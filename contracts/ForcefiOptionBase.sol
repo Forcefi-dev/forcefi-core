@@ -18,7 +18,7 @@ interface IDFOTokenPriceFeed {
     function estimateAmountOut(address, uint128, uint32) external view returns(uint);
 }
 
-abstract contract DFOOptionBase is Ownable {
+abstract contract ForcefiOptionBase is Ownable {
 
     uint immutable internal executionPeriodTimestamp;
     uint immutable internal contractInitTimestamp;

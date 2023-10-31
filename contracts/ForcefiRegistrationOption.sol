@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
-import "./DFOOptionBase.sol";
+import "./ForcefiOptionBase.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract DFORegistrationOption is DFOOptionBase {
+contract ForcefiRegistrationOption is DFOOptionBase {
 
     using Counters for Counters.Counter;
     using SafeMath for uint256;

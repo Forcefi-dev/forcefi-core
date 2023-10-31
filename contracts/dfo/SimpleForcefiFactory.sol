@@ -41,7 +41,7 @@ interface ILZContract{
  * Through this contract new projects can be registered.
  * Afterwards projects can create fundraisings, deploy tokens and create revenue wallets through this contract.
  */
-contract SimpleDfoFactoryHistory is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+contract SimpleForcefiFactory is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
     string constant PARENT_COMPANY = "Forcefi";
     /** @dev Fee amount that is needed to register new project */
