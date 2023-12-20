@@ -22,9 +22,9 @@ contract ForcefiFactoryMain is SimpleForcefiFactory {
         initializedCompanies[_companyName] = true;
         emit MainWalletCreated(_companyName, mainWallet, msg.sender);
 
-//        if(!isParentCompany){
-//            IDFOOption(dfoRegistrationOptionAddress).safeMint(tx.origin, 0);
-//        }
+        if(!isParentCompany){
+            IDFOOption(dfoRegistrationOptionAddress).safeMint(tx.origin, 0);
+        }
 
         return mainWallet;
     }
