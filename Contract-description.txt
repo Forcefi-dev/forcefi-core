@@ -1,9 +1,0 @@
-ForcefiFactoryMain - Main Forcefi structure contract in ARBITRUM blockchain(our main chain) which registers projects, collects fee and distributes referral fee if needed
-
-SimpleForefiFactory - Offchain Forcefi Factory
-
-ForcefiRegistrationOption - Registration option contract that mints 5 options per project when it registers through ForcefiFactory.
-
-MainWalletUpg - Projects main wallet created in registration process. Through this contract projects can create ERC20 Tokens, Fundraising, other wallets and overall interact with Forcefi ecosystem.
-
-MainWalletUpgFactory - Factory that creates main wallets for projects
