@@ -1,0 +1,25 @@
+Forcefi Core provides a comprehensive framework for projects to create and manage ERC20 tokens, lock them in vesting schedules, and raise funds through customizable campaigns. By purchasing packages, particularly the "Accelerator" package, projects can reduce costs and gain access to a wide range of features across multiple blockchains. The platform emphasizes flexibility, security, and efficiency in managing token economics and fundraising activities.
+
+ForcefiPackage Contract
+Purpose: Serves as the entry point for projects to interact with the Forcefi platform. Projects can purchase various packages, each offering different benefits.
+Accelerator Package: Projects that reach the "Accelerator" package level are exempt from paying fees for using Forcefi's core smart contracts, such as those related to ERC20 token creation, vesting, and fundraising. The only cost incurred is the gas fee.
+Cross-Chain Functionality: The ForcefiPackage contract is designed to be cross-chain compatible, allowing projects to bridge their tokens across different blockchain networks to access Forcefi's services on those chains.
+ERC20 Token Factories
+
+ContractFactory and PausableContractFactory
+These contracts allow projects to create their own ERC20 tokens with customizable functionalities. The PausableContractFactory likely includes additional features such as pausing token transfers in certain situations.
+
+Vesting Contract
+Purpose: Allows projects to lock and distribute ERC20 tokens according to a vesting schedule. The tokens can be those created through Forcefi or any ERC20 token owned by the project.
+Functionality: After tokens are locked, beneficiaries can unlock them based on the vesting parameters set by the project. This ensures that token distribution is controlled and aligned with the project's goals.
+
+Fundraising Contract
+Purpose: Enables projects to create fundraising campaigns tailored to their specific needs.
+Investment Tokens: Projects can raise funds in various stablecoins (e.g., USDT, DAI) and distribute their ERC20 tokens according to predefined parameters such as the exchange rate, minimum and maximum ticket values, and fundraising duration.
+Private Fundraising: Campaigns can be made private, restricting participation to whitelisted addresses.
+Staking Requirement: Investors must stake a certain amount of FORC tokens in the ForcefiStaking contract to participate in fundraising campaigns.
+Campaign Closure: Upon successful fundraising, the campaign owner can close the campaign. The raised funds are then distributed to various entities, including the Forcefi treasury, the Staking contract, the Curator contract, and referral addresses (if applicable). The remaining funds, after deducting fees, are returned to the campaign owner.
+
+ForcefiStaking
+
+CuratorContract
