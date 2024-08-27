@@ -105,7 +105,7 @@ contract VestingFinal is ForcefiBaseContract {
     }
 
     // Event emitted when beneficiaries are added to a vesting plan
-    event AddedBenificiars(Benificiar[] beneficiaries);
+    event AddedBenificiars(Benificiar[] beneficiaries, bytes32 indexed vestingIdx);
 
     constructor() {
     }
@@ -183,7 +183,7 @@ contract VestingFinal is ForcefiBaseContract {
             vestingPlans[_vestingIdx].tokenAllocated += _benificiars[i].tokenAmount;
         }
 
-        emit AddedBenificiars(_benificiars);
+        emit AddedBenificiars(_benificiars, _vestingIdx);
     }
 
     /**
