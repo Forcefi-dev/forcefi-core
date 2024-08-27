@@ -55,4 +55,13 @@ contract ForcefiBaseContract is Ownable {
     function setForcefiPackageAddress(address _forcefiPackageAddress) public onlyOwner {
         forcefiPackageAddress = _forcefiPackageAddress;
     }
+
+    /**
+     * @dev Withdraws all fees from the contract.
+     * This function can only be called by the owner of the contract.
+     * @param receiver The address of the address that will receive all the fees collected by the contract.
+     */
+    function withdrawFee(address payable receiver) public onlyOwner{
+        receiver.transfer(address(this).balance);
+    }
 }
