@@ -11,6 +11,10 @@ interface IForcefiStaking {
     function receiveFees(address, uint) external;
 }
 
+/**
+ * @title Fundraising
+ * @dev This contract is used for creating and managing fundraising campaigns with vesting plans.
+ */
 contract Fundraising is ForcefiBaseContract{
     using Counters for Counters.Counter;
     Counters.Counter _fundraisingIdCounter;
@@ -36,11 +40,26 @@ contract Fundraising is ForcefiBaseContract{
 
     mapping(bytes32 => mapping(address => IndividualBalances)) public individualBalances;
 
+    /**
+     * @dev Struct to track individual balances within a fundraising campaign.
+     * @param investmentTokenBalances A mapping of token addresses to their corresponding balances.
+     * @param fundraisingTokenBalance The balance of fundraising tokens held by the individual.
+     */
     struct IndividualBalances {
         mapping(address => uint) investmentTokenBalances;
         uint fundraisingTokenBalance;
     }
 
+    /**
+     * @dev Struct to define a vesting plan.
+     * @param label The label or name of the vesting plan.
+     * @param saleStart The timestamp when the vesting period starts.
+     * @param cliffPeriod The duration of the cliff period (in seconds) before tokens start vesting.
+     * @param vestingPeriod The total duration of the vesting period (in seconds).
+     * @param releasePeriod The period (in seconds) how often tokens are released after the cliff period.
+     * @param tgePercent The percentage of tokens released at the Token Generation Event (TGE).
+     * @param totalTokenAmount The total amount of tokens allocated for this fundraising.
+     */
     struct VestingPlan {
         string label;
         uint saleStart;
@@ -51,6 +70,23 @@ contract Fundraising is ForcefiBaseContract{
         uint totalTokenAmount;
     }
 
+    /**
+     * @dev Struct to define the data required to create a new fundraising campaign.
+     * @param _label The label or name of the fundraising campaign.
+     * @param _vestingStart The timestamp when the vesting period starts.
+     * @param _cliffPeriod The duration of the cliff period (in seconds) before tokens start vesting.
+     * @param _vestingPeriod The total duration of the vesting period (in seconds).
+     * @param _releasePeriod The period (in seconds) how often tokens are released after the cliff period.
+     * @param _tgePercent The percentage of tokens released at the Token Generation Event (TGE).
+     * @param _totalCampaignLimit The maximum amount of tokens that can be raised during the campaign.
+     * @param _rate The exchange rate between the investment token and the fundraising token.
+     * @param _rateDelimiter The denominator used in calculating the exchange rate.
+     * @param _startDate The timestamp when the fundraising campaign starts.
+     * @param _endDate The timestamp when the fundraising campaign ends.
+     * @param _isPrivate Whether the campaign is private or public.
+     * @param _campaignMinTicketLimit The minimum amount required to participate in the campaign.
+     * @param _campaignMaxTicketLimit The maximum amount that can be contributed by a single participant.
+     */
     struct FundraisingData {
         string _label;
         uint _vestingStart;
@@ -68,6 +104,24 @@ contract Fundraising is ForcefiBaseContract{
         uint _campaignMaxTicketLimit;
     }
 
+    /**
+     * @dev Struct to store details of an individual fundraising campaign.
+     * @param owner The address of the campaign owner.
+     * @param totalFundraised The total amount raised during the campaign.
+     * @param privateFundraising Indicates if the campaign is private.
+     * @param startDate The start date of the campaign.
+     * @param endDate The end date of the campaign.
+     * @param campaignHardCap The maximum amount of funds the campaign can raise.
+     * @param rate The exchange rate between the investment token and the fundraising token.
+     * @param rateDelimiter The denominator used in calculating the exchange rate.
+     * @param campaignMinTicketLimit The minimum contribution required to participate.
+     * @param campaignClosed Indicates if the campaign is closed.
+     * @param mintingErc20TokenAddress The address of the ERC20 token being minted for the campaign.
+     * @param referralAddress The address to which referral fees are sent.
+     * @param fundraisingReferralFee The percentage of funds allocated as a referral fee.
+     * @param projectName The name of the project associated with the campaign.
+     * @param campaignMaxTicketLimit The maximum amount that can be contributed by a single participant.
+     */
     struct FundraisingInstance {
         address owner;
         uint totalFundraised;
@@ -88,6 +142,16 @@ contract Fundraising is ForcefiBaseContract{
         uint campaignMaxTicketLimit;
     }
 
+    /**
+     * @dev Struct to configure fee settings for fundraising campaigns.
+     * @param tier1Threshold The fundraising amount threshold for tier 1 fees.
+     * @param tier2Threshold The fundraising amount threshold for tier 2 fees.
+     * @param tier1FeePercentage The percentage fee applied for tier 1.
+     * @param tier2FeePercentage The percentage fee applied for tier 2.
+     * @param tier3FeePercentage The percentage fee applied for tier 3.
+     * @param reclaimWindow The time window (in seconds) for reclaiming funds.
+     * @param minCampaignThreshold The minimum threshold percentage of the campaign hard cap that must be met for a successful campaign.
+     */
     struct FeeConfig {
         uint256 tier1Threshold;
         uint256 tier2Threshold;
@@ -123,10 +187,19 @@ contract Fundraising is ForcefiBaseContract{
         });
     }
 
-    function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _mintingErc20TokenAddress, address [] calldata _whitelistAddresses) external payable {
+    /**
+     * @dev Creates a new fundraising campaign. Campaign can be created either if the owner of the @param _projectName has creation token in ForcefiPackage contract or pays the fee.
+     * @param _fundraisingData The data required to create the fundraising campaign.
+     * @param _attachedERC20Address The addresses of the ERC20 tokens accepted for investment.
+     * @param _referralAddress The address for receiving referral fees.
+     * @param _projectName The name of the project.
+     * @param _fundraisingErc20TokenAddress The address of the ERC20 token being locked.
+     * @param _whitelistAddresses The addresses to whitelist for private campaigns.
+     */
+    function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _fundraisingErc20TokenAddress, address [] calldata _whitelistAddresses) external payable {
         bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
         require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
-        ERC20(_mintingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
+        ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
 
         FundraisingInstance memory fundraising;
         fundraising.owner = tx.origin;
@@ -212,9 +285,16 @@ contract Fundraising is ForcefiBaseContract{
         });
     }
 
+    /**
+     * @dev Invests in a fundraising campaign. Campaign has to be still active. To participate in the sale, users must stake a sufficient amount of FORC tokens.
+     * @param _amount The amount of tokens to invest, it has to be larger than campaignMinTicketLimit and less than campaignMaxTicketLimit for all investments combined.
+              When campaign has almost reached its cap, amount can be less than campaignMinTicketLimit
+     * @param _campaignId The ID of the campaign to invest in.
+     * @param _sentTokenAddress The address of the token being sent for the investment. It has to be whitelisted for the particular sale
+     */
     function invest(uint256 amount, address _whitelistedTokenAddress, bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
-        require(amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised >= amount, "Amount should be more than campaign min ticket limit");
+        require(amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
         require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
         require(fundraising.campaignHardCap >= amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
         require(block.timestamp >= fundraising.startDate, "Campaign hasn't started yet");
@@ -229,9 +309,9 @@ contract Fundraising is ForcefiBaseContract{
         }
         require(isWhitelistedToken, "Only project whitelisted token can be accepted as investment");
 
-        // if(forcefiStakingAddress != address(0)){
-        //     require(IForcefiStaking(forcefiStakingAddress).hasStaked(msg.sender), "To participate in the sale, users must stake a sufficient amount of FORC tokens.");
-        // }
+        if(forcefiStakingAddress != address(0)){
+            require(IForcefiStaking(forcefiStakingAddress).hasStaked(msg.sender), "To participate in the sale, users must stake a sufficient amount of FORC tokens.");
+        }
 
         require(isInvestmentToken[_whitelistedTokenAddress], "Not whitelisted investment token address");
         if(fundraising.privateFundraising){
@@ -251,6 +331,13 @@ contract Fundraising is ForcefiBaseContract{
         emit Invested(msg.sender, amount, _whitelistedTokenAddress, address(this));
     }
 
+    /**
+     * @dev Closes a fundraising campaign.
+            To close campaign it has to reach it's minimal threshold after end date + reclaimWindow.
+            This event sends investmentTokens to referralAddress(if it's attached), successFulFundraiseFeeAddress and calls forcefiStakingContract and curatorContract to receive and distribute fees.
+            All other tokens are sent to the owner of the campaign.
+     * @param _campaignId The ID of the campaign to close.
+     */
     function closeCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(!fundraising.campaignClosed, "Campaign already closed");
@@ -276,7 +363,7 @@ contract Fundraising is ForcefiBaseContract{
             ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(forcefiStakingAddress, feeInWei * 3 / 10 );
             IForcefiStaking(forcefiStakingAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei * 3 / 10);
 
-            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(successfulFundraiseFeeAddress, feeInWei / 2);
+            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, feeInWei / 2);
             IForcefiStaking(curatorContractAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei / 2);
 
             ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(msg.sender, totalFundraisedInWei - feeInWei - referralFeeInWei);
@@ -302,6 +389,11 @@ contract Fundraising is ForcefiBaseContract{
         ERC20(fundraising.mintingErc20TokenAddress).transfer(msg.sender, fundraising.campaignHardCap);
     }
 
+    /**
+     * @dev Allows users to claim their tokens based on the vesting params.
+            Claiming is available only after fundraising has reached it's end date + reclaim window has passed and it's considered as successful - reached min campaign threshold.
+     * @param _campaignId The ID of the campaign to claim tokens from.
+     */
     function claimTokens(bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
@@ -322,6 +414,11 @@ contract Fundraising is ForcefiBaseContract{
         return VestingLibrary.computeReleasableAmount(vestingPlans[_fundraisingIdx].saleStart, vestingPlans[_fundraisingIdx].vestingPeriod, vestingPlans[_fundraisingIdx].releasePeriod, vestingPlans[_fundraisingIdx].cliffPeriod, vestingPlans[_fundraisingIdx].tgePercent, mintingTokenAmount, released[_fundraisingIdx][msg.sender]);
     }
 
+    /**
+    * @dev Allows users to reclaim their tokens if campaign failed to reach it's goal.
+            Reclaiming is available only after fundraising has reached it's end date + reclaim window has passed.
+     * @param _campaignId The ID of the campaign to claim tokens from.
+     */
     function reclaimTokens(bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(block.timestamp >= fundraising.endDate, "Campaign has not ended");
