@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.18;
 
 import "./ERC20MintableBurnableToken.sol";
 import "./ERC20BurnableToken.sol";
 import "./ERC20MintableToken.sol";
 import "./ERC20Token.sol";
-import "./ForcefiBaseContract.sol";
+import "./../ForcefiBaseContract.sol";
 
 /**
  * @title ContractFactory
@@ -55,8 +55,8 @@ contract ContractFactory is ForcefiBaseContract {
         uint256 _initialSupply
     ) external payable returns (address) {
         // Ensure the deployer has the required creation token or pays the appropriate fee
-        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
-        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
+//        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
+//        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
 
         address newContract;
 

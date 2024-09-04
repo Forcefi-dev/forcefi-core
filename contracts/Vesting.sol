@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -119,6 +119,8 @@ contract VestingFinal is ForcefiBaseContract {
      * @param _tokenAddress Address of the ERC20 token to be vested.
      */
     function addVestingPlansBulk(VestingPlanParams[] calldata vestingPlanParams, string calldata _projectName, address _tokenAddress) external payable {
+        //        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
+        //        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         for (uint i = 0; i < vestingPlanParams.length; i++) {
             addVestingPlan(vestingPlanParams[i], _projectName, _tokenAddress);
         }

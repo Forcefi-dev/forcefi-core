@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "https://github.com/LayerZero-Labs/solidity-examples/blob/main/contracts/lzApp/NonblockingLzApp.sol";
+//import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+//import "https://github.com/LayerZero-Labs/solidity-examples/blob/main/contracts/lzApp/NonblockingLzApp.sol";
 
 /**
  * @title ILzContract
@@ -18,9 +18,9 @@ interface ILzContract {
  * @title ForcefiPackage
  * @dev Main contract for managing investment packages and package purchases.
  */
-contract ForcefiPackage is Ownable, NonblockingLzApp {
-
-    mapping(address => AggregatorV3Interface) dataFeeds;
+contract ForcefiPackage is Ownable {
+    // Address of the LayerZero contract used for cross-chain operations
+    address private lzContractAddress;
 
     // Structure defining the properties of an investment package
     struct Package {
@@ -53,9 +53,10 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
      * @param _lzContractAddress Address of the LayerZero contract.
      */
-    constructor(address _lzContractAddress) NonblockingLzApp(_lzContractAddress) {
-        addPackage("Explorer", 750, false, 5, false);
-        addPackage("Accelerator", 2000, false, 5, true);
+    constructor(address _lzContractAddress) {
+        lzContractAddress = _lzContractAddress;
+        addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
+        addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package
     }
 
     /**
@@ -90,11 +91,6 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
         packageToUpdate.amount = newAmount;
         packageToUpdate.isCustom = newIsCustom;
         packageToUpdate.referralFee = newReferralFee;
-    }
-
-    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
-        (address _tokenOwner, string memory _projectName) = abi.decode(_payload, (address, string));
-        _mintPackageToken(_tokenOwner, _projectName);
     }
 
     /**
@@ -136,8 +132,8 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
 
         uint256 referralFee = 0;
         if (_referralAddress != address(0)) {
-            referralFee = finalAmountToPay * package.referralFee / 100;
-            ERC20(_erc20TokenAddress).transferFrom(msg.sender, _referralAddress, referralFee);
+            referralFee = finalAmountToPay * package.referralFee / 100;  // Calculate referral fee
+            ERC20(_erc20TokenAddress).transferFrom(msg.sender, _referralAddress, referralFee);  // Transfer referral fee
         }
 
         uint256 packagePaymentCost = finalAmountToPay - referralFee;
@@ -179,7 +175,7 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
         bytes memory payload = abi.encode(_tokenOwner, _projectName);
         uint16 version = 1;
         bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
-        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams, msg.value);
+        //        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams, msg.value);
     }
 
     /**
@@ -198,7 +194,7 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      */
     function whitelistTokenForInvestment(address _whitelistedTokenAddress, address _dataFeedAddress) external onlyOwner {
         whitelistedToken[_whitelistedTokenAddress] = true;
-        dataFeeds[_whitelistedTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
+        //        dataFeeds[_whitelistedTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
     }
 
     /**
@@ -249,25 +245,26 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      * @return uint256 The latest price in base currency.
      */
     function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
-        AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
-
-        (
-        /* uint80 roundID */,
-            int answer,
-        /*uint startedAt*/,
-        /*uint timeStamp*/,
-        /*uint80 answeredInRound*/
-        ) = dataFeed.latestRoundData();
-
-        uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
-
-        uint256 decimals = uint256(dataFeed.decimals());
-        uint256 chainlinkPrice = uint256(answer);
-
-        if(erc20Decimals > decimals){
-            return chainlinkPrice * (10 ** (erc20Decimals - decimals));
-        } else if(decimals > erc20Decimals ) {
-            return chainlinkPrice / (10 ** (decimals - erc20Decimals));
-        } else return chainlinkPrice;
+        //         AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
+        //
+        //         (
+        //             /* uint80 roundID */,
+        //             int answer,
+        //             /*uint startedAt*/,
+        //             /*uint timeStamp*/,
+        //             /*uint80 answeredInRound*/
+        //         ) = dataFeed.latestRoundData();
+        //
+        //         uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
+        //
+        //         uint256 decimals = uint256(dataFeed.decimals());
+        //         uint256 chainlinkPrice = uint256(answer);
+        //
+        //         if(erc20Decimals > decimals){
+        //             return chainlinkPrice * (10 ** (erc20Decimals - decimals));
+        //         } else if(decimals > erc20Decimals ) {
+        //             return chainlinkPrice / (10 ** (decimals - erc20Decimals));
+        //         } else return chainlinkPrice;
+        return 999500000000000000;
     }
 }

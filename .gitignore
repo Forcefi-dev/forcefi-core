@@ -1,0 +1,11 @@
+# Ignore the node_modules directory (Node.js projects)
+node_modules/
+
+artifacts/
+
+cache/
+.idea/codeStyles/
+.idea/forcefi-core.iml
+.idea/modules.xml
+.idea/vcs.xml
+package-lock.json
