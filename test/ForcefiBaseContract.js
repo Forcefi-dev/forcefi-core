@@ -20,7 +20,7 @@ describe("ForcefiBaseContract", function () {
             expect(initFeeAmount).to.equal(feeAmount);
 
             feeAmount = 500;
-            await expect(forcefiBaseContract.connect(addr1).setFeeAmount(feeAmount)).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(forcefiBaseContract.connect(addr1).setFeeAmount(feeAmount)).to.be.revertedWithCustomError(forcefiBaseContract, `OwnableUnauthorizedAccount`);
             await forcefiBaseContract.setFeeAmount(feeAmount);
             const updatedFeeAmount = await forcefiBaseContract.feeAmount();
             expect(updatedFeeAmount).to.equal(feeAmount);
@@ -35,7 +35,7 @@ describe("ForcefiBaseContract", function () {
             expect(initForcefiPackageAddress).to.equal(forcefiPackageAddress);
 
             forcefiPackageAddress = '0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3';
-            await expect(forcefiBaseContract.connect(addr1).setForcefiPackageAddress(forcefiPackageAddress)).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(forcefiBaseContract.connect(addr1).setForcefiPackageAddress(forcefiPackageAddress)).to.be.revertedWithCustomError(forcefiBaseContract, `OwnableUnauthorizedAccount`);
             await forcefiBaseContract.setForcefiPackageAddress(forcefiPackageAddress);
             const updatedForcefiPackageAddress = await forcefiBaseContract.forcefiPackageAddress();
             expect(updatedForcefiPackageAddress).to.equal(forcefiPackageAddress);

@@ -58,14 +58,14 @@ describe("ERC20Token", function () {
             await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply);
             await expect(await contract.balanceOf(owner.address)).to.equal(newMintedTokens + initialSupply);
 
-            await expect(contract.connect(addr1).mint(owner.address, newMintedTokens)).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(contract.connect(addr1).mint(owner.address, newMintedTokens)).to.be.revertedWithCustomError(contract, `OwnableUnauthorizedAccount`);
 
             const burnableTokens = 250;
             await contract.burn(burnableTokens);
             await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply - burnableTokens);
             await expect(await contract.balanceOf(owner.address)).to.equal(newMintedTokens + initialSupply - burnableTokens);
 
-            await expect(contract.connect(addr1).burn(burnableTokens)).to.be.revertedWith("ERC20: burn amount exceeds balance");
+            await expect(contract.connect(addr1).burn(burnableTokens)).to.be.revertedWithCustomError(contract, `ERC20InsufficientBalance`);
 
 
         });

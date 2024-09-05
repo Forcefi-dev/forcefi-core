@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
-import "@openzeppelin/contracts/utils/Counters.sol";
+pragma solidity 0.8.20;
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
@@ -16,8 +16,7 @@ interface IForcefiStaking {
  * @dev This contract is used for creating and managing fundraising campaigns with vesting plans.
  */
 contract Fundraising is ForcefiBaseContract{
-    using Counters for Counters.Counter;
-    Counters.Counter _fundraisingIdCounter;
+    uint256 private _fundraisingIdCounter;
 
 //    mapping(address => AggregatorV3Interface) dataFeeds;
 
@@ -216,8 +215,8 @@ contract Fundraising is ForcefiBaseContract{
         fundraising.mintingErc20TokenAddress = _fundraisingErc20TokenAddress;
         fundraising.campaignMaxTicketLimit = _fundraisingData._campaignMaxTicketLimit;
 
-        uint fundraisingIdx = _fundraisingIdCounter.current();
-        _fundraisingIdCounter.increment();
+        uint fundraisingIdx = _fundraisingIdCounter;
+        _fundraisingIdCounter += 1;
 
         bytes32 UUID = VestingLibrary.generateUUID(fundraisingIdx);
         address [] storage tokensToPush = whitelistedTokens[UUID];

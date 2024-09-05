@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -53,7 +53,7 @@ contract ForcefiPackage is Ownable {
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
      * @param _lzContractAddress Address of the LayerZero contract.
      */
-    constructor(address _lzContractAddress) {
+    constructor(address _lzContractAddress) Ownable(tx.origin){
         lzContractAddress = _lzContractAddress;
         addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
         addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package

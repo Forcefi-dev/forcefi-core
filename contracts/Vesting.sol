@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
 
@@ -13,11 +12,7 @@ import "./VestingLibrary.sol";
  * Inherits from the ForcefiBaseContract and uses OpenZeppelin's ERC20 and Counters utilities.
  */
 contract VestingFinal is ForcefiBaseContract {
-
-    using Counters for Counters.Counter;
-
-    // Counter for generating unique vesting plan IDs
-    Counters.Counter private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
 
     // Mapping from project names to a list of vesting plan IDs
     mapping(string => bytes32[]) public projectVestings;
@@ -137,8 +132,8 @@ contract VestingFinal is ForcefiBaseContract {
     function addVestingPlan(VestingPlanParams memory params, string calldata _projectName, address _tokenAddress) internal {
         ERC20(_tokenAddress).transferFrom(msg.sender, address(this), params.totalTokenAmount);
 
-        uint vestingIdx = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint vestingIdx = _tokenIdCounter;
+        _tokenIdCounter += 1;
 
         bytes32 UUID = VestingLibrary.generateUUID(vestingIdx);
 

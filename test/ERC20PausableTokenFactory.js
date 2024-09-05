@@ -57,7 +57,7 @@ describe("ERC20Token", function () {
             await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply);
             await expect(await contract.balanceOf(owner.address)).to.equal(newMintedTokens + initialSupply);
 
-            await expect(contract.connect(addr1).mint(owner.address, newMintedTokens)).to.be.revertedWith("Ownable: caller is not the owner");
+            await expect(contract.connect(addr1).mint(owner.address, newMintedTokens)).to.be.revertedWithCustomError(contract, `OwnableUnauthorizedAccount`);
 
             const tokensToTransfer = 250;
             await contract.pause();

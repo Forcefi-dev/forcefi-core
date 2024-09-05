@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.20;
 
 import "./ERC20MintableBurnableToken.sol";
 import "./ERC20BurnableToken.sol";
@@ -14,6 +14,8 @@ import "./../ForcefiBaseContract.sol";
  * Inherits from ForcefiBaseContract.
  */
 contract ContractFactory is ForcefiBaseContract {
+
+    constructor(){}
 
     /**
      * @dev Enum representing different types of token contracts that can be created.

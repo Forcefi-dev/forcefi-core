@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
-
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+pragma solidity 0.8.20;
 
 /**
  * @title VestingLibrary
  * @dev A library that provides functionality for calculating releasable vested amounts and generating unique identifiers (UUIDs).
  */
 library VestingLibrary {
-    using SafeMath for uint256;
 
     /**
      * @dev Computes the amount of tokens that can be released based on vesting parameters.
@@ -35,31 +32,31 @@ library VestingLibrary {
         uint256 currentTime = block.timestamp;
 
         // If the current time is past the total vesting duration plus the lock-up period, all remaining tokens are releasable.
-        if (currentTime >= start.add(duration).add(lockUpPeriod)) {
-            return invested.sub(released);
+        if (currentTime >= start + duration + lockUpPeriod) {
+            return invested - released;
         } else {
             // Calculate the amount releasable at TGE
-            uint256 tgeCalculatedAmount = invested.mul(tgeAmount).div(100);
+            uint256 tgeCalculatedAmount = (invested * tgeAmount) / 100;
 
             // If still within the lock-up period, only the TGE amount can be released.
-            if (currentTime <= start.add(lockUpPeriod)) {
-                return tgeCalculatedAmount.sub(released);
+            if (currentTime <= start + lockUpPeriod) {
+                return tgeCalculatedAmount - released;
             }
 
             // Calculate time passed since the start of the vesting period, excluding the lock-up period.
-            uint256 timeFromStart = currentTime.sub(start).sub(lockUpPeriod);
+            uint256 timeFromStart = currentTime - start - lockUpPeriod;
 
             // Calculate the number of vesting periods that have passed.
-            uint256 vestedPeriods = timeFromStart.div(period);
+            uint256 vestedPeriods = timeFromStart / period;
 
             // Calculate the total number of periods in the entire vesting duration.
-            uint256 totalPeriodsCount = duration.div(period);
+            uint256 totalPeriodsCount = duration / period;
 
             // Calculate the total vested amount proportional to the number of periods that have passed.
-            uint256 vestedAmount = (invested.sub(tgeCalculatedAmount)).mul(vestedPeriods).div(totalPeriodsCount);
+            uint256 vestedAmount = (invested - tgeCalculatedAmount) * vestedPeriods / totalPeriodsCount;
 
             // The releasable amount is the vested amount plus the TGE amount, minus the amount already released.
-            return vestedAmount.add(tgeCalculatedAmount).sub(released);
+            return vestedAmount + tgeCalculatedAmount - released;
         }
     }
 

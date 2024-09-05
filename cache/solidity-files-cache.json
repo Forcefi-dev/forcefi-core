@@ -2,16 +2,17 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ContractFactory.sol": {
-      "lastModificationDate": 1725427126801,
-      "contentHash": "8d3302755fe31475d90207d0aef1fe3b",
+      "lastModificationDate": 1725515242068,
+      "contentHash": "f6f75a231c8b3e6fd5f6e9ff29f621ee",
       "sourceName": "contracts/erc20Contracts/ContractFactory.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -36,23 +37,24 @@
         "./../ForcefiBaseContract.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ContractFactory"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiBaseContract.sol": {
-      "lastModificationDate": 1725427126713,
-      "contentHash": "961b4ce17522a466846ba919ef90135b",
+      "lastModificationDate": 1725515257138,
+      "contentHash": "c7920930bf1aa09d47a482b4b24f907f",
       "sourceName": "contracts/ForcefiBaseContract.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -73,7 +75,7 @@
         "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ForcefiBaseContract",
@@ -81,16 +83,17 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableBurnableToken.sol": {
-      "lastModificationDate": 1725427126838,
-      "contentHash": "1fbc44140a958465c57abc215a20dccf",
+      "lastModificationDate": 1725512971163,
+      "contentHash": "2e355c9c780826e143ed864f90f0e335",
       "sourceName": "contracts/erc20Contracts/ERC20MintableBurnableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -111,23 +114,24 @@
         "./ERC20BurnableToken.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20MintableBurnableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20BurnableToken.sol": {
-      "lastModificationDate": 1725427126764,
-      "contentHash": "bd709c44f5a06d03e981fa0d37955b4f",
+      "lastModificationDate": 1725515689751,
+      "contentHash": "b7183f2bbbe7d9aba42e265808108f16",
       "sourceName": "contracts/erc20Contracts/ERC20BurnableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -149,23 +153,24 @@
         "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20BurnableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableToken.sol": {
-      "lastModificationDate": 1725427126794,
-      "contentHash": "cb3f018303cdac504c7079d7825ef3ec",
+      "lastModificationDate": 1725512971084,
+      "contentHash": "85711210b7eb073ab7c93ba6fe2d696b",
       "sourceName": "contracts/erc20Contracts/ERC20MintableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -186,23 +191,24 @@
         "./ERC20Token.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20MintableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20Token.sol": {
-      "lastModificationDate": 1725427126743,
-      "contentHash": "5a59ceef5b17ea18df0c500039a105ef",
+      "lastModificationDate": 1725515663481,
+      "contentHash": "50a21d9aa019a1bccf76631a84d73217",
       "sourceName": "contracts/erc20Contracts/ERC20Token.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -224,23 +230,24 @@
         "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20Token"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1725474101250,
-      "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
+      "lastModificationDate": 1725512161841,
+      "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -261,23 +268,24 @@
         "../utils/Context.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "Ownable"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1725474100417,
-      "contentHash": "f07feb4a44b1a4872370da5aa70e8e46",
+      "lastModificationDate": 1725512161672,
+      "contentHash": "01c847e2af51f468cb66d9ed83bc3cec",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -296,23 +304,24 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "Context"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Burnable.sol": {
-      "lastModificationDate": 1725474100674,
-      "contentHash": "a1c7f80ae26f5b2d7d563475627fbf25",
+      "lastModificationDate": 1725512161705,
+      "contentHash": "273d8d24b06f67207dd5f35c3a0c1086",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -334,23 +343,24 @@
         "../../../utils/Context.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "ERC20Burnable"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1725474100669,
-      "contentHash": "3ae5166c6827a9cf1a7a462d1632b464",
+      "lastModificationDate": 1725512161703,
+      "contentHash": "c6375ef25e84c90b3d15f9ec4eef218f",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -370,26 +380,28 @@
       "imports": [
         "./IERC20.sol",
         "./extensions/IERC20Metadata.sol",
-        "../../utils/Context.sol"
+        "../../utils/Context.sol",
+        "../../interfaces/draft-IERC6093.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "ERC20"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1725474101058,
-      "contentHash": "df36f7051335cd1e748b1b6463b7fdd3",
+      "lastModificationDate": 1725512161798,
+      "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -408,23 +420,24 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "IERC20"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1725474101063,
-      "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
+      "lastModificationDate": 1725512161800,
+      "contentHash": "4c02fa6f7ae7b6c289cef80424f0c875",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -445,23 +458,24 @@
         "../IERC20.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "IERC20Metadata"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiPackage.sol": {
-      "lastModificationDate": 1725427073164,
-      "contentHash": "fcbf6d6b146fb11fbb0177821b14149c",
+      "lastModificationDate": 1725515719759,
+      "contentHash": "1bea42dfba31b3dfe937d53504f1cbfd",
       "sourceName": "contracts/ForcefiPackage.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -483,7 +497,7 @@
         "@openzeppelin/contracts/token/ERC20/ERC20.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ForcefiPackage",
@@ -491,16 +505,17 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Vesting.sol": {
-      "lastModificationDate": 1725427126862,
-      "contentHash": "2b168ac4cf79aeaf7707f46152146142",
+      "lastModificationDate": 1725513001649,
+      "contentHash": "85263da6d9829216dd5bec47bcb0c8b5",
       "sourceName": "contracts/Vesting.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -519,28 +534,28 @@
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/utils/Counters.sol",
         "./ForcefiBaseContract.sol",
         "./VestingLibrary.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "VestingFinal"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\VestingLibrary.sol": {
-      "lastModificationDate": 1725427126694,
-      "contentHash": "92396d97a92d56c8385c2b27cc7fbb10",
+      "lastModificationDate": 1725512970911,
+      "contentHash": "0ab17b08632dca0453293fd446137c2b",
       "sourceName": "contracts/VestingLibrary.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -557,97 +572,26 @@
           }
         }
       },
-      "imports": [
-        "@openzeppelin/contracts/utils/math/SafeMath.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "VestingLibrary"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Counters.sol": {
-      "lastModificationDate": 1725474100425,
-      "contentHash": "74654e3ae5d7f39555055dfe244dab7a",
-      "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
-      "solcConfig": {
-        "version": "0.8.18",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Counters"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SafeMath.sol": {
-      "lastModificationDate": 1725474101301,
-      "contentHash": "f6f4fda16c536e57069af40a245c985e",
-      "sourceName": "@openzeppelin/contracts/utils/math/SafeMath.sol",
-      "solcConfig": {
-        "version": "0.8.18",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeMath"
-      ]
-    },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Fundraising.sol": {
-      "lastModificationDate": 1725427126818,
-      "contentHash": "d8752fc29bf86bd247a8f72fea74338f",
+      "lastModificationDate": 1725512971142,
+      "contentHash": "7827604cfdcdbdf514bb9bb1601fe581",
       "sourceName": "contracts/Fundraising.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -665,13 +609,12 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/utils/Counters.sol",
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "./ForcefiBaseContract.sol",
         "./VestingLibrary.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "Fundraising",
@@ -679,16 +622,17 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\PausableContractFactory.sol": {
-      "lastModificationDate": 1725427073155,
-      "contentHash": "340f25fccadb2f0f4e911eb9571642a6",
+      "lastModificationDate": 1725515641853,
+      "contentHash": "31fca2d0316ed57aa1ee73b1ddbe21fa",
       "sourceName": "contracts/erc20Contracts/pausable/PausableContractFactory.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -713,23 +657,24 @@
         "./ERC20PausableToken.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "PausableContractFactory"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableBurnableToken.sol": {
-      "lastModificationDate": 1725427126724,
-      "contentHash": "eab1c744354bdb148431074ca79082bd",
+      "lastModificationDate": 1725514866102,
+      "contentHash": "a76a144813944574c78d8ced65275035",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableBurnableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -750,23 +695,24 @@
         "./ERC20PausableBurnableToken.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20PausableMintableBurnableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableBurnableToken.sol": {
-      "lastModificationDate": 1725427126808,
-      "contentHash": "436a20d769684d3bd4987115526faa7f",
+      "lastModificationDate": 1725518687574,
+      "contentHash": "c258901f2ce26ec41316a443ede10568",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableBurnableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -787,26 +733,27 @@
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        "@openzeppelin/contracts/security/Pausable.sol"
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20PausableBurnableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableToken.sol": {
-      "lastModificationDate": 1725427126774,
-      "contentHash": "bd9ede23a2a5b21b59205c980dafe142",
+      "lastModificationDate": 1725514827472,
+      "contentHash": "6eed052956263956a9fa9ff7aeb890ba",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -827,23 +774,24 @@
         "./ERC20PausableToken.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20PausableMintableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableToken.sol": {
-      "lastModificationDate": 1725427073204,
-      "contentHash": "6a2c3a413cf82bffe4c0be63cd0675fe",
+      "lastModificationDate": 1725518687583,
+      "contentHash": "d3f64b5392e2dd0c5ca7e5ec90c57775",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableToken.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -863,26 +811,104 @@
       "imports": [
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/security/Pausable.sol"
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"
       ],
       "versionPragmas": [
-        "0.8.18"
+        "0.8.20"
       ],
       "artifacts": [
         "ERC20PausableToken"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\security\\Pausable.sol": {
-      "lastModificationDate": 1725474101258,
-      "contentHash": "25c8108f36fdd472bc78d4c4af240c11",
-      "sourceName": "@openzeppelin/contracts/security/Pausable.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
+      "lastModificationDate": 1725512161678,
+      "contentHash": "4aefc698f77ecbace7f401257dfe182d",
+      "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
-        "version": "0.8.18",
+        "version": "0.8.20",
         "settings": {
           "optimizer": {
             "enabled": true,
             "runs": 1000
           },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC1155Errors",
+        "IERC20Errors",
+        "IERC721Errors"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Pausable.sol": {
+      "lastModificationDate": 1725512161712,
+      "contentHash": "64b7606ccba31af7e49e3b2d8af1b948",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC20.sol",
+        "../../../utils/Pausable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC20Pausable"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Pausable.sol": {
+      "lastModificationDate": 1725512161844,
+      "contentHash": "24e52f6ef3868e6fca664a423140bee9",
+      "sourceName": "@openzeppelin/contracts/utils/Pausable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
           "outputSelection": {
             "*": {
               "*": [
@@ -903,7 +929,7 @@
         "../utils/Context.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
         "Pausable"
