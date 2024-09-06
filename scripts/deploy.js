@@ -5,16 +5,24 @@ async function main() {
 
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const ContractFactory = await ethers.deployContract("VestingFinal");
+  const networkName = hre.network.name;
+  const envVarName = `LZ_CONTRACT_ADDRESS_${networkName.toUpperCase()}`;
+  const _lzContractAddress = process.env[envVarName];
 
-  console.log("ERC20Token " + await ContractFactory.getAddress())
+  const ForcefiPackage = await ethers.deployContract("ForcefiPackage");
+  console.log("ForcefiPackage contract address " + await ForcefiPackage.getAddress())
 
-  await hre.run("verify:verify", {
-    address: await ContractFactory.getAddress(),
-    constructorArguments: [
-    ],
-  });
+  const ContractFactory = await ethers.deployContract("ContractFactory");
+  console.log("ContractFactory contract address " + await ContractFactory.getAddress())
 
+  const PausableContractFactory = await ethers.deployContract("PausableContractFactory");
+  console.log("PausableContractFactory contract address " + await PausableContractFactory.getAddress())
+
+  const Fundraising = await ethers.deployContract("Fundraising");
+  console.log("Fundraising contract address " + await Fundraising.getAddress())
+
+  const Vesting = await ethers.deployContract("VestingFinal");
+  console.log("Vesting contract address " + await Vesting.getAddress())
 }
 
 main()

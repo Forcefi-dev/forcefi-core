@@ -1,4 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -11,5 +12,22 @@ module.exports = {
       },
     },
   },
-  allowUnlimitedContractSize: true
+  allowUnlimitedContractSize: true,
+  networks: {
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_TEST,
+      },
+    },
+    mainnet: {
+      url: process.env.MAINNET_RPC_URL,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_TEST,
+      },
+    },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY,
+  },
 }
