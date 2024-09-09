@@ -196,8 +196,8 @@ contract Fundraising is ForcefiBaseContract{
      * @param _whitelistAddresses The addresses to whitelist for private campaigns.
      */
     function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _fundraisingErc20TokenAddress, address [] calldata _whitelistAddresses) external payable {
-//        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
-//        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
+        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
+        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
 
         FundraisingInstance memory fundraising;

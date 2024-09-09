@@ -3,7 +3,7 @@ const { expect } = require("chai");
 describe("ERC20Token", function () {
 
     let erc20Token;
-    let owner, addr1, addr2;
+    let owner, addr1, addr2, mockedLzAddress;
     const name = "Test token";
     const symbol = "TST";
     const initialSupply = 20000;
@@ -52,8 +52,11 @@ describe("ERC20Token", function () {
 
     beforeEach(async function () {
         vestingContract = await ethers.deployContract("VestingFinal");
-        [owner, addr1, addr2] = await ethers.getSigners();
+        [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply]);
+
+        const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
+        await vestingContract.setForcefiPackageAddress(forcefiPackage.getAddress());
     });
 
     describe("add vestings", function () {

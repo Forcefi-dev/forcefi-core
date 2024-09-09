@@ -5,7 +5,7 @@ const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 describe("ERC20Token", function () {
 
     let ERC20Token, erc20TokenFactory;
-    let owner, addr1, addr2;
+    let owner, addr1, addr2, mockedLzAddress;
     const contractType = 3
     const name = "Test token";
     const symbol = "TST";
@@ -15,8 +15,10 @@ describe("ERC20Token", function () {
     const initialSupply2 = 50000;
 
     beforeEach(async function () {
-        [owner, addr1, addr2] = await ethers.getSigners();
+        [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
         erc20TokenFactory = await ethers.deployContract("ContractFactory");
+        const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
+        await erc20TokenFactory.setForcefiPackageAddress(forcefiPackage.getAddress());
     });
 
     describe("factory constructor", function () {

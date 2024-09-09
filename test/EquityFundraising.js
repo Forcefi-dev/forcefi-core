@@ -14,6 +14,7 @@ describe("EquityFundraising", function () {
     let user2;
     let user3;
     let user4;
+    let mockedLzAddress;
     let mainWalletAddressMock;
     let erc20Token;
     let investmentToken;
@@ -74,7 +75,7 @@ describe("EquityFundraising", function () {
 
     beforeEach(async function () {
 
-        [owner, user1, user2, user3, user4, mainWalletAddressMock] = await ethers.getSigners();
+        [owner, user1, user2, user3, user4, mainWalletAddressMock, mockedLzAddress] = await ethers.getSigners();
         equityFundraising = await ethers.deployContract("Fundraising");
 
         const vestingPlans =[];
@@ -83,6 +84,9 @@ describe("EquityFundraising", function () {
         investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         investmentToken2 = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         projectToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
+
+        const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
+        await equityFundraising.setForcefiPackageAddress(forcefiPackage.getAddress());
 
         const _attachedERC20Address = [
             investmentToken.getAddress(),
