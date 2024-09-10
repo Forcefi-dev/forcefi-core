@@ -36,11 +36,16 @@ describe("ERC20Token", function () {
     let forcefiPackage;
 
     beforeEach(async function () {
+        const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
+        const mockOracle = await MockOracle.deploy(
+            "18", // decimals
+            "1000"// initialAnswer
+        );
         // ERC20Token = await ethers.getContractFactory("ERC20Token");
         forcefiPackage = await ethers.deployContract("ForcefiPackage", [lzAddress]);
         [owner, addr1, addr2] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), erc20Token.getAddress());
+        await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
     });
 
     describe("addPackage updatePackage", function () {

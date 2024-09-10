@@ -3,7 +3,7 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 //import "https://github.com/LayerZero-Labs/solidity-examples/blob/main/contracts/lzApp/NonblockingLzApp.sol";
 
 /**
@@ -21,6 +21,8 @@ interface ILzContract {
 contract ForcefiPackage is Ownable {
     // Address of the LayerZero contract used for cross-chain operations
     address private lzContractAddress;
+
+    mapping(address => AggregatorV3Interface) dataFeeds;
 
     // Structure defining the properties of an investment package
     struct Package {
@@ -194,7 +196,7 @@ contract ForcefiPackage is Ownable {
      */
     function whitelistTokenForInvestment(address _whitelistedTokenAddress, address _dataFeedAddress) external onlyOwner {
         whitelistedToken[_whitelistedTokenAddress] = true;
-        //        dataFeeds[_whitelistedTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
+        dataFeeds[_whitelistedTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
     }
 
     /**
@@ -245,26 +247,25 @@ contract ForcefiPackage is Ownable {
      * @return uint256 The latest price in base currency.
      */
     function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
-        //         AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
-        //
-        //         (
-        //             /* uint80 roundID */,
-        //             int answer,
-        //             /*uint startedAt*/,
-        //             /*uint timeStamp*/,
-        //             /*uint80 answeredInRound*/
-        //         ) = dataFeed.latestRoundData();
-        //
-        //         uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
-        //
-        //         uint256 decimals = uint256(dataFeed.decimals());
-        //         uint256 chainlinkPrice = uint256(answer);
-        //
-        //         if(erc20Decimals > decimals){
-        //             return chainlinkPrice * (10 ** (erc20Decimals - decimals));
-        //         } else if(decimals > erc20Decimals ) {
-        //             return chainlinkPrice / (10 ** (decimals - erc20Decimals));
-        //         } else return chainlinkPrice;
-        return 999500000000000000;
+        AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
+
+        (
+        /* uint80 roundID */,
+        int answer,
+        /*uint startedAt*/,
+        /*uint timeStamp*/,
+        /*uint80 answeredInRound*/
+        ) = dataFeed.latestRoundData();
+
+        uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
+
+        uint256 decimals = uint256(dataFeed.decimals());
+        uint256 chainlinkPrice = uint256(answer);
+
+        if(erc20Decimals > decimals){
+            return chainlinkPrice * (10 ** (erc20Decimals - decimals));
+        } else if(decimals > erc20Decimals ) {
+            return chainlinkPrice / (10 ** (decimals - erc20Decimals));
+        } else return chainlinkPrice;
     }
 }

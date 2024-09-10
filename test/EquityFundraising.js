@@ -75,6 +75,12 @@ describe("EquityFundraising", function () {
 
     beforeEach(async function () {
 
+        const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
+        const mockOracle = await MockOracle.deploy(
+            "18", // decimals
+            "1000"// initialAnswer
+        );
+
         [owner, user1, user2, user3, user4, mainWalletAddressMock, mockedLzAddress] = await ethers.getSigners();
         equityFundraising = await ethers.deployContract("Fundraising");
 
@@ -93,8 +99,8 @@ describe("EquityFundraising", function () {
             investmentToken2.getAddress()
         ];
 
-        equityFundraising.whitelistTokenForInvestment(investmentToken.getAddress(), investmentToken.getAddress())
-        equityFundraising.whitelistTokenForInvestment(investmentToken2.getAddress(), investmentToken2.getAddress())
+        equityFundraising.whitelistTokenForInvestment(investmentToken.getAddress(), mockOracle.getAddress())
+        equityFundraising.whitelistTokenForInvestment(investmentToken2.getAddress(), mockOracle.getAddress())
 
         await equityFundraising.setReferralFee(referralFee);
 
