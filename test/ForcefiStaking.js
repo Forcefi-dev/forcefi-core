@@ -8,6 +8,7 @@ describe("ERC20Token", function () {
     const symbol = "TST";
 
     let stakingContract;
+    let dstForcefiPackage;
 
     const additionalTokens = "5000000";
     const investmentTokensMintAmount = "5000000";
@@ -15,12 +16,23 @@ describe("ERC20Token", function () {
     let investmentToken;
 
     beforeEach(async function () {
+        const srcChainId = 1;
+        const dstChainId = 2;
+
+        const LZEndpointMock = await hre.ethers.getContractFactory("LZEndpointMock");
+        const srcChainMock = await LZEndpointMock.deploy(srcChainId);
+        const dstChainMock = await LZEndpointMock.deploy(dstChainId);
+
+        const forcefiStaking = await hre.ethers.getContractFactory("ForcefiStaking");
 
         [owner, addr1, addr2, silverNftAddress, goldNftAddress] = await ethers.getSigners();
 
         forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, investmentTokensMintAmount]);
-        stakingContract = await ethers.deployContract("ForcefiStaking", [silverNftAddress, goldNftAddress, forcefiToken, owner.address]);
+
+        stakingContract = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, srcChainMock.getAddress());
+        dstForcefiPackage = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, dstChainMock.getAddress());
+        // stakingContract = await ethers.deployContract("ForcefiStaking", [silverNftAddress, goldNftAddress, forcefiToken, owner.address, srcChainMock.address]);
     });
 
     describe("testing forcefi staking contract", function () {

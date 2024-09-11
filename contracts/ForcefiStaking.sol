@@ -3,13 +3,12 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "https://github.com/LayerZero-Labs/solidity-examples/blob/main/contracts/lzApp/NonblockingLzApp.sol";
+import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
 
-contract ForcefiStaking is Ownable {
+contract ForcefiStaking is Ownable, NonblockingLzApp {
 
     uint _stakeIdCounter;
 
-    uint public eligabilityTime;
     FeeMultiplier public feeMultiplier;
 
     address private lzContractAddress;
@@ -53,13 +52,7 @@ contract ForcefiStaking is Ownable {
     event Staked(address indexed stakerAddress, uint amount, uint indexed stakeIdx);
     event Unstaked(address indexed stakerAddress, uint indexed stakeIdx);
 
-//    constructor(address _lzContractAddress, address _silverNftAddress, address _goldNftAddress) NonblockingLzApp(_lzContractAddress) {
-//        silverNftContract = _silverNftAddress;
-//        goldNftContract = _goldNftAddress;
-//        lzContractAddress = _lzContractAddress;
-//    }
-
-    constructor(address _silverNftAddress, address _goldNftAddress, address _forcefiTokenAddress, address _forcefiFundraisingAddress) Ownable(tx.origin) {
+    constructor(address _silverNftAddress, address _goldNftAddress, address _forcefiTokenAddress, address _forcefiFundraisingAddress, address _lzContractAddress) Ownable(tx.origin) NonblockingLzApp(_lzContractAddress) {
         silverNftContract = _silverNftAddress;
         goldNftContract = _goldNftAddress;
         forcefiTokenAddress = _forcefiTokenAddress;
@@ -80,10 +73,6 @@ contract ForcefiStaking is Ownable {
         feeMultiplier = FeeMultiplier(_eligableToReceiveFee, _beginnerFeeTreshold, _intermediateFeeTreshold, _maximumFeeTreshold, _beginnerMultiplier, _intermediateMultiplier, _maximumMultiplier);
     }
 
-//    function setEligabilityTime(uint _eligabilityTime) external onlyOwner {
-//        eligabilityTime = _eligabilityTime;
-//    }
-
     function setMinStakingAmount(uint _stakingAmount) external onlyOwner {
         minStakingAmount = _stakingAmount;
     }
@@ -96,9 +85,9 @@ contract ForcefiStaking is Ownable {
         investorTreshholdAmount = _investorTreshholdAmount;
     }
 
-//    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
-//        // No logic to implement
-//    }
+    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
+        // No logic to implement
+    }
 
     function bridgeStakingAccess(uint16[] memory _destChainIds, uint gasForDestinationLzReceive, uint _stakeId) public payable {
         require(activeStake[_stakeId].stakerAddress == msg.sender, "Not an owner of a stake");
@@ -106,7 +95,7 @@ contract ForcefiStaking is Ownable {
         require(hasStaked(_stakeId), "Sender doesn't have active stake");
 
         bytes memory payload = abi.encode(msg.sender, activeStake[_stakeId].stakeAmount);
-//        executeBridge(_destChainIds, payload, gasForDestinationLzReceive);
+        executeBridge(_destChainIds, payload, gasForDestinationLzReceive);
     }
 
     function bridgeNftToken(uint16[] memory _destChainIds, uint gasForDestinationLzReceive, uint _nftId, uint _stakeId) public payable {
@@ -124,16 +113,16 @@ contract ForcefiStaking is Ownable {
         }
 
         bytes memory payload = abi.encode(msg.sender, activeStake[_stakeId].stakeAmount);
-//        executeBridge(_destChainIds, payload, gasForDestinationLzReceive);
+        executeBridge(_destChainIds, payload, gasForDestinationLzReceive);
     }
 
-//    function executeBridge(uint16[] memory _destChainIds, bytes memory payload, uint gasForDestinationLzReceive) internal {
-//        uint16 version = 1;
-//        bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
-//        for (uint256 i = 0; i < _destChainIds.length; i++) {
-//            _lzSend(_destChainIds[i], payload, payable(tx.origin), address(0x0), adapterParams, msg.value);
-//        }
-//    }
+    function executeBridge(uint16[] memory _destChainIds, bytes memory payload, uint gasForDestinationLzReceive) internal {
+        uint16 version = 1;
+        bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
+        for (uint256 i = 0; i < _destChainIds.length; i++) {
+            _lzSend(_destChainIds[i], payload, payable(tx.origin), address(0x0), adapterParams);
+        }
+    }
 
     function receiveFees(address _feeTokenAddress, uint256 _feeAmount) public {
 
@@ -219,11 +208,11 @@ contract ForcefiStaking is Ownable {
     function unstake(uint _stakeId, uint gasForDestinationLzReceive) public {
         require(activeStake[_stakeId].goldNftId == 0, "Can't unstake gold nft");
         uint stakeAmount = activeStake[_stakeId].stakeAmount;
-        activeStake[_stakeId].stakeAmount = 0;
         ERC20(forcefiTokenAddress).transfer(msg.sender, stakeAmount);
         isCurator[msg.sender] = false;
         removeInvestor(_stakeId);
-//        bridgeStakingAccess(chainList, gasForDestinationLzReceive);
+        bridgeStakingAccess(chainList, gasForDestinationLzReceive, _stakeId);
+        activeStake[_stakeId].stakeAmount = 0;
         emit Unstaked(msg.sender, _stakeId);
     }
 

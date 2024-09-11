@@ -939,8 +939,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiStaking.sol": {
-      "lastModificationDate": 1725904019142,
-      "contentHash": "aa91054bb734aafebfdcfe5c521fd343",
+      "lastModificationDate": 1726077891752,
+      "contentHash": "1f055ca2f4690c42896b68721bcb0150",
       "sourceName": "contracts/ForcefiStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -968,7 +968,8 @@
       },
       "imports": [
         "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol"
       ],
       "versionPragmas": [
         "0.8.20"
