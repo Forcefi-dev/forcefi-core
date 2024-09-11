@@ -36,13 +36,26 @@ describe("ERC20Token", function () {
     let forcefiPackage;
 
     beforeEach(async function () {
+        const srcChainId = 1;
+        const dstChainId = 2;
+
+        const LZEndpointMock = await hre.ethers.getContractFactory("LZEndpointMock");
+        const srcChainMock = await LZEndpointMock.deploy(srcChainId);
+        const dstChainMock = await LZEndpointMock.deploy(dstChainId);
+
+        const forcefiPackageC = await hre.ethers.getContractFactory("ForcefiPackage");
+
+        forcefiPackage = await forcefiPackageC.deploy(srcChainMock.getAddress())
+        const dstForcefiPackage = await forcefiPackageC.deploy(dstChainMock.getAddress())
+
+
         const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
         const mockOracle = await MockOracle.deploy(
             "18", // decimals
             "1000"// initialAnswer
         );
         // ERC20Token = await ethers.getContractFactory("ERC20Token");
-        forcefiPackage = await ethers.deployContract("ForcefiPackage", [lzAddress]);
+        // forcefiPackage = await ethers.deployContract("ForcefiPackage", [lzAddress]);
         [owner, addr1, addr2] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());

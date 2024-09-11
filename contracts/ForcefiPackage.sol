@@ -4,7 +4,7 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-//import "https://github.com/LayerZero-Labs/solidity-examples/blob/main/contracts/lzApp/NonblockingLzApp.sol";
+import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
 
 /**
  * @title ILzContract
@@ -18,7 +18,7 @@ interface ILzContract {
  * @title ForcefiPackage
  * @dev Main contract for managing investment packages and package purchases.
  */
-contract ForcefiPackage is Ownable {
+contract ForcefiPackage is Ownable, NonblockingLzApp {
     // Address of the LayerZero contract used for cross-chain operations
     address private lzContractAddress;
 
@@ -55,10 +55,15 @@ contract ForcefiPackage is Ownable {
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
      * @param _lzContractAddress Address of the LayerZero contract.
      */
-    constructor(address _lzContractAddress) Ownable(tx.origin){
+    constructor(address _lzContractAddress) Ownable(tx.origin) NonblockingLzApp(_lzContractAddress){
         lzContractAddress = _lzContractAddress;
         addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
         addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package
+    }
+
+    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
+        (address _tokenOwner, string memory _projectName) = abi.decode(_payload, (address, string));
+        _mintPackageToken(_tokenOwner, _projectName);
     }
 
     /**
@@ -177,7 +182,7 @@ contract ForcefiPackage is Ownable {
         bytes memory payload = abi.encode(_tokenOwner, _projectName);
         uint16 version = 1;
         bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
-        //        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams, msg.value);
+        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams);
     }
 
     /**

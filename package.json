@@ -35,6 +35,8 @@
     "@openzeppelin/hardhat-upgrades": "^3.0.0",
     "@truffle/hdwallet-provider": "^2.1.15",
     "dotenv": "^16.4.5",
-    "ethers": "^6.6.2"
+    "ethers": "^6.6.2",
+    "@layerzerolabs/lz-sdk": "^0.0.2",
+    "@layerzerolabs/solidity-examples": "^0.0.2"
   }
 }
