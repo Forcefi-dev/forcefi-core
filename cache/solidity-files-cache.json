@@ -465,8 +465,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiPackage.sol": {
-      "lastModificationDate": 1726031682527,
-      "contentHash": "997a397ed5ff31a5dfcc665b48ac2a3f",
+      "lastModificationDate": 1726123336766,
+      "contentHash": "2ee37eb0b290f40c0ad57f4503d6f04b",
       "sourceName": "contracts/ForcefiPackage.sol",
       "solcConfig": {
         "version": "0.8.20",

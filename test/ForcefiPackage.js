@@ -34,10 +34,12 @@ describe("ERC20Token", function () {
     ];
     const additionalTokens = "500000000000000000000000";
     let forcefiPackage;
+    let dstForcefiPackage;
+
+    const srcChainId = 1;
+    const dstChainId = 2;
 
     beforeEach(async function () {
-        const srcChainId = 1;
-        const dstChainId = 2;
 
         const LZEndpointMock = await hre.ethers.getContractFactory("LZEndpointMock");
         const srcChainMock = await LZEndpointMock.deploy(srcChainId);
@@ -46,16 +48,20 @@ describe("ERC20Token", function () {
         const forcefiPackageC = await hre.ethers.getContractFactory("ForcefiPackage");
 
         forcefiPackage = await forcefiPackageC.deploy(srcChainMock.getAddress())
-        const dstForcefiPackage = await forcefiPackageC.deploy(dstChainMock.getAddress())
+        dstForcefiPackage = await forcefiPackageC.deploy(dstChainMock.getAddress())
 
+        await srcChainMock.setDestLzEndpoint(dstForcefiPackage.getAddress(), dstChainMock.getAddress());
+        await dstChainMock.setDestLzEndpoint(forcefiPackage.getAddress(), srcChainMock.getAddress());
+
+        await forcefiPackage.setTrustedRemote(dstChainId, dstForcefiPackage.getAddress());
+        await dstForcefiPackage.setTrustedRemote(srcChainId, forcefiPackage.getAddress());
 
         const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
         const mockOracle = await MockOracle.deploy(
             "18", // decimals
             "1000"// initialAnswer
         );
-        // ERC20Token = await ethers.getContractFactory("ERC20Token");
-        // forcefiPackage = await ethers.deployContract("ForcefiPackage", [lzAddress]);
+
         [owner, addr1, addr2] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
@@ -145,6 +151,23 @@ describe("ERC20Token", function () {
 
             await expect(await erc20Token.balanceOf(forcefiPackage.getAddress())).to.equal(normalizedExpectedContractRevenue)
 
+        });
+
+        it("bridge Accelerator package / creation token", async function () {
+            const packageTotalPrice = 2000;
+            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+            const totalTokensPerPackage = packageTotalPrice * Number(erc20TokenPrice);
+            await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerPackage.toString());
+
+            await forcefiPackage.buyPackage(_projectName, _acceleratorPackageLabel, erc20Token.getAddress(), addr1.address);
+            expect(await forcefiPackage.hasCreationToken(owner, _projectName)).to.equal(true);
+
+            // Check dst chain for creation token
+            expect(await dstForcefiPackage.hasCreationToken(owner, _projectName)).to.equal(false);
+
+            // Bridge creation token
+            await forcefiPackage.bridgeToken(dstChainId, _projectName, 0);
+            expect(await dstForcefiPackage.hasCreationToken(owner, _projectName)).to.equal(true);
         });
 
         it("buy Accelerator package after buying Explorer", async function () {

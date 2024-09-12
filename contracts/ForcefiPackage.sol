@@ -171,15 +171,14 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
     }
 
     /**
-     * @dev Function to bridge a creation token to another blockchain (currently commented out).
+     * @dev Function to bridge a creation token to another blockchain.
      * @param _destChainId Destination chain ID.
      * @param _projectName Name of the project associated with the token.
-     * @param _tokenOwner Address of the token owner.
      * @param gasForDestinationLzReceive Gas required for destination LayerZero receive.
      */
-    function bridgeToken(uint16 _destChainId, string memory _projectName, address _tokenOwner, uint gasForDestinationLzReceive) public payable {
+    function bridgeToken(uint16 _destChainId, string memory _projectName, uint gasForDestinationLzReceive) public payable {
         require(creationTokens[msg.sender][_projectName], "No token to bridge");
-        bytes memory payload = abi.encode(_tokenOwner, _projectName);
+        bytes memory payload = abi.encode(msg.sender, _projectName);
         uint16 version = 1;
         bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
         _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams);
