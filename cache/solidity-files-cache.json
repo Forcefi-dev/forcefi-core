@@ -1390,6 +1390,46 @@
       "artifacts": [
         "NonblockingLzApp"
       ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiChildChainStaking.sol": {
+      "lastModificationDate": 1726119084084,
+      "contentHash": "fb4091a48066e0b730e757909e18ecaf",
+      "sourceName": "contracts/ForcefiChildChainStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "ForcefiChildChainStaking"
+      ]
     }
   }
 }
