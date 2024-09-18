@@ -11,3 +11,6 @@ cache/
 package-lock.json
 
 .env
+coverage.json
+
+coverage

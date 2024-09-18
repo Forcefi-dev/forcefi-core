@@ -50,11 +50,11 @@ describe("ERC20Token", function () {
             await stakingContract.setMinStakingAmount(stakingAmount);
 
             expect(await stakingContract.minStakingAmount()).to.equal(stakingAmount);
-            expect(await stakingContract.hasStaked(0)).to.equal(false);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(false);
 
             await forcefiToken.approve(stakingContract.getAddress(), stakingAmount);
             await stakingContract.stake(stakingAmount, 0);
-            expect(await stakingContract.hasStaked(0)).to.equal(true);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(true);
 
             expect(await forcefiToken.balanceOf(owner.address)).to.equal(additionalTokens - stakingAmount)
             expect(await forcefiToken.balanceOf(await stakingContract.getAddress())).to.equal(stakingAmount)
@@ -70,7 +70,7 @@ describe("ERC20Token", function () {
             expect(await stakingContract.isCurator(owner.address)).to.equal(false);
             await forcefiToken.approve(stakingContract.getAddress(), curatorTreshhold);
             await stakingContract.stake(curatorTreshhold, 0);
-            expect(await stakingContract.hasStaked(0)).to.equal(true);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(true);
             expect(await stakingContract.isCurator(owner.address)).to.equal(true);
             expect(await forcefiToken.balanceOf(owner.address)).to.equal(additionalTokens - curatorTreshhold)
             expect(await forcefiToken.balanceOf(await stakingContract.getAddress())).to.equal(curatorTreshhold)
@@ -89,7 +89,7 @@ describe("ERC20Token", function () {
 
             await forcefiToken.approve(stakingContract.getAddress(), investorTreshhold);
             await stakingContract.stake(investorTreshhold, 0);
-            expect(await stakingContract.hasStaked(0)).to.equal(true);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(true);
 
             const investorsAfterEvent = await stakingContract.getInvestors();
             expect(investorsAfterEvent.length).to.equal(1);
@@ -113,7 +113,7 @@ describe("ERC20Token", function () {
 
             await forcefiToken.approve(stakingContract.getAddress(), investorTreshhold);
             await stakingContract.stake(investorTreshhold, 0);
-            expect(await stakingContract.hasStaked(0)).to.equal(true);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(true);
 
             const investorsAfterEvent = await stakingContract.getInvestors();
             expect(investorsAfterEvent.length).to.equal(1);
@@ -124,7 +124,7 @@ describe("ERC20Token", function () {
             // Unstake event
             await stakingContract.unstake(0, 0);
 
-            expect(await stakingContract.hasStaked(0)).to.equal(false);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(false);
             expect(await stakingContract.isCurator(owner.address)).to.equal(false);
 
             const investorsAfterUnstakeEvent = await stakingContract.getInvestors();
@@ -192,7 +192,8 @@ describe("ERC20Token", function () {
             expect(await investmentToken.balanceOf(addr1.address)).to.equal(Math.floor(firstInvestorCalculatedShare))
             expect(await investmentToken.balanceOf(addr2.address)).to.equal(Math.floor(secondInvestorCalculatedShare))
             expect(await investmentToken.balanceOf(owner.address)).to.equal(investmentTokensMintAmount - feesAmount)
-
         });
+
+
     });
 });

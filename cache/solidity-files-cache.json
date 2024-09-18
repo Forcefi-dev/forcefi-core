@@ -9,7 +9,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -26,6 +26,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -51,7 +54,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -68,6 +71,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -90,7 +96,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -107,6 +113,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -128,7 +137,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -145,6 +154,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -167,7 +179,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -184,6 +196,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -205,7 +220,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -222,6 +237,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -237,14 +255,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1725512161841,
+      "lastModificationDate": 1725943562096,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -261,6 +279,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -275,14 +296,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1725512161672,
+      "lastModificationDate": 1725943560882,
       "contentHash": "01c847e2af51f468cb66d9ed83bc3cec",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -299,6 +320,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -311,14 +335,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Burnable.sol": {
-      "lastModificationDate": 1725512161705,
+      "lastModificationDate": 1725943561251,
       "contentHash": "273d8d24b06f67207dd5f35c3a0c1086",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -335,6 +359,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -350,14 +377,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1725512161703,
+      "lastModificationDate": 1725943561232,
       "contentHash": "c6375ef25e84c90b3d15f9ec4eef218f",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -374,6 +401,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -391,14 +421,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1725512161798,
+      "lastModificationDate": 1725943561894,
       "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -415,6 +445,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -427,14 +460,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1725512161800,
+      "lastModificationDate": 1725943561904,
       "contentHash": "4c02fa6f7ae7b6c289cef80424f0c875",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -451,6 +484,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -472,7 +508,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -489,6 +525,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -514,7 +553,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -531,6 +570,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -554,7 +596,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -571,6 +613,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -590,7 +635,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -607,6 +652,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -632,7 +680,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -649,6 +697,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -674,7 +725,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -691,6 +742,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -712,7 +766,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -729,6 +783,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -753,7 +810,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -770,6 +827,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -791,7 +851,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -808,6 +868,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -824,14 +887,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
-      "lastModificationDate": 1725512161678,
+      "lastModificationDate": 1725943560979,
       "contentHash": "4aefc698f77ecbace7f401257dfe182d",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -848,6 +911,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -862,14 +928,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Pausable.sol": {
-      "lastModificationDate": 1725512161712,
+      "lastModificationDate": 1725943561281,
       "contentHash": "64b7606ccba31af7e49e3b2d8af1b948",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -886,6 +952,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -901,14 +970,14 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Pausable.sol": {
-      "lastModificationDate": 1725512161844,
+      "lastModificationDate": 1725943562105,
       "contentHash": "24e52f6ef3868e6fca664a423140bee9",
       "sourceName": "@openzeppelin/contracts/utils/Pausable.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -925,6 +994,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -938,46 +1010,6 @@
         "Pausable"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiStaking.sol": {
-      "lastModificationDate": 1726077891752,
-      "contentHash": "1f055ca2f4690c42896b68721bcb0150",
-      "sourceName": "contracts/ForcefiStaking.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "ForcefiStaking"
-      ]
-    },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@chainlink\\contracts\\src\\v0.8\\shared\\interfaces\\AggregatorV3Interface.sol": {
       "lastModificationDate": 1725943642734,
       "contentHash": "64a3f906dc7696aa3c9fa8454b673be7",
@@ -986,7 +1018,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1003,6 +1035,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1022,7 +1057,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1039,6 +1074,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1061,7 +1099,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1078,6 +1116,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1097,7 +1138,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1114,6 +1155,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1135,7 +1179,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1152,6 +1196,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1171,7 +1218,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1188,6 +1235,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1210,7 +1260,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1227,6 +1277,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1246,7 +1299,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1263,6 +1316,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1284,7 +1340,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1301,6 +1357,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1320,7 +1379,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1337,6 +1396,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1361,7 +1423,7 @@
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1378,6 +1440,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1391,15 +1456,15 @@
         "NonblockingLzApp"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiChildChainStaking.sol": {
-      "lastModificationDate": 1726119084084,
-      "contentHash": "fb4091a48066e0b730e757909e18ecaf",
-      "sourceName": "contracts/ForcefiChildChainStaking.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
+      "lastModificationDate": 1726636266840,
+      "contentHash": "980acb8f837d402a9d035c432f9fffb8",
+      "sourceName": "contracts/Staking/BaseStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
           "optimizer": {
-            "enabled": true,
+            "enabled": false,
             "runs": 1000
           },
           "evmVersion": "paris",
@@ -1416,6 +1481,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -1423,6 +1491,88 @@
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "BaseStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiStaking.sol": {
+      "lastModificationDate": 1726636266870,
+      "contentHash": "468aca82ef591725ecf3a464a60443a6",
+      "sourceName": "contracts/Staking/ForcefiStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": false
+          }
+        }
+      },
+      "imports": [
+        "./BaseStaking.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "ForcefiStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiChildChainStaking.sol": {
+      "lastModificationDate": 1726636266854,
+      "contentHash": "f13869d5f25a7f7616afad21fe2dea6c",
+      "sourceName": "contracts/Staking/ForcefiChildChainStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": false
+          }
+        }
+      },
+      "imports": [
+        "./BaseStaking.sol"
       ],
       "versionPragmas": [
         "0.8.20"
