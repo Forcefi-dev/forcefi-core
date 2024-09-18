@@ -20,6 +20,7 @@ describe("EquityFundraising", function () {
     let investmentToken;
     let investmentToken2;
     let projectToken;
+    let forcefiPackage;
 
     let capturedValue;
     let privateCampaignCapturedValue;
@@ -87,11 +88,12 @@ describe("EquityFundraising", function () {
         const vestingPlans =[];
         const symbol = "InvestmentToken";
         const name = "INVT";
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         investmentToken2 = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
         projectToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
 
-        const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
+        forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await equityFundraising.setForcefiPackageAddress(forcefiPackage.getAddress());
 
         // Setup staking contract, add 1 investor who will receive fees
@@ -438,6 +440,75 @@ describe("EquityFundraising", function () {
 
             await expect(await investmentToken2.balanceOf(owner)).to.equal(additionalTokens);
             await expect(await investmentToken2.balanceOf(equityFundraising)).to.equal(0);
+        });
+
+        it('set fee amount and test fundraising creation', async function () {
+            const feeAmount = 500;
+            await equityFundraising.setFeeAmount(feeAmount);
+
+            const _attachedERC20Address = [
+                investmentToken.getAddress()
+            ];
+
+            await projectToken.approve(equityFundraising.getAddress(), campaignLimit)
+
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            await expect(equityFundraising.createFundraising(_fundraisingData, _attachedERC20Address, user1.getAddress(), projectName, projectToken.getAddress(), [],
+                { value: feeAmount }))
+                .to.emit(equityFundraising, 'FundraisingCreated')
+                .withArgs(await owner.getAddress(), (arg) => captureValue(arg) && true, projectName);
+
+            const contractBalanceAfterFundraisingCreation = await ethers.provider.getBalance(equityFundraising.getAddress());
+            await expect(contractBalanceAfterFundraisingCreation).to.equal(feeAmount);
+
+            // Withdraw fee
+            const treasuryWallet = ethers.Wallet.createRandom();
+            await expect(await ethers.provider.getBalance(treasuryWallet.address)).to.equal(0);
+            await equityFundraising.withdrawFee(treasuryWallet.address);
+
+            const finalBalance = await ethers.provider.getBalance(equityFundraising.getAddress());
+            await expect(finalBalance).to.equal(0);
+            await expect(await ethers.provider.getBalance(treasuryWallet.address)).to.equal(feeAmount);
+        });
+
+        it('set forcefi package address and create fundraising when has creation token ', async function () {
+            const feeAmount = 500;
+            await equityFundraising.setFeeAmount(feeAmount);
+
+            const _attachedERC20Address = [
+                investmentToken.getAddress()
+            ];
+
+            await projectToken.approve(equityFundraising.getAddress(), campaignLimit)
+
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const mockOracle = await MockOracle.deploy(
+                "18",
+                "1000"
+            );
+            await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
+
+            const _acceleratorPackageLabel = "Accelerator";
+            const packageTotalPrice = 2000;
+            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+            const totalTokensPerPackage = packageTotalPrice * Number(erc20TokenPrice);
+            await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerPackage.toString());
+
+            await forcefiPackage.buyPackage(projectName, _acceleratorPackageLabel, erc20Token.getAddress(), owner.address);
+            expect(await forcefiPackage.hasCreationToken(owner, projectName)).to.equal(true);
+
+            await expect(equityFundraising.createFundraising(_fundraisingData, _attachedERC20Address, user1.getAddress(), projectName, projectToken.getAddress(), []))
+                .to.emit(equityFundraising, 'FundraisingCreated')
+                .withArgs(await owner.getAddress(), (arg) => captureValue(arg) && true, projectName);
         });
 
     });
