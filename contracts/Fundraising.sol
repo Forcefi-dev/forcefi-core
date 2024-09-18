@@ -359,9 +359,8 @@ contract Fundraising is ForcefiBaseContract{
 
             ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(successfulFundraiseFeeAddress, feeInWei / 5);
 
-//            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(forcefiStakingAddress, feeInWei * 3 / 10 );
-//            IForcefiStaking(forcefiStakingAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei * 3 / 10);
-            ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(forcefiStakingAddress, feeInWei * 3 / 10);
+            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(forcefiStakingAddress, feeInWei * 3 / 10 );
+            IForcefiStaking(forcefiStakingAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei * 3 / 10);
 
 //            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, feeInWei / 2);
 //            IForcefiStaking(curatorContractAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei / 2);

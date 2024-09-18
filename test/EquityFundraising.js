@@ -94,6 +94,22 @@ describe("EquityFundraising", function () {
         const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await equityFundraising.setForcefiPackageAddress(forcefiPackage.getAddress());
 
+        // Setup staking contract, add 1 investor who will receive fees
+        const forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
+        const forcefiStaking = await ethers.deployContract("ForcefiStaking", [mockedLzAddress, mockedLzAddress, forcefiToken.getAddress(), owner.address, mockedLzAddress]);
+
+        const minStakingAmount = 500;
+        const investorTreshhold = 7500;
+        await forcefiStaking.setInvestorTreshholdAmount(investorTreshhold);
+        await forcefiToken.approve(forcefiStaking.getAddress(), investorTreshhold);
+        await forcefiStaking.stake(investorTreshhold, 0);
+
+        await forcefiToken.transfer(user1.address, minStakingAmount);
+        await forcefiToken.connect(user1).approve(forcefiStaking.getAddress(), minStakingAmount);
+        await forcefiStaking.connect(user1).stake(minStakingAmount, 0);
+
+        await equityFundraising.setForcefiStakingAddress(forcefiStaking.getAddress())
+
         const _attachedERC20Address = [
             investmentToken.getAddress(),
             investmentToken2.getAddress()
@@ -295,7 +311,6 @@ describe("EquityFundraising", function () {
             await equityFundraising.invest(investmentAmount, investmentToken, treshholdedCapturedValue)
 
             await equityFundraising.setSuccessfulFundraisingFeeAddress(user2.address)
-            await equityFundraising.setForcefiStakingAddress(user3.address)
             await equityFundraising.setCuratorsContractAddress(user4.address)
 
             await expect(await projectToken.balanceOf(equityFundraising)).to.equal(_fundraisingData._totalCampaignLimit + _privateCampaignFundraisingData._totalCampaignLimit + _fundraisingData._totalCampaignLimit);
@@ -329,7 +344,6 @@ describe("EquityFundraising", function () {
             await equityFundraising.invest(investmentAmount, investmentToken, capturedValue)
 
             await equityFundraising.setSuccessfulFundraisingFeeAddress(user2.address)
-            await equityFundraising.setForcefiStakingAddress(user3.address)
             await equityFundraising.setCuratorsContractAddress(user4.address)
 
             await expect(await projectToken.balanceOf(equityFundraising)).to.equal(_fundraisingData._totalCampaignLimit + _privateCampaignFundraisingData._totalCampaignLimit + _fundraisingData._totalCampaignLimit);
