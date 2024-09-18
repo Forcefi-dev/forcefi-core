@@ -71,5 +71,32 @@ describe("ERC20Token", function () {
 
 
         });
+
+        it("create mintable token ", async function () {
+
+            const mintableContractType = 1;
+            let capturedValue
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            await expect(erc20TokenFactory.createContract(mintableContractType, name, symbol, projectName, initialSupply))
+                .to.emit(erc20TokenFactory, 'ContractCreated')
+                .withArgs(captureValue, owner.address, projectName);
+
+            const MyContract = await ethers.getContractFactory("ERC20MintableToken");
+            const contract = MyContract.attach(
+                capturedValue
+            );
+
+            await expect(await contract.totalSupply()).to.equal(initialSupply);
+
+            const newMintedTokens = 500;
+            await contract.mint(owner.address, newMintedTokens);
+            await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply);
+            await expect(await contract.balanceOf(owner.address)).to.equal(newMintedTokens + initialSupply);
+
+        });
     });
 });

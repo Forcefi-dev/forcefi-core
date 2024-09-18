@@ -70,5 +70,42 @@ describe("ERC20Token", function () {
             await contract.connect(addr1).transfer(addr2.address, tokensToTransfer);
             await expect(await contract.balanceOf(addr2.address)).to.equal(tokensToTransfer);
         });
+
+        it("create pausableMintableBurnable token", async function () {
+
+            const pausableMintableBurnableType = 2;
+
+            let capturedValue
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            await expect(erc20TokenFactory.createContract(pausableMintableBurnableType, name, symbol, projectName, initialSupply))
+                .to.emit(erc20TokenFactory, 'ContractCreated')
+                .withArgs(captureValue, owner.address, projectName);
+
+            let MyContract = await ethers.getContractFactory("ERC20PausableMintableToken");
+            const contract = MyContract.attach(
+                capturedValue
+            );
+
+            await expect(await contract.totalSupply()).to.equal(initialSupply);
+
+            const newMintedTokens = 500;
+            await contract.mint(owner.address, newMintedTokens);
+            await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply);
+            await expect(await contract.balanceOf(owner.address)).to.equal(newMintedTokens + initialSupply);
+
+            await expect(contract.connect(addr1).mint(owner.address, newMintedTokens)).to.be.revertedWithCustomError(contract, `OwnableUnauthorizedAccount`);
+
+            const tokensToTransfer = 250;
+            await contract.pause();
+            await contract.transfer(addr1.address, tokensToTransfer)
+            await expect(contract.connect(addr1).transfer(addr2.address, tokensToTransfer)).to.be.revertedWith("Pausable: paused and not whitelisted");
+            await contract.unpause();
+            await contract.connect(addr1).transfer(addr2.address, tokensToTransfer);
+            await expect(await contract.balanceOf(addr2.address)).to.equal(tokensToTransfer);
+        });
     });
 });

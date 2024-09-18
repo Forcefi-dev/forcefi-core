@@ -23,20 +23,20 @@
     "chai": "^4.3.7",
     "hardhat": "^2.16.1",
     "hardhat-gas-reporter": "^1.0.9",
-    "solidity-coverage": "^0.8.4",
+    "solidity-coverage": "^0.8.13",
     "ts-node": "^10.9.1",
     "typechain": "^8.2.0",
     "typescript": "^5.1.6"
   },
   "dependencies": {
     "@chainlink/contracts": "^1.2.0",
+    "@layerzerolabs/lz-sdk": "^0.0.2",
+    "@layerzerolabs/solidity-examples": "^0.0.2",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/contracts-upgradeable": "^5.0.0",
     "@openzeppelin/hardhat-upgrades": "^3.0.0",
     "@truffle/hdwallet-provider": "^2.1.15",
     "dotenv": "^16.4.5",
-    "ethers": "^6.6.2",
-    "@layerzerolabs/lz-sdk": "^0.0.2",
-    "@layerzerolabs/solidity-examples": "^0.0.2"
+    "ethers": "^6.6.2"
   }
 }
