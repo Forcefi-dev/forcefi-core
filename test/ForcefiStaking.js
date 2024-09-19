@@ -142,6 +142,7 @@ describe("Forcefi staking", function () {
             expect(await stakingContract.investorTreshholdAmount()).to.equal(investorTreshhold);
 
             const eligibleToReceiveFee = 0;
+            const earlyUnstakePercent = 100;
             const beginnerFeeThreshold = 100;
             const intermediateFeeThreshold = 60 * 60 * 24 * 180;
             const maximumFeeThreshold = 60 * 60 * 24 * 365;
@@ -149,7 +150,7 @@ describe("Forcefi staking", function () {
             const intermediateMultiplier = 20;
             const maximumMultiplier = 30;
 
-            await stakingContract.setFeeMultiplier(eligibleToReceiveFee, beginnerFeeThreshold, intermediateFeeThreshold, maximumFeeThreshold, beginnerMultiplier, intermediateMultiplier, maximumMultiplier);
+            await stakingContract.setFeeMultiplier(eligibleToReceiveFee, earlyUnstakePercent, beginnerFeeThreshold, intermediateFeeThreshold, maximumFeeThreshold, beginnerMultiplier, intermediateMultiplier, maximumMultiplier);
 
             const feesAmount = 50000;
 

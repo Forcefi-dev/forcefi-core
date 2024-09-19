@@ -28,6 +28,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
 
     struct FeeMultiplier {
         uint256 eligibleToReceiveFee;
+        uint256 earlyUnstakePercent;
         uint256 beginnerFeeThreshold;
         uint256 intermediateFeeThreshold;
         uint256 maximumFeeThreshold;
@@ -44,6 +45,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
 
         feeMultiplier = FeeMultiplier(
             2629800,
+            100,
             2629800 * 3,
             2629800 * 6,
             2629800 * 9,
@@ -89,6 +91,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
 
     function setFeeMultiplier(
         uint _eligibleToReceiveFee,
+        uint _earlyUnstakePercent,
         uint _beginnerFeeThreshold,
         uint _intermediateFeeThreshold,
         uint _maximumFeeThreshold,
@@ -98,6 +101,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
     ) public onlyOwner {
         feeMultiplier = FeeMultiplier(
             _eligibleToReceiveFee,
+            _earlyUnstakePercent,
             _beginnerFeeThreshold,
             _intermediateFeeThreshold,
             _maximumFeeThreshold,

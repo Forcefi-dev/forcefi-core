@@ -3,6 +3,11 @@ pragma solidity 0.8.20;
 
 import "./BaseStaking.sol";
 
+// Interface for an ERC20 token with a burn function
+interface IERC20Burnable {
+    function burn(uint256 amount) external;
+}
+
 contract ForcefiStaking is BaseStaking {
 
     address public forcefiTokenAddress;
@@ -74,6 +79,19 @@ contract ForcefiStaking is BaseStaking {
     function unstake(uint _stakeId, uint gasForDestinationLzReceive) public {
         require(activeStake[_stakeId].goldNftId == 0, "Can't unstake gold nft");
         uint stakeAmount = activeStake[_stakeId].stakeAmount;
+
+        // If unstake event happens before stake becomes eligable to receive fees, then investor gets penalty
+        if (activeStake[_stakeId].stakeEventTimestamp + feeMultiplier.eligibleToReceiveFee < block.timestamp) {
+            // Calculate the amount of tokens to burn based on earlyUnstakePercent
+            uint256 burnAmount = stakeAmount * feeMultiplier.earlyUnstakePercent / 100;
+
+            // Adjust the stake amount after applying the early unstake penalty
+            stakeAmount = stakeAmount - burnAmount;
+
+            // Burn the calculated amount of tokens
+            IERC20Burnable(forcefiTokenAddress).burn(burnAmount);
+        }
+
         ERC20(forcefiTokenAddress).transfer(msg.sender, stakeAmount);
         isCurator[msg.sender] = false;
         removeInvestor(_stakeId);

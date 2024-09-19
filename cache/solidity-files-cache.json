@@ -1352,8 +1352,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
-      "lastModificationDate": 1726636266840,
-      "contentHash": "980acb8f837d402a9d035c432f9fffb8",
+      "lastModificationDate": 1726726522790,
+      "contentHash": "59a3990659e9a9160ace18cf964f5e81",
       "sourceName": "contracts/Staking/BaseStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1392,8 +1392,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiStaking.sol": {
-      "lastModificationDate": 1726636266870,
-      "contentHash": "468aca82ef591725ecf3a464a60443a6",
+      "lastModificationDate": 1726741276134,
+      "contentHash": "215cc2646eca7adc3f7929c327825bf7",
       "sourceName": "contracts/Staking/ForcefiStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1426,11 +1426,12 @@
         "0.8.20"
       ],
       "artifacts": [
-        "ForcefiStaking"
+        "ForcefiStaking",
+        "IERC20Burnable"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiChildChainStaking.sol": {
-      "lastModificationDate": 1726636266854,
+      "lastModificationDate": 1726726221292,
       "contentHash": "f13869d5f25a7f7616afad21fe2dea6c",
       "sourceName": "contracts/Staking/ForcefiChildChainStaking.sol",
       "solcConfig": {
