@@ -1352,8 +1352,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
-      "lastModificationDate": 1726726522790,
-      "contentHash": "59a3990659e9a9160ace18cf964f5e81",
+      "lastModificationDate": 1726743169515,
+      "contentHash": "3a4a62e8fe79694458b18bda8494d153",
       "sourceName": "contracts/Staking/BaseStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1392,8 +1392,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiStaking.sol": {
-      "lastModificationDate": 1726741276134,
-      "contentHash": "215cc2646eca7adc3f7929c327825bf7",
+      "lastModificationDate": 1726742917190,
+      "contentHash": "c4a5a588db618af86405f87a5ad0c6fc",
       "sourceName": "contracts/Staking/ForcefiStaking.sol",
       "solcConfig": {
         "version": "0.8.20",

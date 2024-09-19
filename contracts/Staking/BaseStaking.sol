@@ -45,7 +45,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
 
         feeMultiplier = FeeMultiplier(
             2629800,
-            100,
+            0,
             2629800 * 3,
             2629800 * 6,
             2629800 * 9,

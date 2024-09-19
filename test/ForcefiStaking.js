@@ -27,7 +27,7 @@ describe("Forcefi staking", function () {
 
         [owner, addr1, addr2, silverNftAddress, goldNftAddress] = await ethers.getSigners();
 
-        forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
+        forcefiToken = await ethers.deployContract("ERC20BurnableToken", [name, symbol, additionalTokens]);
         investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, investmentTokensMintAmount]);
 
         stakingContract = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, srcChainMock.getAddress());
@@ -192,6 +192,46 @@ describe("Forcefi staking", function () {
             expect(await investmentToken.balanceOf(owner.address)).to.equal(investmentTokensMintAmount - feesAmount)
         });
 
+        it("should unstake the investor and gent penalty, which is burned", async function () {
 
+            const stakingAmount = 500;
+            await stakingContract.setMinStakingAmount(stakingAmount);
+
+            const curatorTreshhold = 2500;
+            await stakingContract.setCuratorTreshholdAmount(curatorTreshhold);
+
+            const investorTreshhold = 7500;
+            await stakingContract.setInvestorTreshholdAmount(investorTreshhold);
+
+            expect(await stakingContract.investorTreshholdAmount()).to.equal(investorTreshhold);
+
+            await forcefiToken.approve(stakingContract.getAddress(), investorTreshhold);
+            await stakingContract.stake(investorTreshhold, 0);
+            expect(await stakingContract.hasStaked(owner.address)).to.equal(true);
+
+            const investorsAfterEvent = await stakingContract.getInvestors();
+            expect(investorsAfterEvent.length).to.equal(1);
+
+            expect(await forcefiToken.balanceOf(owner.address)).to.equal(additionalTokens - investorTreshhold)
+            expect(await forcefiToken.balanceOf(await stakingContract.getAddress())).to.equal(investorTreshhold)
+
+            // Set early unstake percent to 5%
+            const eligibleToReceiveFee = 2629800;
+            const earlyUnstakePercent = 5;
+
+            const burnAmount = investorTreshhold * earlyUnstakePercent / 100;
+
+            await stakingContract.setFeeMultiplier(eligibleToReceiveFee, earlyUnstakePercent, 0, 0, 0, 0, 0, 0);
+
+            // Unstake event
+            await stakingContract.unstake(0, 0);
+
+            const investorsAfterUnstakeEvent = await stakingContract.getInvestors();
+            expect(investorsAfterUnstakeEvent.length).to.equal(0);
+
+            expect(await forcefiToken.balanceOf(owner.address)).to.equal(additionalTokens - burnAmount)
+            expect(await forcefiToken.balanceOf(await stakingContract.getAddress())).to.equal(0)
+            expect(await forcefiToken.totalSupply()).to.equal(additionalTokens - burnAmount)
+        });
     });
 });

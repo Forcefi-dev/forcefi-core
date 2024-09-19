@@ -81,7 +81,7 @@ contract ForcefiStaking is BaseStaking {
         uint stakeAmount = activeStake[_stakeId].stakeAmount;
 
         // If unstake event happens before stake becomes eligable to receive fees, then investor gets penalty
-        if (activeStake[_stakeId].stakeEventTimestamp + feeMultiplier.eligibleToReceiveFee < block.timestamp) {
+        if (activeStake[_stakeId].stakeEventTimestamp + feeMultiplier.eligibleToReceiveFee > block.timestamp) {
             // Calculate the amount of tokens to burn based on earlyUnstakePercent
             uint256 burnAmount = stakeAmount * feeMultiplier.earlyUnstakePercent / 100;
 
