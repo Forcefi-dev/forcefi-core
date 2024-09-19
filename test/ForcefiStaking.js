@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 
-describe("ERC20Token", function () {
+describe("Forcefi staking", function () {
 
     let owner, addr1, addr2;
     let silverNftAddress, goldNftAddress;
@@ -32,7 +32,6 @@ describe("ERC20Token", function () {
 
         stakingContract = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, srcChainMock.getAddress());
         dstForcefiPackage = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, dstChainMock.getAddress());
-        // stakingContract = await ethers.deployContract("ForcefiStaking", [silverNftAddress, goldNftAddress, forcefiToken, owner.address, srcChainMock.address]);
     });
 
     describe("testing forcefi staking contract", function () {
@@ -174,8 +173,6 @@ describe("ERC20Token", function () {
 
             await investmentToken.approve(stakingContract.getAddress(), feesAmount);
             await stakingContract.receiveFees(investmentToken, feesAmount)
-
-            const totalInvestmentAmount = investorTreshhold + secondInvestorTokensInvested;
 
             const firstInvestorMultipliedAmount = investorTreshhold * (beginnerMultiplier + 100) / 100
             const secondInvestorMultipliedAmount = secondInvestorTokensInvested

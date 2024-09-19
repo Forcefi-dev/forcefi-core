@@ -1,10 +1,8 @@
 const { expect } = require("chai");
-const { BigNumber } = require("@ethersproject/bignumber");
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 
-describe("ERC20Token", function () {
+describe("ERC20 token factory", function () {
 
-    let ERC20Token, erc20TokenFactory;
+    let erc20TokenFactory;
     let owner, addr1, addr2, mockedLzAddress;
     const contractType = 3
     const name = "Test token";
@@ -12,7 +10,6 @@ describe("ERC20Token", function () {
     const decimals = 18;
     const projectName = "Test project";
     const initialSupply = 20000;
-    const initialSupply2 = 50000;
 
     beforeEach(async function () {
         [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();

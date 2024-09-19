@@ -1,37 +1,12 @@
 const { expect } = require("chai");
 
-describe("ERC20Token", function () {
+describe("Forcefi Package", function () {
 
-    let ERC20Token, erc20Token;
+    let erc20Token;
     let owner, addr1, addr2;
     const name = "Test token";
     const symbol = "TST";
-    const initialSupply = 20000;
-    const initialSupply2 = 50000;
-    const lzAddress = "0x0000000000000000000000000000000000000123"
 
-    const vestingPlans = [
-        {label: "vesting_plan_1",
-            saleStart: 1,
-            cliffPeriod: 2,
-            vestingPeriod: 3,
-            releasePeriod: 4,
-            tgePercent: 5,
-            totalTokenAmount: initialSupply,
-            tokenAllocated: 0,
-            initialized: true
-        },
-        {label: "vesting_plan_2",
-            saleStart: 1,
-            cliffPeriod: 2,
-            vestingPeriod: 3,
-            releasePeriod: 4,
-            tgePercent: 5,
-            totalTokenAmount: initialSupply2,
-            tokenAllocated: 0,
-            initialized: true
-        }
-    ];
     const additionalTokens = "500000000000000000000000";
     let forcefiPackage;
     let dstForcefiPackage;

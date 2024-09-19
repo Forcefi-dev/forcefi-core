@@ -34,7 +34,7 @@ describe("ForcefiBaseContract", function () {
             const initForcefiPackageAddress = await forcefiBaseContract.forcefiPackageAddress();
             expect(initForcefiPackageAddress).to.equal(forcefiPackageAddress);
 
-            forcefiPackageAddress = '0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3';
+            forcefiPackageAddress = ethers.Wallet.createRandom();
             await expect(forcefiBaseContract.connect(addr1).setForcefiPackageAddress(forcefiPackageAddress)).to.be.revertedWithCustomError(forcefiBaseContract, `OwnableUnauthorizedAccount`);
             await forcefiBaseContract.setForcefiPackageAddress(forcefiPackageAddress);
             const updatedForcefiPackageAddress = await forcefiBaseContract.forcefiPackageAddress();

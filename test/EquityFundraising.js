@@ -1,5 +1,4 @@
 const { expect } = require("chai");
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 
 const getCurrentTime = async () => {
     const currentBlock = await ethers.provider.getBlock("latest");
@@ -85,7 +84,6 @@ describe("EquityFundraising", function () {
         [owner, user1, user2, user3, user4, mainWalletAddressMock, mockedLzAddress] = await ethers.getSigners();
         equityFundraising = await ethers.deployContract("Fundraising");
 
-        const vestingPlans =[];
         const symbol = "InvestmentToken";
         const name = "INVT";
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
@@ -167,7 +165,6 @@ describe("EquityFundraising", function () {
             await expect(fundraising[3]).to.equal(await startDateTimestamp);
             await expect(fundraising[4]).to.equal(await _fundraisingData._endDate);
             await expect(fundraising[5]).to.equal(_fundraisingData._totalCampaignLimit);
-            // await expect(fundraising[6]).to.equal(_fundraisingData._campaignSoftCap);
             await expect(fundraising[6]).to.equal(_fundraisingData._rate);
             await expect(fundraising[7]).to.equal(_fundraisingData._rateDelimiter);
             await expect(fundraising[8]).to.equal(_fundraisingData._campaignMinTicketLimit);

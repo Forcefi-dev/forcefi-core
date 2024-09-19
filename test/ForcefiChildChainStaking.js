@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 
-describe("ERC20Token", function () {
+describe("Forcefi Child chain staking", function () {
 
     let owner, addr1, addr2;
     let silverNftAddress, goldNftAddress;
