@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "https://github.com/LayerZero-Labs/solidity-examples/blob/main/contracts/lzApp/NonblockingLzApp.sol";
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
 
 /**
  * @title ILzContract
@@ -19,6 +19,8 @@ interface ILzContract {
  * @dev Main contract for managing investment packages and package purchases.
  */
 contract ForcefiPackage is Ownable, NonblockingLzApp {
+    // Address of the LayerZero contract used for cross-chain operations
+    address private lzContractAddress;
 
     mapping(address => AggregatorV3Interface) dataFeeds;
 
@@ -53,9 +55,15 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
      * @param _lzContractAddress Address of the LayerZero contract.
      */
-    constructor(address _lzContractAddress) NonblockingLzApp(_lzContractAddress) {
-        addPackage("Explorer", 750, false, 5, false);
-        addPackage("Accelerator", 2000, false, 5, true);
+    constructor(address _lzContractAddress) Ownable(tx.origin) NonblockingLzApp(_lzContractAddress){
+        lzContractAddress = _lzContractAddress;
+        addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
+        addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package
+    }
+
+    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
+        (address _tokenOwner, string memory _projectName) = abi.decode(_payload, (address, string));
+        _mintPackageToken(_tokenOwner, _projectName);
     }
 
     /**
@@ -90,11 +98,6 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
         packageToUpdate.amount = newAmount;
         packageToUpdate.isCustom = newIsCustom;
         packageToUpdate.referralFee = newReferralFee;
-    }
-
-    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
-        (address _tokenOwner, string memory _projectName) = abi.decode(_payload, (address, string));
-        _mintPackageToken(_tokenOwner, _projectName);
     }
 
     /**
@@ -136,8 +139,8 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
 
         uint256 referralFee = 0;
         if (_referralAddress != address(0)) {
-            referralFee = finalAmountToPay * package.referralFee / 100;
-            ERC20(_erc20TokenAddress).transferFrom(msg.sender, _referralAddress, referralFee);
+            referralFee = finalAmountToPay * package.referralFee / 100;  // Calculate referral fee
+            ERC20(_erc20TokenAddress).transferFrom(msg.sender, _referralAddress, referralFee);  // Transfer referral fee
         }
 
         uint256 packagePaymentCost = finalAmountToPay - referralFee;
@@ -168,18 +171,17 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
     }
 
     /**
-     * @dev Function to bridge a creation token to another blockchain (currently commented out).
+     * @dev Function to bridge a creation token to another blockchain.
      * @param _destChainId Destination chain ID.
      * @param _projectName Name of the project associated with the token.
-     * @param _tokenOwner Address of the token owner.
      * @param gasForDestinationLzReceive Gas required for destination LayerZero receive.
      */
-    function bridgeToken(uint16 _destChainId, string memory _projectName, address _tokenOwner, uint gasForDestinationLzReceive) public payable {
+    function bridgeToken(uint16 _destChainId, string memory _projectName, uint gasForDestinationLzReceive) public payable {
         require(creationTokens[msg.sender][_projectName], "No token to bridge");
-        bytes memory payload = abi.encode(_tokenOwner, _projectName);
+        bytes memory payload = abi.encode(msg.sender, _projectName);
         uint16 version = 1;
         bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
-        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams, msg.value);
+        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams);
     }
 
     /**
@@ -253,7 +255,7 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
 
         (
         /* uint80 roundID */,
-            int answer,
+        int answer,
         /*uint startedAt*/,
         /*uint timeStamp*/,
         /*uint80 answeredInRound*/

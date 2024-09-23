@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.3;
-import "@openzeppelin/contracts/utils/Counters.sol";
+pragma solidity 0.8.20;
+
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 interface IForcefiStaking {
     function hasStaked(address) external view returns(bool);
@@ -16,8 +16,7 @@ interface IForcefiStaking {
  * @dev This contract is used for creating and managing fundraising campaigns with vesting plans.
  */
 contract Fundraising is ForcefiBaseContract{
-    using Counters for Counters.Counter;
-    Counters.Counter _fundraisingIdCounter;
+    uint256 private _fundraisingIdCounter;
 
     mapping(address => AggregatorV3Interface) dataFeeds;
 
@@ -213,11 +212,11 @@ contract Fundraising is ForcefiBaseContract{
         fundraising.referralAddress = _referralAddress;
         fundraising.fundraisingReferralFee = referralFee;
         fundraising.projectName = _projectName;
-        fundraising.mintingErc20TokenAddress = _mintingErc20TokenAddress;
+        fundraising.mintingErc20TokenAddress = _fundraisingErc20TokenAddress;
         fundraising.campaignMaxTicketLimit = _fundraisingData._campaignMaxTicketLimit;
 
-        uint fundraisingIdx = _fundraisingIdCounter.current();
-        _fundraisingIdCounter.increment();
+        uint fundraisingIdx = _fundraisingIdCounter;
+        _fundraisingIdCounter += 1;
 
         bytes32 UUID = VestingLibrary.generateUUID(fundraisingIdx);
         address [] storage tokensToPush = whitelistedTokens[UUID];
@@ -289,14 +288,14 @@ contract Fundraising is ForcefiBaseContract{
      * @dev Invests in a fundraising campaign. Campaign has to be still active. To participate in the sale, users must stake a sufficient amount of FORC tokens.
      * @param _amount The amount of tokens to invest, it has to be larger than campaignMinTicketLimit and less than campaignMaxTicketLimit for all investments combined.
               When campaign has almost reached its cap, amount can be less than campaignMinTicketLimit
-     * @param _campaignId The ID of the campaign to invest in.
-     * @param _sentTokenAddress The address of the token being sent for the investment. It has to be whitelisted for the particular sale
+     * @param _fundraisingIdx The ID of the campaign to invest in.
+     * @param _whitelistedTokenAddress The address of the token being sent for the investment. It has to be whitelisted for the particular sale
      */
-    function invest(uint256 amount, address _whitelistedTokenAddress, bytes32 _fundraisingIdx) external {
+    function invest(uint256 _amount, address _whitelistedTokenAddress, bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
-        require(amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
-        require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
-        require(fundraising.campaignHardCap >= amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
+        require(_amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
+        require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + _amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
+        require(fundraising.campaignHardCap >= _amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
         require(block.timestamp >= fundraising.startDate, "Campaign hasn't started yet");
         require(block.timestamp <= fundraising.endDate, "Campaign has ended");
         require(!fundraising.campaignClosed, "Campaign is closed");
@@ -320,15 +319,15 @@ contract Fundraising is ForcefiBaseContract{
 
         uint erc20Decimals = ERC20(_whitelistedTokenAddress).decimals();
 
-        uint investTokenAmount = (getChainlinkDataFeedLatestAnswer(_whitelistedTokenAddress) * fundraising.rate * amount ) / fundraising.rateDelimiter / 10 ** erc20Decimals;
-        individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += amount;
+        uint investTokenAmount = (getChainlinkDataFeedLatestAnswer(_whitelistedTokenAddress) * fundraising.rate * _amount ) / fundraising.rateDelimiter / 10 ** erc20Decimals;
+        individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += _amount;
         individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[_whitelistedTokenAddress] += investTokenAmount;
 
         ERC20(_whitelistedTokenAddress).transferFrom(msg.sender, address(this), investTokenAmount);
         fundraisingBalance[_fundraisingIdx][_whitelistedTokenAddress] += investTokenAmount;
 
-        fundraising.totalFundraised += amount;
-        emit Invested(msg.sender, amount, _whitelistedTokenAddress, address(this));
+        fundraising.totalFundraised += _amount;
+        emit Invested(msg.sender, _amount, _whitelistedTokenAddress, address(this));
     }
 
     /**
@@ -336,7 +335,7 @@ contract Fundraising is ForcefiBaseContract{
             To close campaign it has to reach it's minimal threshold after end date + reclaimWindow.
             This event sends investmentTokens to referralAddress(if it's attached), successFulFundraiseFeeAddress and calls forcefiStakingContract and curatorContract to receive and distribute fees.
             All other tokens are sent to the owner of the campaign.
-     * @param _campaignId The ID of the campaign to close.
+     * @param _fundraisingIdx The ID of the campaign to close.
      */
     function closeCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
@@ -363,8 +362,9 @@ contract Fundraising is ForcefiBaseContract{
             ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(forcefiStakingAddress, feeInWei * 3 / 10 );
             IForcefiStaking(forcefiStakingAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei * 3 / 10);
 
-            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, feeInWei / 2);
-            IForcefiStaking(curatorContractAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei / 2);
+//            ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, feeInWei / 2);
+//            IForcefiStaking(curatorContractAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], feeInWei / 2);
+            ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(curatorContractAddress, feeInWei / 2);
 
             ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(msg.sender, totalFundraisedInWei - feeInWei - referralFeeInWei);
         }
@@ -392,7 +392,7 @@ contract Fundraising is ForcefiBaseContract{
     /**
      * @dev Allows users to claim their tokens based on the vesting params.
             Claiming is available only after fundraising has reached it's end date + reclaim window has passed and it's considered as successful - reached min campaign threshold.
-     * @param _campaignId The ID of the campaign to claim tokens from.
+     * @param _fundraisingIdx The ID of the campaign to claim tokens from.
      */
     function claimTokens(bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
@@ -417,7 +417,7 @@ contract Fundraising is ForcefiBaseContract{
     /**
     * @dev Allows users to reclaim their tokens if campaign failed to reach it's goal.
             Reclaiming is available only after fundraising has reached it's end date + reclaim window has passed.
-     * @param _campaignId The ID of the campaign to claim tokens from.
+     * @param _fundraisingIdx The ID of the campaign to claim tokens from.
      */
     function reclaimTokens(bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
 
@@ -13,11 +12,7 @@ import "./VestingLibrary.sol";
  * Inherits from the ForcefiBaseContract and uses OpenZeppelin's ERC20 and Counters utilities.
  */
 contract VestingFinal is ForcefiBaseContract {
-
-    using Counters for Counters.Counter;
-
-    // Counter for generating unique vesting plan IDs
-    Counters.Counter private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
 
     // Mapping from project names to a list of vesting plan IDs
     mapping(string => bytes32[]) public projectVestings;
@@ -105,7 +100,7 @@ contract VestingFinal is ForcefiBaseContract {
     }
 
     // Event emitted when beneficiaries are added to a vesting plan
-    event AddedBenificiars(Benificiar[] beneficiaries);
+    event AddedBenificiars(Benificiar[] beneficiaries, bytes32 indexed vestingIdx);
 
     constructor() {
     }
@@ -119,6 +114,8 @@ contract VestingFinal is ForcefiBaseContract {
      * @param _tokenAddress Address of the ERC20 token to be vested.
      */
     function addVestingPlansBulk(VestingPlanParams[] calldata vestingPlanParams, string calldata _projectName, address _tokenAddress) external payable {
+        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
+        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         for (uint i = 0; i < vestingPlanParams.length; i++) {
             addVestingPlan(vestingPlanParams[i], _projectName, _tokenAddress);
         }
@@ -135,8 +132,8 @@ contract VestingFinal is ForcefiBaseContract {
     function addVestingPlan(VestingPlanParams memory params, string calldata _projectName, address _tokenAddress) internal {
         ERC20(_tokenAddress).transferFrom(msg.sender, address(this), params.totalTokenAmount);
 
-        uint vestingIdx = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint vestingIdx = _tokenIdCounter;
+        _tokenIdCounter += 1;
 
         bytes32 UUID = VestingLibrary.generateUUID(vestingIdx);
 
@@ -183,7 +180,7 @@ contract VestingFinal is ForcefiBaseContract {
             vestingPlans[_vestingIdx].tokenAllocated += _benificiars[i].tokenAmount;
         }
 
-        emit AddedBenificiars(_benificiars);
+        emit AddedBenificiars(_benificiars, _vestingIdx);
     }
 
     /**

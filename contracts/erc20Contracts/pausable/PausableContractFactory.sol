@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.20;
 
-import "./../ForcefiBaseContract.sol";
+import "./../../ForcefiBaseContract.sol";
 import "./ERC20PausableMintableBurnableToken.sol";
 import "./ERC20PausableBurnableToken.sol";
 import "./ERC20PausableMintableToken.sol";
@@ -14,6 +14,10 @@ import "./ERC20PausableToken.sol";
  * Inherits from ForcefiBaseContract.
  */
 contract PausableContractFactory is ForcefiBaseContract {
+
+    constructor(){
+
+    }
 
     /**
      * @dev Enum representing different types of pausable token contracts that can be created.

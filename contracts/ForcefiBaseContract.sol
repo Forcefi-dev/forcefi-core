@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -35,7 +35,7 @@ contract ForcefiBaseContract is Ownable {
      * @dev Constructor for the ForcefiBaseContract.
      * Initializes the contract without setting the fee amount or the Forcefi package address.
      */
-    constructor() {
+    constructor() Ownable(tx.origin){
     }
 
     /**
@@ -54,5 +54,14 @@ contract ForcefiBaseContract is Ownable {
      */
     function setForcefiPackageAddress(address _forcefiPackageAddress) public onlyOwner {
         forcefiPackageAddress = _forcefiPackageAddress;
+    }
+
+    /**
+     * @dev Withdraws all fees from the contract.
+     * This function can only be called by the owner of the contract.
+     * @param receiver The address of the address that will receive all the fees collected by the contract.
+     */
+    function withdrawFee(address payable receiver) public onlyOwner{
+        receiver.transfer(address(this).balance);
     }
 }
