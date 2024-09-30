@@ -21,6 +21,8 @@ contract ForcefiChildChainStaking is BaseStaking {
             _setStaker(_stakeAmount, _staker);
         } else {
             unstake(_stakeId);
+            hasStaked[_staker] = false;
+            isInvestor[_staker] = false;
         }
     }
 
@@ -30,10 +32,10 @@ contract ForcefiChildChainStaking is BaseStaking {
     function _setStaker(uint _stakeAmount, address _stakerAddress) private {
         uint stakeId = _stakeIdCounter;
         _stakeIdCounter += 1;
-        activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, _stakeAmount, block.timestamp, 0);
-        userStakes[_stakerAddress].push(stakeId);
-
+        hasStaked[_stakerAddress] = true;
         if (_stakeAmount >= investorTreshholdAmount) {
+            isInvestor[_stakerAddress] = true;
+            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, 0);
             investors.push(stakeId);
         }
         emit Staked(msg.sender, _stakeAmount, stakeId);
@@ -43,7 +45,6 @@ contract ForcefiChildChainStaking is BaseStaking {
     /// @param _stakeId The ID of the stake to be unstaked
     function unstake(uint _stakeId) private {
         activeStake[_stakeId].stakeAmount = 0;
-        removeStakeFromUser(msg.sender, _stakeId);
         removeInvestor(_stakeId);
     }
 }

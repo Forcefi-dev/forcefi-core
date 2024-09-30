@@ -10,21 +10,19 @@ import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
 abstract contract BaseStaking is Ownable, NonblockingLzApp {
     // Counter to track stake IDs
     uint internal _stakeIdCounter;
-
-    // Struct to define fee multipliers based on stake duration
-    FeeMultiplier public feeMultiplier;
+    uint internal eligibleToReceiveFeeTime;
 
     // Address where fundraising fees are sent
     address private forcefiFundraisingAddress;
 
     // Mapping from stake ID to active stake details
     mapping(uint => ActiveStake) public activeStake;
+    mapping(address => bool) hasStaked;
+    mapping(address => bool) isInvestor;
+    mapping(address => uint) public totalStaked;
 
     // Mapping to track investor token balances by address and token contract
     mapping(address => mapping(address => uint)) public investorTokenBalance;
-
-    // Mapping to track stake IDs for each user
-    mapping(address => uint[]) public userStakes;
 
     // Array to store investor addresses
     uint256[] public investors;
@@ -46,27 +44,8 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
         uint goldNftId;
     }
 
-    /// @dev Struct representing fee multipliers based on staking time thresholds
-    /// @param eligibleToReceiveFee Minimum time to be eligible for fees
-    /// @param earlyUnstakePercent Penalty percentage for early unstaking
-    /// @param beginnerFeeThreshold Time threshold for beginner fee multiplier
-    /// @param intermediateFeeThreshold Time threshold for intermediate fee multiplier
-    /// @param maximumFeeThreshold Time threshold for maximum fee multiplier
-    /// @param beginnerMultiplier Multiplier applied for beginner stakers
-    /// @param intermediateMultiplier Multiplier applied for intermediate stakers
-    /// @param maximumMultiplier Multiplier applied for maximum duration stakers
-    struct FeeMultiplier {
-        uint256 eligibleToReceiveFee;
-        uint256 earlyUnstakePercent;
-        uint256 beginnerFeeThreshold;
-        uint256 intermediateFeeThreshold;
-        uint256 maximumFeeThreshold;
-        uint256 beginnerMultiplier;
-        uint256 intermediateMultiplier;
-        uint256 maximumMultiplier;
-    }
-
     // Events for staking and unstaking
+    event CuratorAdded(address indexed stakerAddress);
     event Staked(address indexed stakerAddress, uint amount, uint indexed stakeIdx);
     event Unstaked(address indexed stakerAddress, uint indexed stakeIdx);
 
@@ -75,18 +54,6 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
     /// @param _lzContractAddress The LayerZero contract address used for cross-chain communication
     constructor(address _forcefiFundraisingAddress, address _lzContractAddress) NonblockingLzApp(_lzContractAddress) Ownable(tx.origin) {
         forcefiFundraisingAddress = _forcefiFundraisingAddress;
-
-        // Initializing fee multipliers based on a time-based threshold system
-        feeMultiplier = FeeMultiplier(
-            2629800,
-            0,
-            2629800 * 3,
-            2629800 * 6,
-            2629800 * 9,
-            10,
-            20,
-            30
-        );
     }
 
     /// @notice Distributes fees to eligible stakers based on their stake and multipliers
@@ -103,15 +70,8 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
         // Iterate over all investors and calculate their eligible stake for fee distribution
         for (uint256 i = 0; i < investors.length; i++) {
             // Check if the stake is eligible for receiving fees
-            if (activeStake[investors[i]].stakeEventTimestamp + feeMultiplier.eligibleToReceiveFee < block.timestamp) {
-                uint256 stakingTime = block.timestamp - activeStake[investors[i]].stakeEventTimestamp;
-                uint256 multiplier = getMultiplier(stakingTime);
-
-                uint256 activeStakeMultiplied = multiplier * activeStake[investors[i]].stakeAmount;
-                tokensWithMultiplier += activeStakeMultiplied;
-
+            if (activeStake[investors[i]].stakeEventTimestamp + eligibleToReceiveFeeTime < block.timestamp) {
                 eligibleFeeReceivers[count] = activeStake[investors[i]].stakerAddress;
-                eligibleStakes[count] = activeStakeMultiplied;
                 count++;
             }
         }
@@ -119,60 +79,19 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
         // Distribute fees based on calculated multipliers
         if (count > 0) {
             IERC20(_feeTokenAddress).transferFrom(forcefiFundraisingAddress, address(this), _feeAmount);
-
+            uint256 feeShare = _feeAmount / count;
             for (uint256 j = 0; j < count; j++) {
-                uint256 stakeAmount = eligibleStakes[j];
-                uint256 feeShare = (_feeAmount * stakeAmount) / tokensWithMultiplier;
-
                 investorTokenBalance[eligibleFeeReceivers[j]][_feeTokenAddress] += feeShare;
             }
         }
-    }
+        // TODO: Send to treasury
+        else {
 
-    /// @notice Updates the fee multiplier values used to calculate staking rewards
-    /// @param _eligibleToReceiveFee Time required to be eligible for fee rewards
-    /// @param _earlyUnstakePercent Penalty for unstaking early
-    /// @param _beginnerFeeThreshold Time threshold for beginner multiplier
-    /// @param _intermediateFeeThreshold Time threshold for intermediate multiplier
-    /// @param _maximumFeeThreshold Time threshold for maximum multiplier
-    /// @param _beginnerMultiplier Beginner multiplier percentage
-    /// @param _intermediateMultiplier Intermediate multiplier percentage
-    /// @param _maximumMultiplier Maximum multiplier percentage
-    function setFeeMultiplier(
-        uint _eligibleToReceiveFee,
-        uint _earlyUnstakePercent,
-        uint _beginnerFeeThreshold,
-        uint _intermediateFeeThreshold,
-        uint _maximumFeeThreshold,
-        uint _beginnerMultiplier,
-        uint _intermediateMultiplier,
-        uint _maximumMultiplier
-    ) public onlyOwner {
-        feeMultiplier = FeeMultiplier(
-            _eligibleToReceiveFee,
-            _earlyUnstakePercent,
-            _beginnerFeeThreshold,
-            _intermediateFeeThreshold,
-            _maximumFeeThreshold,
-            _beginnerMultiplier,
-            _intermediateMultiplier,
-            _maximumMultiplier
-        );
-    }
-
-    /// @notice Internal function to determine the appropriate multiplier based on staking time
-    /// @param stakingTime The duration for which tokens have been staked
-    /// @return The multiplier value based on the staking time
-    function getMultiplier(uint256 stakingTime) internal view returns (uint256) {
-        if (stakingTime >= feeMultiplier.maximumFeeThreshold) {
-            return 100 + feeMultiplier.maximumMultiplier;
-        } else if (stakingTime >= feeMultiplier.intermediateFeeThreshold) {
-            return 100 + feeMultiplier.intermediateMultiplier;
-        } else if (stakingTime >= feeMultiplier.beginnerFeeThreshold) {
-            return 100 + feeMultiplier.beginnerMultiplier;
-        } else {
-            return 100;
         }
+    }
+
+    function setEligabilityTimeToReceiveFees(uint _eligibleToReceiveFeeTime) public onlyOwner {
+        eligibleToReceiveFeeTime = _eligibleToReceiveFeeTime;
     }
 
     /// @notice Allows users to claim their accrued fees
@@ -227,32 +146,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
         return investors;
     }
 
-    /// @notice Helper function to remove a stake from a user's list of stakes
-    /// @param _user The address of the user
-    /// @param _stakeId The ID of the stake to remove
-    function removeStakeFromUser(address _user, uint _stakeId) internal {
-        uint[] storage stakes = userStakes[_user];
-        for (uint i = 0; i < stakes.length; i++) {
-            if (stakes[i] == _stakeId) {
-                stakes[i] = stakes[stakes.length - 1];
-                stakes.pop();
-                break;
-            }
-        }
-    }
-
-    /// @notice Checks if a user has any active stakes
-    /// @param _stakerAddress The address of the staker
-    /// @return A boolean indicating whether the user has an active stake
-    function hasStaked(address _stakerAddress) public view returns (bool) {
-        uint[] memory stakes = userStakes[_stakerAddress];
-
-        for (uint i = 0; i < stakes.length; i++) {
-            uint stakeId = stakes[i];
-            if (activeStake[stakeId].stakeAmount > 0) {
-                return true;
-            }
-        }
-        return false;
+    function hasAddressStaked(address _stakerAddress) public view returns(bool){
+        return hasStaked[_stakerAddress];
     }
 }

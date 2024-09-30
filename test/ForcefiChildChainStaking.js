@@ -58,13 +58,13 @@ describe("Forcefi Child chain staking", function () {
 
             await forcefiToken.approve(stakingContract.getAddress(), investorTreshhold);
 
-            expect(await stakingContract.hasStaked(owner.address)).to.equal(false);
-            expect(await childChainStakingContract.hasStaked(owner.address)).to.equal(false);
+            expect(await stakingContract.hasAddressStaked(owner.address)).to.equal(false);
+            expect(await childChainStakingContract.hasAddressStaked(owner.address)).to.equal(false);
 
             await stakingContract.stake(investorTreshhold, 0);
             await stakingContract.bridgeStakingAccess([dstChainId], 0, 0, false);
 
-            expect(await stakingContract.hasStaked(owner.address)).to.equal(true);
+            expect(await stakingContract.hasAddressStaked(owner.address)).to.equal(true);
 
             const investorsAfterEvent = await stakingContract.getInvestors();
             expect(investorsAfterEvent.length).to.equal(1);
@@ -75,15 +75,15 @@ describe("Forcefi Child chain staking", function () {
             // Check child chain staking
             await childChainStakingContract.setInvestorTreshholdAmount(investorTreshhold);
 
-            expect(await childChainStakingContract.hasStaked(owner.address)).to.equal(true);
+            expect(await childChainStakingContract.hasAddressStaked(owner.address)).to.equal(true);
             const childChainInvestors = await childChainStakingContract.getInvestors();
             expect(childChainInvestors.length).to.equal(1);
 
             // Test _nonBlockingLzReceive that sets unstake
             await stakingContract.unstake(0, 0);
-            expect(await stakingContract.hasStaked(owner.address)).to.equal(false);
+            expect(await stakingContract.hasAddressStaked(owner.address)).to.equal(false);
 
-            expect(await childChainStakingContract.hasStaked(owner.address)).to.equal(false);
+            expect(await childChainStakingContract.hasAddressStaked(owner.address)).to.equal(false);
             const childChainInvestorsAfterUnstake = await childChainStakingContract.getInvestors();
             expect(childChainInvestorsAfterUnstake.length).to.equal(0);
         });

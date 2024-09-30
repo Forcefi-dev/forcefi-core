@@ -70,59 +70,50 @@ contract ForcefiStaking is BaseStaking {
     /// @param _stakeAmount The amount of tokens to stake
     /// @param _goldNftId The ID of the gold NFT associated with the stake (0 if not applicable)
     function stake(uint _stakeAmount, uint _goldNftId) public {
-        require(_stakeAmount >= minStakingAmount || _goldNftId != 0, "Not enough tokens to stake");
-        if (_goldNftId != 0 && goldNftOwner[_goldNftId] == address(0)) {
-            goldNftOwner[_goldNftId] = msg.sender;
-            _setStaker(investorTreshholdAmount, msg.sender, _goldNftId);
-        } else {
-            ERC20(forcefiTokenAddress).transferFrom(msg.sender, address(this), _stakeAmount);
-            _setStaker(_stakeAmount, msg.sender, _goldNftId);
-        }
-    }
+        require(_stakeAmount == minStakingAmount - totalStaked[msg.sender]
+            || _stakeAmount == curatorTreshholdAmount - totalStaked[msg.sender]
+            || _stakeAmount - totalStaked[msg.sender] == investorTreshholdAmount
+            || _goldNftId != 0, "Invalid stake amount");
 
-    /// @notice Sets a staker with the given stake amount, address, and optional gold NFT
-    /// @param _stakeAmount The amount of tokens staked
-    /// @param _stakerAddress The address of the user who staked
-    /// @param _goldNftId The ID of the gold NFT associated with the stake (0 if not applicable)
-    function _setStaker(uint _stakeAmount, address _stakerAddress, uint _goldNftId) private {
-        uint stakeId = _stakeIdCounter;
-        _stakeIdCounter += 1;
-        activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, _stakeAmount, block.timestamp, _goldNftId);
-        userStakes[msg.sender].push(stakeId);
-        if (_stakeAmount >= curatorTreshholdAmount) {
-            isCurator[msg.sender] = true;
+        if(_goldNftId == 0) {
+            ERC20(forcefiTokenAddress).transferFrom(msg.sender, address(this), _stakeAmount);
         }
-        if (_stakeAmount >= investorTreshholdAmount) {
+        hasStaked[msg.sender] = true;
+
+        if(_stakeAmount + totalStaked[msg.sender]== investorTreshholdAmount ){
+            require(isInvestor[msg.sender] == false, "Only one investor stake is available per address");
+            isInvestor[msg.sender] = true;
+            uint stakeId = _stakeIdCounter;
+            _stakeIdCounter += 1;
             investors.push(stakeId);
+            activeStake[stakeId] = ActiveStake(stakeId, msg.sender, _stakeAmount, block.timestamp, _goldNftId);
+            emit Staked(msg.sender, _stakeAmount, stakeId);
         }
-        emit Staked(msg.sender, _stakeAmount, stakeId);
+        else if (_goldNftId != 0 && goldNftOwner[_goldNftId] != address(0)) {
+            goldNftOwner[_goldNftId] = msg.sender;
+            isInvestor[msg.sender] = true;
+            uint stakeId = _stakeIdCounter;
+            _stakeIdCounter += 1;
+            investors.push(stakeId);
+            activeStake[stakeId] = ActiveStake(stakeId, msg.sender, _stakeAmount, block.timestamp, _goldNftId);
+
+            emit Staked(msg.sender, _stakeAmount, stakeId);
+        } else if (_stakeAmount + totalStaked[msg.sender] == curatorTreshholdAmount) {
+            isCurator[msg.sender] = true;
+            emit CuratorAdded(msg.sender);
+        }
+        totalStaked[msg.sender] += _stakeAmount;
     }
 
     /// @notice Unstakes a given stake by ID and handles associated logic including penalties and bridging
     /// @param _stakeId The ID of the stake to be unstaked
     /// @param gasForDestinationLzReceive The gas amount provided for the LayerZero receive function on the destination chain
     function unstake(uint _stakeId, uint gasForDestinationLzReceive) public {
-        require(activeStake[_stakeId].goldNftId == 0, "Can't unstake gold nft");
-        uint stakeAmount = activeStake[_stakeId].stakeAmount;
+//        require(activeStake[_stakeId].goldNftId == 0, "Can't unstake gold nft");
 
-        // If unstake event happens before stake becomes eligible to receive fees, then investor gets penalty
-        if (activeStake[_stakeId].stakeEventTimestamp + feeMultiplier.eligibleToReceiveFee > block.timestamp) {
-            // Calculate the amount of tokens to burn based on earlyUnstakePercent
-            uint256 burnAmount = stakeAmount * feeMultiplier.earlyUnstakePercent / 100;
-
-            // Adjust the stake amount after applying the early unstake penalty
-            stakeAmount = stakeAmount - burnAmount;
-
-            // Burn the calculated amount of tokens
-            IERC20Burnable(forcefiTokenAddress).burn(burnAmount);
-        }
-
-        ERC20(forcefiTokenAddress).transfer(msg.sender, stakeAmount);
-        isCurator[msg.sender] = false;
-        removeInvestor(_stakeId);
+        ERC20(forcefiTokenAddress).transfer(msg.sender, totalStaked[msg.sender]);
         bridgeStakingAccess(chainList[msg.sender], gasForDestinationLzReceive, _stakeId, true);
-        activeStake[_stakeId].stakeAmount = 0;
-        removeStakeFromUser(msg.sender, _stakeId);
+//        activeStake[_stakeId].stakeAmount = 0;
         emit Unstaked(msg.sender, _stakeId);
     }
 
@@ -132,14 +123,17 @@ contract ForcefiStaking is BaseStaking {
     /// @param _stakeId The ID of the stake being bridged
     /// @param _unstake Boolean indicating if the bridging is for unstaking
     function bridgeStakingAccess(uint16[] memory _destChainIds, uint gasForDestinationLzReceive, uint _stakeId, bool _unstake) public payable {
-        require(activeStake[_stakeId].stakerAddress == msg.sender, "Not an owner of a stake");
+//        require(activeStake[_stakeId].stakerAddress == msg.sender, "Not an owner of a stake");
         // Check if user eligibility to bridge
-        require(hasStaked(msg.sender), "Sender doesn't have active stake");
 
         // Get the amount of the stake; if unstake is true, set the amount to 0
-        uint stakeAmount = activeStake[_stakeId].stakeAmount;
+        uint stakeAmount = totalStaked[msg.sender];
         if (_unstake) {
+            require(hasStaked[msg.sender], "Sender doesn't have active stake");
             stakeAmount = 0;
+            isCurator[msg.sender] = false;
+            hasStaked[msg.sender] = false;
+            removeInvestor(_stakeId);
         } else {
             // Loop through all destination chain IDs and add them to the user's chain list
             for (uint i = 0; i < _destChainIds.length; i++) {

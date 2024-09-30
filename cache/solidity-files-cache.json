@@ -507,7 +507,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Vesting.sol": {
-      "lastModificationDate": 1725901292167,
+      "lastModificationDate": 1727265714999,
       "contentHash": "604f6eb1461b356d8e9e69e1fce4e535",
       "sourceName": "contracts/Vesting.sol",
       "solcConfig": {
@@ -547,7 +547,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\VestingLibrary.sol": {
-      "lastModificationDate": 1725512970911,
+      "lastModificationDate": 1727265706736,
       "contentHash": "0ab17b08632dca0453293fd446137c2b",
       "sourceName": "contracts/VestingLibrary.sol",
       "solcConfig": {
@@ -583,8 +583,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Fundraising.sol": {
-      "lastModificationDate": 1726638810583,
-      "contentHash": "1c0eec67ceabe264eaf7e43429ca1ded",
+      "lastModificationDate": 1727508027688,
+      "contentHash": "1211278eb8a4ae8a7dee590e7db4ebd2",
       "sourceName": "contracts/Fundraising.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -784,7 +784,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableToken.sol": {
-      "lastModificationDate": 1725518687583,
+      "lastModificationDate": 1727265653164,
       "contentHash": "d3f64b5392e2dd0c5ca7e5ec90c57775",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableToken.sol",
       "solcConfig": {
@@ -1352,8 +1352,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
-      "lastModificationDate": 1726754446230,
-      "contentHash": "700c462bd97bdf98ada6e97d8ccb1aa9",
+      "lastModificationDate": 1727507125282,
+      "contentHash": "ee1d205e86b9202cc60f19fec8fc6916",
       "sourceName": "contracts/Staking/BaseStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1392,8 +1392,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiStaking.sol": {
-      "lastModificationDate": 1726754650239,
-      "contentHash": "26b4dc080431c7003d2a88b7ccb41ae2",
+      "lastModificationDate": 1727512433795,
+      "contentHash": "88a4f2958e43690f69837816368d1e3f",
       "sourceName": "contracts/Staking/ForcefiStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1431,8 +1431,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiChildChainStaking.sol": {
-      "lastModificationDate": 1726754549452,
-      "contentHash": "168f921ba220411b269766134a80b166",
+      "lastModificationDate": 1727513200950,
+      "contentHash": "87ba5bc490be7819470fd30f213f0ba6",
       "sourceName": "contracts/Staking/ForcefiChildChainStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1466,6 +1466,77 @@
       ],
       "artifacts": [
         "ForcefiChildChainStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\CuratorTokenDistributor.sol": {
+      "lastModificationDate": 1727336338313,
+      "contentHash": "8da4c05aae4568444e41cb4fd35356dc",
+      "sourceName": "contracts/Staking/CuratorTokenDistributor.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcStaking.sol": {
+      "lastModificationDate": 1727373265376,
+      "contentHash": "27e54e586a22ff991187aa9f3f88236a",
+      "sourceName": "contracts/Staking/ForcStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "TokenLock"
       ]
     }
   }
