@@ -168,6 +168,7 @@ contract Fundraising is ForcefiBaseContract{
     event FundraisingCreated(address indexed ownerAddress, bytes32, string);
     event Invested(address indexed investor, uint amount, address sentTokenAddress, address fundraisingAddress);
     event WhitelistedAddress(address whitelistedAddress);
+    event ReferralFeeSent(address indexed whitelistedAddress, address erc20TokenAddress, string, uint);
 
     modifier isFundraisingOwner(bytes32 _fundraisingIdx){
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
@@ -365,6 +366,7 @@ contract Fundraising is ForcefiBaseContract{
 
             if(fundraising.referralAddress != address(0)){
                 ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(fundraising.referralAddress, referralFeeInWei);
+                emit ReferralFeeSent(fundraising.referralAddress, whitelistedTokens[_fundraisingIdx][i], fundraising.projectName, referralFeeInWei);
             }
 
             ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(successfulFundraiseFeeAddress, feeInWei / 5);
