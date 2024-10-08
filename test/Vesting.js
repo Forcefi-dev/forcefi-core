@@ -16,7 +16,7 @@ describe("Vesting", function () {
 
     const vestingPlans = [
         {
-            benificiars: [{ beneficiarAddress: beneficiar_1, tokenAmount: 250 }],
+            beneficiaries: [{ beneficiaryAddress: beneficiar_1, tokenAmount: 250 }],
             vestingPlanLabel: vesting_1_label,
             saleStart: Math.floor(Date.now() / 1000), // Current timestamp
             cliffPeriod: 60 * 60 * 24 * 30, // 30 days
@@ -26,7 +26,7 @@ describe("Vesting", function () {
             totalTokenAmount: "1000"
         },
         {
-            benificiars: [{ beneficiarAddress: beneficiar_1, tokenAmount: 25 }],
+            beneficiaries: [{ beneficiaryAddress: beneficiar_1, tokenAmount: 25 }],
             vestingPlanLabel: vesting_2_label,
             saleStart: Math.floor(Date.now() / 1000), // Current timestamp
             cliffPeriod: 60 * 60 * 24 * 30, // 30 days
@@ -41,7 +41,7 @@ describe("Vesting", function () {
     const deployContracts = async () => {
         vestingContract = await ethers.deployContract("VestingFinal");
         [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
-        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply]);
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply, owner.address]);
 
         const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await vestingContract.setForcefiPackageAddress(forcefiPackage.getAddress());
@@ -55,7 +55,7 @@ describe("Vesting", function () {
 
     // Helper function to get vesting plan IDs
     const getProjectVestings = async () => {
-        const projectVestings = await vestingContract.getVestingsForProject(_projectName);
+        const projectVestings = await vestingContract.getVestingsByProjectName(_projectName);
         return projectVestings.toString().split(",");
     };
 
@@ -80,7 +80,7 @@ describe("Vesting", function () {
             expect(vestingPlan[7]).to.equal(vestingPlans[0].releasePeriod);
             expect(vestingPlan[8]).to.equal(vestingPlans[0].tgePercent);
             expect(vestingPlan[9]).to.equal(vestingPlans[0].totalTokenAmount);
-            expect(vestingPlan[10]).to.equal(vestingPlans[0].benificiars[0].tokenAmount);
+            expect(vestingPlan[10]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount);
 
             // Compare token amounts
             const totalAllocatedTokens = Number(vestingPlans[0].totalTokenAmount) + Number(vestingPlans[1].totalTokenAmount);
@@ -89,7 +89,7 @@ describe("Vesting", function () {
 
             // Verify beneficiary's vesting
             const beneficiar1 = await vestingContract.individualVestings(vesting1, beneficiar_1);
-            expect(beneficiar1[0]).to.equal(vestingPlans[0].benificiars[0].tokenAmount);
+            expect(beneficiar1[0]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount);
             expect(beneficiar1[1]).to.equal(0);
         });
 
@@ -103,7 +103,7 @@ describe("Vesting", function () {
 
             // Withdraw unallocated tokens
             await vestingContract.withdrawUnallocatedTokens(vesting1);
-            expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - vestingPlans[0].benificiars[0].tokenAmount - vestingPlans[1].totalTokenAmount);
+            expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - vestingPlans[0].beneficiaries[0].tokenAmount - vestingPlans[1].totalTokenAmount);
         });
 
         // Add other test cases here using helper functions as needed
@@ -114,17 +114,17 @@ describe("Vesting", function () {
             const [vesting1] = await getProjectVestings();
 
             const benificariesArray = [{
-                beneficiarAddress: beneficiar_2,
-                tokenAmount: vestingPlans[0].totalTokenAmount - vestingPlans[0].benificiars[0].tokenAmount
+                beneficiaryAddress: beneficiar_2,
+                tokenAmount: vestingPlans[0].totalTokenAmount - vestingPlans[0].beneficiaries[0].tokenAmount
             }]
 
-            await vestingContract.addVestingBeneficiar(vesting1, benificariesArray);
+            await vestingContract.addVestingBeneficiaries(vesting1, benificariesArray);
 
             const vestingPlan = await vestingContract.vestingPlans(vesting1);
-            expect(vestingPlan[10]).to.equal(vestingPlans[0].benificiars[0].tokenAmount + benificariesArray[0].tokenAmount);
+            expect(vestingPlan[10]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount + benificariesArray[0].tokenAmount);
 
             // Try to add vesting beneficiaries one more time
-            await expect(vestingContract.addVestingBeneficiar(vesting1, benificariesArray)).to.be.revertedWith("Token allocation reached maximum for vesting plan");
+            await expect(vestingContract.addVestingBeneficiaries(vesting1, benificariesArray)).to.be.revertedWith("Token allocation reached maximum for vesting plan");
         });
 
         it("release vested tokens", async function () {
@@ -141,9 +141,9 @@ describe("Vesting", function () {
             // Ensure the saleStart is properly awaited
             const releasableVestingPlan = [
                 {
-                    benificiars: [
+                    beneficiaries: [
                         {
-                            beneficiarAddress: addr1.address, // Use the address here
+                            beneficiaryAddress: addr1.address, // Use the address here
                             tokenAmount: benificiarTokenAmount
                         }
                     ],
@@ -162,7 +162,7 @@ describe("Vesting", function () {
             await vestingContract.addVestingPlansBulk(releasableVestingPlan, _projectName, erc20Token.getAddress());
 
             // Get vesting by project name
-            const projectVestings = await vestingContract.getVestingsForProject(_projectName);
+            const projectVestings = await vestingContract.getVestingsByProjectName(_projectName);
             const vestingId = projectVestings[0]; // Extract the first vesting plan ID
 
             // Initially, no vested tokens should be claimable
@@ -208,13 +208,13 @@ describe("Vesting", function () {
         it("release vested tokens for paused contract", async function () {
             const releasableVestingPlan = [
                 {
-                    benificiars: [
+                    beneficiaries: [
                         {
-                            beneficiarAddress: addr1.address,
+                            beneficiaryAddress: addr1.address,
                             tokenAmount: 2500
                         },
                         {
-                            beneficiarAddress: addr2.address,
+                            beneficiaryAddress: addr2.address,
                             tokenAmount: 2500
                         }
                     ],
@@ -229,14 +229,14 @@ describe("Vesting", function () {
             ];
 
             // Deploy and initialize the pausable ERC20 token
-            const erc20PausableToken = await ethers.deployContract("ERC20PausableBurnableToken", [name, symbol, erc20Supply]);
+            const erc20PausableToken = await ethers.deployContract("ERC20PausableBurnableToken", [name, symbol, erc20Supply, owner.address]);
 
             // Add vesting plan
             await erc20PausableToken.approve(vestingContract.getAddress(), erc20Supply);
             await vestingContract.addVestingPlansBulk(releasableVestingPlan, _projectName, erc20PausableToken.getAddress());
 
             // Get vesting by project name
-            const projectVestings = await vestingContract.getVestingsForProject(_projectName);
+            const projectVestings = await vestingContract.getVestingsByProjectName(_projectName);
             const vestingId = projectVestings[0]; // Get the vesting plan ID
 
             // Check initial balance
@@ -244,7 +244,7 @@ describe("Vesting", function () {
 
             // Release TGE tokens for addr1
             await vestingContract.connect(addr1).releaseVestedTokens(vestingId);
-            const tgeTokenCountAddr1 = releasableVestingPlan[0].benificiars[0].tokenAmount * releasableVestingPlan[0].tgePercent / 100;
+            const tgeTokenCountAddr1 = releasableVestingPlan[0].beneficiaries[0].tokenAmount * releasableVestingPlan[0].tgePercent / 100;
             expect(await erc20PausableToken.balanceOf(addr1.address)).to.equal(tgeTokenCountAddr1);
 
             // Ensure no additional tokens can be claimed yet
@@ -261,7 +261,7 @@ describe("Vesting", function () {
 
             // addr2 should now be able to release TGE tokens
             await vestingContract.connect(addr2).releaseVestedTokens(vestingId);
-            const tgeTokenCountAddr2 = releasableVestingPlan[0].benificiars[1].tokenAmount * releasableVestingPlan[0].tgePercent / 100;
+            const tgeTokenCountAddr2 = releasableVestingPlan[0].beneficiaries[1].tokenAmount * releasableVestingPlan[0].tgePercent / 100;
             expect(await erc20PausableToken.balanceOf(addr2.address)).to.equal(tgeTokenCountAddr2);
         });
     });

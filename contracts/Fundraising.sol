@@ -7,7 +7,7 @@ import "./VestingLibrary.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 interface IForcefiStaking {
-    function hasStaked(address) external view returns(bool);
+    function hasAddressStaked(address) external view returns(bool);
     function receiveFees(address, uint) external;
 }
 
@@ -139,6 +139,7 @@ contract Fundraising is ForcefiBaseContract{
         uint fundraisingReferralFee;
         string projectName;
         uint campaignMaxTicketLimit;
+        FeeConfig fundraisingFeeConfig;
     }
 
     /**
@@ -167,6 +168,7 @@ contract Fundraising is ForcefiBaseContract{
     event FundraisingCreated(address indexed ownerAddress, bytes32, string);
     event Invested(address indexed investor, uint amount, address sentTokenAddress, address fundraisingAddress);
     event WhitelistedAddress(address whitelistedAddress);
+    event ReferralFeeSent(address indexed whitelistedAddress, address erc20TokenAddress, string, uint);
 
     modifier isFundraisingOwner(bytes32 _fundraisingIdx){
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
@@ -201,7 +203,7 @@ contract Fundraising is ForcefiBaseContract{
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
 
         FundraisingInstance memory fundraising;
-        fundraising.owner = tx.origin;
+        fundraising.owner = msg.sender;
         fundraising.campaignHardCap = _fundraisingData._totalCampaignLimit;
         fundraising.rate = _fundraisingData._rate;
         fundraising.rateDelimiter = _fundraisingData._rateDelimiter;
@@ -214,6 +216,15 @@ contract Fundraising is ForcefiBaseContract{
         fundraising.projectName = _projectName;
         fundraising.mintingErc20TokenAddress = _fundraisingErc20TokenAddress;
         fundraising.campaignMaxTicketLimit = _fundraisingData._campaignMaxTicketLimit;
+        fundraising.fundraisingFeeConfig = FeeConfig({
+            tier1Threshold: feeConfig.tier1Threshold,
+            tier2Threshold: feeConfig.tier2Threshold,
+            tier1FeePercentage: feeConfig.tier1FeePercentage,
+            tier2FeePercentage: feeConfig.tier2FeePercentage,
+            tier3FeePercentage: feeConfig.tier3FeePercentage,
+            reclaimWindow: feeConfig.reclaimWindow,
+            minCampaignThreshold: feeConfig.minCampaignThreshold
+        });
 
         uint fundraisingIdx = _fundraisingIdCounter;
         _fundraisingIdCounter += 1;
@@ -241,7 +252,7 @@ contract Fundraising is ForcefiBaseContract{
             addWhitelistAddress(_whitelistAddresses, UUID);
         }
 
-        emit FundraisingCreated(tx.origin, UUID, _projectName);
+        emit FundraisingCreated(msg.sender, UUID, _projectName);
     }
 
     function getIndividualBalanceForToken(bytes32 _idx, address _investmentTokenAddress) public view returns(uint){
@@ -309,7 +320,7 @@ contract Fundraising is ForcefiBaseContract{
         require(isWhitelistedToken, "Only project whitelisted token can be accepted as investment");
 
         if(forcefiStakingAddress != address(0)){
-            require(IForcefiStaking(forcefiStakingAddress).hasStaked(msg.sender), "To participate in the sale, users must stake a sufficient amount of FORC tokens.");
+            require(IForcefiStaking(forcefiStakingAddress).hasAddressStaked(msg.sender), "To participate in the sale, users must stake a sufficient amount of FORC tokens.");
         }
 
         require(isInvestmentToken[_whitelistedTokenAddress], "Not whitelisted investment token address");
@@ -340,12 +351,12 @@ contract Fundraising is ForcefiBaseContract{
     function closeCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(!fundraising.campaignClosed, "Campaign already closed");
-        bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
-        require(hasReachedLimit && fundraising.endDate + feeConfig.reclaimWindow >= block.timestamp, "Campaign is not yet ended or didn't reach minimal threshold");
+        bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * fundraising.fundraisingFeeConfig.minCampaignThreshold / 100;
+        require(hasReachedLimit && fundraising.endDate + fundraising.fundraisingFeeConfig.reclaimWindow >= block.timestamp, "Campaign is not yet ended or didn't reach minimal threshold");
 
         fundraising.campaignClosed = true;
 
-        uint feePercentage = calculateFee(fundraising.totalFundraised);
+        uint feePercentage = calculateFee(fundraising.totalFundraised, fundraising.fundraisingFeeConfig);
 
         for(uint i=0; i< whitelistedTokens[_fundraisingIdx].length; i++){
             uint totalFundraisedInWei = fundraisingBalance[_fundraisingIdx][whitelistedTokens[_fundraisingIdx][i]];
@@ -355,6 +366,7 @@ contract Fundraising is ForcefiBaseContract{
 
             if(fundraising.referralAddress != address(0)){
                 ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(fundraising.referralAddress, referralFeeInWei);
+                emit ReferralFeeSent(fundraising.referralAddress, whitelistedTokens[_fundraisingIdx][i], fundraising.projectName, referralFeeInWei);
             }
 
             ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(successfulFundraiseFeeAddress, feeInWei / 5);
@@ -477,15 +489,15 @@ contract Fundraising is ForcefiBaseContract{
         } else return chainlinkPrice;
     }
 
-    function calculateFee(uint256 amountRaised) public view returns (uint256) {
+    function calculateFee(uint256 amountRaised, FeeConfig memory fundraisingFeeConfig) public pure returns (uint256) {
         uint256 feePercentage;
 
-        if (amountRaised < feeConfig.tier1Threshold) {
-            feePercentage = feeConfig.tier1FeePercentage;
-        } else if (amountRaised <= feeConfig.tier2Threshold) {
-            feePercentage = feeConfig.tier2FeePercentage;
+        if (amountRaised < fundraisingFeeConfig.tier1Threshold) {
+            feePercentage = fundraisingFeeConfig.tier1FeePercentage;
+        } else if (amountRaised <= fundraisingFeeConfig.tier2Threshold) {
+            feePercentage = fundraisingFeeConfig.tier2FeePercentage;
         } else {
-            feePercentage = feeConfig.tier3FeePercentage;
+            feePercentage = fundraisingFeeConfig.tier3FeePercentage;
         }
         return feePercentage;
     }

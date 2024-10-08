@@ -10,10 +10,10 @@ contract ERC20PausableBurnableToken is ERC20, Pausable, ERC20Burnable, Ownable {
 
     mapping(address => bool) private _whitelistedContracts;
 
-    constructor(string memory _name, string memory _ticker, uint256 _initialSupply)
-    ERC20(_name, _ticker) Ownable(tx.origin){
-        _transferOwnership(tx.origin);
-        _mint(tx.origin, _initialSupply);
+    constructor(string memory _name, string memory _ticker, uint256 _initialSupply, address _ownerAddress)
+    ERC20(_name, _ticker) Ownable(_ownerAddress){
+        _transferOwnership(_ownerAddress);
+        _mint(_ownerAddress, _initialSupply);
     }
 
     modifier whenNotPausedOrWhitelisted() {

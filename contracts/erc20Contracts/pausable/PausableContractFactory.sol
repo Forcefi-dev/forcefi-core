@@ -67,13 +67,13 @@ contract PausableContractFactory is ForcefiBaseContract {
 
         // Deploy the appropriate contract type based on the provided enum value
         if (_type == ContractType.Pausable) {
-            newContract = address(new ERC20PausableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20PausableToken(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.PausableMintable) {
-            newContract = address(new ERC20PausableMintableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20PausableMintableToken(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.PausableBurnable) {
-            newContract = address(new ERC20PausableBurnableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20PausableBurnableToken(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.PausableMintableBurnable) {
-            newContract = address(new ERC20PausableMintableBurnableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20PausableMintableBurnableToken(_name, _ticker, _initialSupply, msg.sender));
         } else {
             revert("Invalid contract type");
         }

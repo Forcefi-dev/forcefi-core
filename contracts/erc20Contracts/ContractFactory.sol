@@ -64,13 +64,13 @@ contract ContractFactory is ForcefiBaseContract {
 
         // Deploy the appropriate contract type based on the provided enum value
         if (_type == ContractType.StandardToken) {
-            newContract = address(new ERC20Token(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20Token(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.Mintable) {
-            newContract = address(new ERC20MintableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20MintableToken(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.Burnable) {
-            newContract = address(new ERC20BurnableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20BurnableToken(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.MintableAndBurnable) {
-            newContract = address(new ERC20MintableBurnableToken(_name, _ticker, _initialSupply));
+            newContract = address(new ERC20MintableBurnableToken(_name, _ticker, _initialSupply, msg.sender));
         } else {
             revert("Invalid contract type");
         }

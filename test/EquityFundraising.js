@@ -73,6 +73,9 @@ describe("EquityFundraising", function () {
         _campaignMaxTicketLimit: 200
     }
 
+    const minStakingAmount = 100;
+    const investorTreshhold = 7500;
+
     beforeEach(async function () {
 
         const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
@@ -86,23 +89,22 @@ describe("EquityFundraising", function () {
 
         const symbol = "InvestmentToken";
         const name = "INVT";
-        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        investmentToken2 = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        projectToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        investmentToken2 = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        projectToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
 
         forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await equityFundraising.setForcefiPackageAddress(forcefiPackage.getAddress());
 
         // Setup staking contract, add 1 investor who will receive fees
-        const forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        const forcefiStaking = await ethers.deployContract("ForcefiStaking", [mockedLzAddress, mockedLzAddress, forcefiToken.getAddress(), owner.address, mockedLzAddress]);
+        const forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        const forcefiStaking = await ethers.deployContract("ForcefiStaking", [mockedLzAddress, mockedLzAddress, forcefiToken.getAddress(), equityFundraising.getAddress(), mockedLzAddress]);
 
-        const minStakingAmount = 500;
-        const investorTreshhold = 7500;
         await forcefiStaking.setInvestorTreshholdAmount(investorTreshhold);
         await forcefiToken.approve(forcefiStaking.getAddress(), investorTreshhold);
         await forcefiStaking.stake(investorTreshhold, 0);
+        await forcefiStaking.setMinStakingAmount(minStakingAmount);
 
         await forcefiToken.transfer(user1.address, minStakingAmount);
         await forcefiToken.connect(user1).approve(forcefiStaking.getAddress(), minStakingAmount);
@@ -181,7 +183,7 @@ describe("EquityFundraising", function () {
         it("should invest in new fundraising", async function () {
 
             const investorBalance = 1000;
-            const investmentAmount = 100;
+            const investmentAmount = minStakingAmount;
 
             await investmentToken.transfer(user1.address, investorBalance);
             let investmentAmountConverted = Number(investmentAmount) * Number(await equityFundraising.getChainlinkDataFeedLatestAnswer(investmentToken));
