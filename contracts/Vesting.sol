@@ -8,12 +8,12 @@ import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
 
 /**
- * @title VestingFinal
+ * @title Vesting
  * @dev This contract manages token vesting plans for multiple beneficiaries within a project.
  * It allows for the creation of vesting plans, adding beneficiaries, and releasing vested tokens.
  * Inherits from ForcefiBaseContract, uses OpenZeppelin's ERC20 and SafeERC20, and includes reentrancy protection.
  */
-contract VestingFinal is ForcefiBaseContract, ReentrancyGuard {
+contract Vesting is ForcefiBaseContract, ReentrancyGuard {
     using SafeERC20 for ERC20;
 
     uint256 private _tokenIdCounter;
@@ -34,6 +34,20 @@ contract VestingFinal is ForcefiBaseContract, ReentrancyGuard {
     }
 
     // Struct representing a vesting plan
+     /**
+     * @param tokenAddress The address of the ERC20 token that will be vested.
+     * @param projectName The name of the project associated with this vesting plan.
+     * @param label A label for this specific vesting plan.
+     * @param vestingOwner The address of the owner of the vesting plan.
+     * @param saleStart The timestamp indicating when the vesting starts.
+     * @param cliffPeriod The duration (in seconds) before the tokens start vesting.
+     * @param vestingPeriod The total duration (in seconds) over which the tokens will be vested.
+     * @param releasePeriod The period (in seconds) how often tokens are released after the cliff period.
+     * @param tgePercent The percentage of the total tokens to be released at the token generation event (TGE).
+     * @param totalTokenAmount The total amount of tokens allocated for this vesting plan.
+     * @param tokenAllocated The amount of tokens that have already been allocated to beneficiaries.
+     * @param initialized A boolean indicating whether the vesting plan has been initialized.
+     */
     struct VestingPlan {
         address tokenAddress;
         string projectName;
@@ -50,6 +64,12 @@ contract VestingFinal is ForcefiBaseContract, ReentrancyGuard {
     }
 
     // Struct representing an individual beneficiary's vesting details
+     /**
+     * @param tokenAmount The total amount of tokens allocated to the individual beneficiary.
+     * @param tokensReleased The amount of tokens that have already been released to the beneficiary.
+     * @param initialized A boolean indicating whether the vesting for this beneficiary has been initialized.
+     * @param initializedTimestamp The timestamp when the vesting was initialized for this beneficiary.
+     */
     struct IndividualVesting {
         uint tokenAmount;
         uint tokensReleased;
@@ -58,6 +78,16 @@ contract VestingFinal is ForcefiBaseContract, ReentrancyGuard {
     }
 
     // Struct representing the parameters required to create a new vesting plan
+    /**
+    * @param benificiars An array of Benificiar structs representing each beneficiary and their token allocation.
+     * @param vestingPlanLabel A label for the vesting plan being created.
+     * @param saleStart The timestamp indicating when the vesting period begins.
+     * @param cliffPeriod The duration (in seconds) before the tokens start vesting.
+     * @param vestingPeriod The total duration (in seconds) over which the tokens will be vested.
+     * @param releasePeriod The period (in seconds) for how often tokens are released after the cliff period.
+     * @param tgePercent The percentage of the total tokens to be released at the token generation event (TGE).
+     * @param totalTokenAmount The total amount of tokens to be allocated for the vesting plan.
+     */
     struct VestingPlanParams {
         Beneficiary[] beneficiaries;
         string vestingPlanLabel;

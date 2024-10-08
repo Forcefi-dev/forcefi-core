@@ -21,7 +21,7 @@ async function main() {
   const Fundraising = await ethers.deployContract("Fundraising");
   console.log("Fundraising contract address " + await Fundraising.getAddress())
 
-  const Vesting = await ethers.deployContract("VestingFinal");
+  const Vesting = await ethers.deployContract("Vesting");
   console.log("Vesting contract address " + await Vesting.getAddress())
 
 }
