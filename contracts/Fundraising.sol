@@ -203,7 +203,7 @@ contract Fundraising is ForcefiBaseContract{
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
 
         FundraisingInstance memory fundraising;
-        fundraising.owner = tx.origin;
+        fundraising.owner = msg.sender;
         fundraising.campaignHardCap = _fundraisingData._totalCampaignLimit;
         fundraising.rate = _fundraisingData._rate;
         fundraising.rateDelimiter = _fundraisingData._rateDelimiter;
@@ -252,7 +252,7 @@ contract Fundraising is ForcefiBaseContract{
             addWhitelistAddress(_whitelistAddresses, UUID);
         }
 
-        emit FundraisingCreated(tx.origin, UUID, _projectName);
+        emit FundraisingCreated(msg.sender, UUID, _projectName);
     }
 
     function getIndividualBalanceForToken(bytes32 _idx, address _investmentTokenAddress) public view returns(uint){
@@ -489,7 +489,7 @@ contract Fundraising is ForcefiBaseContract{
         } else return chainlinkPrice;
     }
 
-    function calculateFee(uint256 amountRaised, FeeConfig memory fundraisingFeeConfig) public view returns (uint256) {
+    function calculateFee(uint256 amountRaised, FeeConfig memory fundraisingFeeConfig) public pure returns (uint256) {
         uint256 feePercentage;
 
         if (amountRaised < fundraisingFeeConfig.tier1Threshold) {

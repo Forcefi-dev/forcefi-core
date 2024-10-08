@@ -38,7 +38,7 @@ describe("Forcefi Package", function () {
         );
 
         [owner, addr1, addr2] = await ethers.getSigners();
-        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
         await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
     });
 

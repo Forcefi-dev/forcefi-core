@@ -4,10 +4,11 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title BaseStaking
 /// @notice A base contract for staking functionality that handles staking, fee distribution, and user balances.
-abstract contract BaseStaking is Ownable, NonblockingLzApp {
+abstract contract BaseStaking is Ownable, NonblockingLzApp, ReentrancyGuard {
     // Counter to track stake IDs
     uint internal _stakeIdCounter;
     uint internal eligibleToReceiveFeeTime;
@@ -52,7 +53,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
     /// @notice Constructor initializes the contract with addresses for fundraising and LayerZero
     /// @param _forcefiFundraisingAddress The address where fundraising fees are sent
     /// @param _lzContractAddress The LayerZero contract address used for cross-chain communication
-    constructor(address _forcefiFundraisingAddress, address _lzContractAddress) NonblockingLzApp(_lzContractAddress) Ownable(tx.origin) {
+    constructor(address _forcefiFundraisingAddress, address _lzContractAddress) NonblockingLzApp(_lzContractAddress) Ownable(msg.sender) {
         forcefiFundraisingAddress = _forcefiFundraisingAddress;
     }
 
@@ -60,12 +61,9 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
     /// @param _feeTokenAddress The address of the ERC20 token used to pay the fees
     /// @param _feeAmount The total amount of fees to distribute
     function receiveFees(address _feeTokenAddress, uint256 _feeAmount) public {
-        uint256 totalEligibleStake = 0;
-        uint256[] memory eligibleStakes = new uint256[](investors.length);
+        require(msg.sender == forcefiFundraisingAddress, "Not fundraising address");
         address[] memory eligibleFeeReceivers = new address[](investors.length);
         uint256 count = 0;
-
-        uint256 tokensWithMultiplier = 0;
 
         // Iterate over all investors and calculate their eligible stake for fee distribution
         for (uint256 i = 0; i < investors.length; i++) {
@@ -96,7 +94,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp {
 
     /// @notice Allows users to claim their accrued fees
     /// @param _feeTokenAddress The address of the ERC20 token to claim fees in
-    function claimFees(address _feeTokenAddress) external {
+    function claimFees(address _feeTokenAddress) external nonReentrant{
         uint tokenBalance = investorTokenBalance[msg.sender][_feeTokenAddress];
         IERC20(_feeTokenAddress).transfer(msg.sender, tokenBalance);
         investorTokenBalance[msg.sender][_feeTokenAddress] = 0;

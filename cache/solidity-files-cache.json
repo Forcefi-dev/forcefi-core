@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ContractFactory.sol": {
-      "lastModificationDate": 1725901100094,
-      "contentHash": "fecd0abbd894d30877ea499edbf0c465",
+      "lastModificationDate": 1728363855293,
+      "contentHash": "5184e498284807193d60f26c7a6e874e",
       "sourceName": "contracts/erc20Contracts/ContractFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -83,8 +83,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableBurnableToken.sol": {
-      "lastModificationDate": 1725512971163,
-      "contentHash": "2e355c9c780826e143ed864f90f0e335",
+      "lastModificationDate": 1728363855294,
+      "contentHash": "b056265c16d917b5baf54735b78fa1b1",
       "sourceName": "contracts/erc20Contracts/ERC20MintableBurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -121,8 +121,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20BurnableToken.sol": {
-      "lastModificationDate": 1725515689751,
-      "contentHash": "b7183f2bbbe7d9aba42e265808108f16",
+      "lastModificationDate": 1728363855294,
+      "contentHash": "274a8f2c904b6450881237e21bbf193c",
       "sourceName": "contracts/erc20Contracts/ERC20BurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -160,8 +160,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableToken.sol": {
-      "lastModificationDate": 1725512971084,
-      "contentHash": "85711210b7eb073ab7c93ba6fe2d696b",
+      "lastModificationDate": 1728363855295,
+      "contentHash": "152467f7be5c8721afa5cc51ea2ff94c",
       "sourceName": "contracts/erc20Contracts/ERC20MintableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -198,8 +198,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20Token.sol": {
-      "lastModificationDate": 1725515663481,
-      "contentHash": "50a21d9aa019a1bccf76631a84d73217",
+      "lastModificationDate": 1728363855296,
+      "contentHash": "bfed530da0be97a219ed914c9c9fe50f",
       "sourceName": "contracts/erc20Contracts/ERC20Token.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -465,8 +465,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiPackage.sol": {
-      "lastModificationDate": 1726123336766,
-      "contentHash": "2ee37eb0b290f40c0ad57f4503d6f04b",
+      "lastModificationDate": 1728363855292,
+      "contentHash": "4d11866e33170d384340ca8ff2730605",
       "sourceName": "contracts/ForcefiPackage.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -585,8 +585,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Fundraising.sol": {
-      "lastModificationDate": 1727953959692,
-      "contentHash": "57bba22d67d9bd89329beae5929c119f",
+      "lastModificationDate": 1728364954331,
+      "contentHash": "6585d17af70f0cd29f389e1a254235cb",
       "sourceName": "contracts/Fundraising.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -627,8 +627,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\PausableContractFactory.sol": {
-      "lastModificationDate": 1725900232173,
-      "contentHash": "5ba7dc4b0ef0f3806e53fe09c4a49c44",
+      "lastModificationDate": 1728363855299,
+      "contentHash": "c0d1c6b3cbe1468484b0cae4186957a1",
       "sourceName": "contracts/erc20Contracts/pausable/PausableContractFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -669,8 +669,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableBurnableToken.sol": {
-      "lastModificationDate": 1725514866102,
-      "contentHash": "a76a144813944574c78d8ced65275035",
+      "lastModificationDate": 1728363855298,
+      "contentHash": "15abbb6fac20ef3864a6f46c10be2973",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableBurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -707,8 +707,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableBurnableToken.sol": {
-      "lastModificationDate": 1725518687574,
-      "contentHash": "c258901f2ce26ec41316a443ede10568",
+      "lastModificationDate": 1728363855297,
+      "contentHash": "d86c86197ea0469adc197e2186fc5756",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableBurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -748,8 +748,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableToken.sol": {
-      "lastModificationDate": 1725514827472,
-      "contentHash": "6eed052956263956a9fa9ff7aeb890ba",
+      "lastModificationDate": 1728363855298,
+      "contentHash": "1aed3d65a44c7f735ade9d8c37c5f30d",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -786,8 +786,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableToken.sol": {
-      "lastModificationDate": 1728067445066,
-      "contentHash": "05326e4dd9ea53441e3294e7dd346b4c",
+      "lastModificationDate": 1728364920636,
+      "contentHash": "959778f20849e82cb63104ced227071c",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -819,7 +819,7 @@
         "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
-        "0.8.20"
+        "^0.8.20"
       ],
       "artifacts": [
         "ERC20PausableToken"
@@ -1354,8 +1354,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
-      "lastModificationDate": 1727507125282,
-      "contentHash": "ee1d205e86b9202cc60f19fec8fc6916",
+      "lastModificationDate": 1728363855339,
+      "contentHash": "696e41099d8c4637fe175e6c58680904",
       "sourceName": "contracts/Staking/BaseStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1384,7 +1384,8 @@
       "imports": [
         "@openzeppelin/contracts/access/Ownable.sol",
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol"
+        "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol",
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol"
       ],
       "versionPragmas": [
         "0.8.20"
@@ -1394,7 +1395,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiStaking.sol": {
-      "lastModificationDate": 1727512433795,
+      "lastModificationDate": 1728363848249,
       "contentHash": "88a4f2958e43690f69837816368d1e3f",
       "sourceName": "contracts/Staking/ForcefiStaking.sol",
       "solcConfig": {
@@ -1433,7 +1434,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiChildChainStaking.sol": {
-      "lastModificationDate": 1727513200950,
+      "lastModificationDate": 1728363848248,
       "contentHash": "87ba5bc490be7819470fd30f213f0ba6",
       "sourceName": "contracts/Staking/ForcefiChildChainStaking.sol",
       "solcConfig": {

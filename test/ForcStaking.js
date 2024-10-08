@@ -17,8 +17,8 @@ describe("TokenLock", function () {
 
         // Deploy mock ERC20 tokens
         const Token = await ethers.getContractFactory("ERC20Token"); // Use OpenZeppelin's ERC20 Mock
-        token = await Token.deploy("Token", "TKN", 1000);
-        treasuryToken = await Token.deploy("TreasuryToken", "TREAS", 5000);
+        token = await Token.deploy("Token", "TKN", 1000, owner.address);
+        treasuryToken = await Token.deploy("TreasuryToken", "TREAS", 5000, owner.address);
 
         // Deploy TokenLock contract
         const TokenLock = await ethers.getContractFactory("TokenLock");

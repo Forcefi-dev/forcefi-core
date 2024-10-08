@@ -41,7 +41,7 @@ describe("Vesting", function () {
     const deployContracts = async () => {
         vestingContract = await ethers.deployContract("VestingFinal");
         [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
-        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply]);
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply, owner.address]);
 
         const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await vestingContract.setForcefiPackageAddress(forcefiPackage.getAddress());
@@ -229,7 +229,7 @@ describe("Vesting", function () {
             ];
 
             // Deploy and initialize the pausable ERC20 token
-            const erc20PausableToken = await ethers.deployContract("ERC20PausableBurnableToken", [name, symbol, erc20Supply]);
+            const erc20PausableToken = await ethers.deployContract("ERC20PausableBurnableToken", [name, symbol, erc20Supply, owner.address]);
 
             // Add vesting plan
             await erc20PausableToken.approve(vestingContract.getAddress(), erc20Supply);

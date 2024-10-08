@@ -55,7 +55,7 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
      * @param _lzContractAddress Address of the LayerZero contract.
      */
-    constructor(address _lzContractAddress) Ownable(tx.origin) NonblockingLzApp(_lzContractAddress){
+    constructor(address _lzContractAddress) Ownable(msg.sender) NonblockingLzApp(_lzContractAddress){
         lzContractAddress = _lzContractAddress;
         addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
         addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package
@@ -181,7 +181,7 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
         bytes memory payload = abi.encode(msg.sender, _projectName);
         uint16 version = 1;
         bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
-        _lzSend(_destChainId, payload, payable(tx.origin), address(0x0), adapterParams);
+        _lzSend(_destChainId, payload, payable(msg.sender), address(0x0), adapterParams);
     }
 
     /**

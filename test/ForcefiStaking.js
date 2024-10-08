@@ -27,8 +27,8 @@ describe("Forcefi staking", function () {
 
         [owner, addr1, addr2, silverNftAddress, goldNftAddress] = await ethers.getSigners();
 
-        forcefiToken = await ethers.deployContract("ERC20BurnableToken", [name, symbol, additionalTokens]);
-        investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, investmentTokensMintAmount]);
+        forcefiToken = await ethers.deployContract("ERC20BurnableToken", [name, symbol, additionalTokens, owner.address]);
+        investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, investmentTokensMintAmount, owner.address]);
 
         stakingContract = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, srcChainMock.getAddress());
         dstForcefiPackage = await forcefiStaking.deploy(silverNftAddress, goldNftAddress, forcefiToken, owner.address, dstChainMock.getAddress());

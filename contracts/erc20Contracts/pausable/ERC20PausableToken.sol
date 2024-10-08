@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
@@ -20,13 +20,11 @@ contract ERC20PausableToken is ERC20, Pausable, Ownable {
      * @param _ticker Symbol of the token.
      * @param _initialSupply Initial token supply.
      */
-    constructor(string memory _name, string memory _ticker, uint256 _initialSupply)
-    ERC20(_name, _ticker) Ownable(tx.origin)
+    constructor(string memory _name, string memory _ticker, uint256 _initialSupply, address _ownerAddress)
+    ERC20(_name, _ticker) Ownable(_ownerAddress)
     {
-        // Transfer ownership to the origin of the transaction
-        _transferOwnership(tx.origin);
         // Mint initial supply to the owner
-        _mint(tx.origin, _initialSupply);
+        _mint(_ownerAddress, _initialSupply);
     }
 
     /**
@@ -61,7 +59,9 @@ contract ERC20PausableToken is ERC20, Pausable, Ownable {
         _unpause();
     }
 
-    // Override _update() to apply the custom logic (similar to _beforeTokenTransfer in v4)
+    /**
+     * @dev Update the transfer logic with custom pausability and whitelist check.
+     */
     function _update(address from, address to, uint256 amount) internal virtual override whenNotPausedOrWhitelisted {
         super._update(from, to, amount);
     }

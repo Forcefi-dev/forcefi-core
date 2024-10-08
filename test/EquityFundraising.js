@@ -89,17 +89,17 @@ describe("EquityFundraising", function () {
 
         const symbol = "InvestmentToken";
         const name = "INVT";
-        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        investmentToken2 = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        projectToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        investmentToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        investmentToken2 = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        projectToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
 
         forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await equityFundraising.setForcefiPackageAddress(forcefiPackage.getAddress());
 
         // Setup staking contract, add 1 investor who will receive fees
-        const forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens]);
-        const forcefiStaking = await ethers.deployContract("ForcefiStaking", [mockedLzAddress, mockedLzAddress, forcefiToken.getAddress(), owner.address, mockedLzAddress]);
+        const forcefiToken = await ethers.deployContract("ERC20Token", [name, symbol, additionalTokens, owner.address]);
+        const forcefiStaking = await ethers.deployContract("ForcefiStaking", [mockedLzAddress, mockedLzAddress, forcefiToken.getAddress(), equityFundraising.getAddress(), mockedLzAddress]);
 
         await forcefiStaking.setInvestorTreshholdAmount(investorTreshhold);
         await forcefiToken.approve(forcefiStaking.getAddress(), investorTreshhold);

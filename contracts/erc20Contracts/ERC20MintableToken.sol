@@ -5,8 +5,8 @@ import "./ERC20Token.sol";
 
 contract ERC20MintableToken is ERC20Token {
 
-    constructor(string memory _name, string memory _ticker, uint256 _initialSupply)
-    ERC20Token(_name, _ticker, _initialSupply) {
+    constructor(string memory _name, string memory _ticker, uint256 _initialSupply, address _ownerAddress)
+        ERC20Token(_name, _ticker, _initialSupply, _ownerAddress) {
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
