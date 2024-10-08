@@ -39,7 +39,7 @@ describe("Vesting", function () {
 
     // Helper function to deploy contracts
     const deployContracts = async () => {
-        vestingContract = await ethers.deployContract("VestingFinal");
+        vestingContract = await ethers.deployContract("Vesting");
         [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply, owner.address]);
 
