@@ -5,7 +5,7 @@ async function main() {
 
     console.log("Start contract verification:", deployer.address);
 
-    const addressToVerify = "";
+    const addressToVerify = "0x80026f366Fd5Fd4913CAcdF29d4B69d789aF99Ef";
 
     await hre.run("verify:verify", {
         address: addressToVerify,
