@@ -467,6 +467,8 @@ describe("EquityFundraising", function () {
             // Withdraw fee
             const treasuryWallet = ethers.Wallet.createRandom();
             await expect(await ethers.provider.getBalance(treasuryWallet.address)).to.equal(0);
+
+            await expect(equityFundraising.connect(user1).withdrawFee(treasuryWallet.address)).to.be.revertedWithCustomError(equityFundraising, "OwnableUnauthorizedAccount");
             await equityFundraising.withdrawFee(treasuryWallet.address);
 
             const finalBalance = await ethers.provider.getBalance(equityFundraising.getAddress());

@@ -14,6 +14,8 @@ describe("Vesting", function () {
 
     const erc20Supply = "50000";
 
+    let forcefiPackage;
+
     const vestingPlans = [
         {
             beneficiaries: [{ beneficiaryAddress: beneficiar_1, tokenAmount: 250 }],
@@ -43,8 +45,17 @@ describe("Vesting", function () {
         [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply, owner.address]);
 
-        const forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
+        forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
         await vestingContract.setForcefiPackageAddress(forcefiPackage.getAddress());
+
+        const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
+        const mockOracle = await MockOracle.deploy(
+            "18", // decimals
+            "1000"// initialAnswer
+        );
+
+        await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
+
     };
 
     // Helper function to approve and add vesting plans
@@ -93,6 +104,27 @@ describe("Vesting", function () {
             expect(beneficiar1[1]).to.equal(0);
         });
 
+        it("adding vesting plan with project package", async function () {
+
+            const feeAmount = 5;
+            await vestingContract.setFeeAmount(feeAmount);
+
+            await erc20Token.approve(vestingContract.getAddress(), erc20Supply);
+            await expect(vestingContract.addVestingPlansBulk(vestingPlans, _projectName, erc20Token.getAddress())).to.be.revertedWith("Invalid fee value or no creation token available");
+
+            const packageTotalPrice = 2000;
+            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+            const totalTokensPerPackage = packageTotalPrice * Number(erc20TokenPrice);
+            await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerPackage.toString());
+            await forcefiPackage.buyPackage(_projectName, "Accelerator", erc20Token.getAddress(), addr1.address);
+
+            await approveAndAddVestings(vestingPlans);
+            const [vesting1] = await getProjectVestings();
+            const vestingPlan = await vestingContract.vestingPlans(vesting1);
+
+            expect(vestingPlan[1]).to.equal(_projectName);
+        });
+
         it("unlock unallocated tokens", async function () {
             await approveAndAddVestings(vestingPlans);
             const [vesting1] = await getProjectVestings();
@@ -102,8 +134,14 @@ describe("Vesting", function () {
             expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - totalAllocatedTokens);
 
             // Withdraw unallocated tokens
+            const invalidVestingAddress = "0xa397bc7c0ff6ac261a7a658e96f6f457721577937cc4078360bcb683265671b2";
+            await expect(vestingContract.withdrawUnallocatedTokens(invalidVestingAddress)).to.be.revertedWith("Invalid vesting plan");
+            await expect(vestingContract.connect(addr1).withdrawUnallocatedTokens(vesting1)).to.be.revertedWith("Only vesting owner can withdraw tokens");
+
             await vestingContract.withdrawUnallocatedTokens(vesting1);
             expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - vestingPlans[0].beneficiaries[0].tokenAmount - vestingPlans[1].totalTokenAmount);
+
+            await expect(vestingContract.withdrawUnallocatedTokens(vesting1)).to.be.revertedWith("No unallocated tokens to withdraw");
         });
 
         // Add other test cases here using helper functions as needed
@@ -119,6 +157,18 @@ describe("Vesting", function () {
             }]
 
             await vestingContract.addVestingBeneficiaries(vesting1, benificariesArray);
+
+            await expect(vestingContract.connect(addr1).addVestingBeneficiaries(vesting1, benificariesArray)).to.be.revertedWith("Only vesting owner can add beneficiaries");
+
+            const invalidVestingAddress = "0xa397bc7c0ff6ac261a7a658e96f6f457721577937cc4078360bcb683265671b2";
+            await expect(vestingContract.addVestingBeneficiaries(invalidVestingAddress, benificariesArray)).to.be.revertedWith("Invalid vesting plan");
+
+            // Try to add address(0) as benificiar
+            const invalidBenificariesArray = [{
+                beneficiaryAddress: '0x0000000000000000000000000000000000000000',
+                tokenAmount: 0
+            }]
+            await expect(vestingContract.addVestingBeneficiaries(vesting1, invalidBenificariesArray)).to.be.revertedWith("Invalid beneficiary address");
 
             const vestingPlan = await vestingContract.vestingPlans(vesting1);
             expect(vestingPlan[10]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount + benificariesArray[0].tokenAmount);

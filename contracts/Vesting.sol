@@ -2,7 +2,6 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
@@ -13,7 +12,7 @@ import "./VestingLibrary.sol";
  * It allows for the creation of vesting plans, adding beneficiaries, and releasing vested tokens.
  * Inherits from ForcefiBaseContract, uses OpenZeppelin's ERC20 and SafeERC20, and includes reentrancy protection.
  */
-contract Vesting is ForcefiBaseContract, ReentrancyGuard {
+contract Vesting is ForcefiBaseContract {
     using SafeERC20 for ERC20;
 
     uint256 private _tokenIdCounter;
@@ -213,7 +212,7 @@ contract Vesting is ForcefiBaseContract, ReentrancyGuard {
      *
      * @param _vestingIdx The ID of the vesting plan.
      */
-    function withdrawUnallocatedTokens(bytes32 _vestingIdx) public nonReentrant {
+    function withdrawUnallocatedTokens(bytes32 _vestingIdx) public {
         require(vestingPlans[_vestingIdx].initialized, "Invalid vesting plan");
         require(vestingPlans[_vestingIdx].vestingOwner == msg.sender, "Only vesting owner can withdraw tokens");
 
@@ -232,7 +231,7 @@ contract Vesting is ForcefiBaseContract, ReentrancyGuard {
      *
      * @param _vestingIdx The ID of the vesting plan.
      */
-    function releaseVestedTokens(bytes32 _vestingIdx) public nonReentrant {
+    function releaseVestedTokens(bytes32 _vestingIdx) public {
         uint256 vestedAmount = calculateVestedTokens(_vestingIdx);
         require(vestedAmount > 0, "TokenVesting: cannot release tokens, no vested tokens");
 

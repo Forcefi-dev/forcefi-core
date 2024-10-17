@@ -19,9 +19,6 @@ interface ILzContract {
  * @dev Main contract for managing investment packages and package purchases.
  */
 contract ForcefiPackage is Ownable, NonblockingLzApp {
-    // Address of the LayerZero contract used for cross-chain operations
-    address private lzContractAddress;
-
     mapping(address => AggregatorV3Interface) dataFeeds;
 
     // Structure defining the properties of an investment package
@@ -56,7 +53,6 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      * @param _lzContractAddress Address of the LayerZero contract.
      */
     constructor(address _lzContractAddress) Ownable(msg.sender) NonblockingLzApp(_lzContractAddress){
-        lzContractAddress = _lzContractAddress;
         addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
         addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package
     }
