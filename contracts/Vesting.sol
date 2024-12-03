@@ -3,16 +3,14 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
 
 /**
  * @title Vesting
  * @dev This contract manages token vesting plans for multiple beneficiaries within a project.
  * It allows for the creation of vesting plans, adding beneficiaries, and releasing vested tokens.
- * Inherits from ForcefiBaseContract, uses OpenZeppelin's ERC20 and SafeERC20, and includes reentrancy protection.
  */
-contract Vesting is ForcefiBaseContract {
+contract Vesting {
     using SafeERC20 for ERC20;
 
     uint256 private _tokenIdCounter;
@@ -125,9 +123,6 @@ contract Vesting is ForcefiBaseContract {
     external
     payable
     {
-        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
-        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
-
         for (uint i = 0; i < vestingPlanParams.length; i++) {
             addVestingPlan(vestingPlanParams[i], _projectName, _tokenAddress);
         }

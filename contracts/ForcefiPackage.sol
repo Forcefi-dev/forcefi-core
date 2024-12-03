@@ -4,7 +4,8 @@ pragma solidity 0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
+import { OApp, MessagingFee, Origin } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
+import { MessagingReceipt } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol";
 
 /**
  * @title ILzContract
@@ -18,7 +19,7 @@ interface ILzContract {
  * @title ForcefiPackage
  * @dev Main contract for managing investment packages and package purchases.
  */
-contract ForcefiPackage is Ownable, NonblockingLzApp {
+contract ForcefiPackage is Ownable, OApp {
     mapping(address => AggregatorV3Interface) dataFeeds;
 
     // Structure defining the properties of an investment package
@@ -50,16 +51,51 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
 
     /**
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
-     * @param _lzContractAddress Address of the LayerZero contract.
-     */
-    constructor(address _lzContractAddress) Ownable(msg.sender) NonblockingLzApp(_lzContractAddress){
+    */
+    constructor(address _endpoint, address _delegate) OApp(_endpoint, _delegate) Ownable(_delegate) {
         addPackage("Explorer", 750, false, 5, false);      // Adding default "Explorer" package
         addPackage("Accelerator", 2000, false, 5, true);   // Adding default "Accelerator" package
     }
 
-    function _nonblockingLzReceive(uint16, bytes memory, uint64, bytes memory _payload) internal override {
-        (address _tokenOwner, string memory _projectName) = abi.decode(_payload, (address, string));
+    /**
+    * @dev Internal function override to handle incoming messages from another chain.
+     * @dev _origin A struct containing information about the message sender.
+     * @dev _guid A unique global packet identifier for the message.
+     * @param payload The encoded message payload being received.
+     *
+     * @dev The following params are unused in the current implementation of the OApp.
+     * @dev _executor The address of the Executor responsible for processing the message.
+     * @dev _extraData Arbitrary data appended by the Executor to the message.
+     *
+     * Decodes the received payload and processes it as per the business logic defined in the function.
+     */
+    function _lzReceive(
+        Origin calldata /*_origin*/,
+        bytes32 /*_guid*/,
+        bytes calldata payload,
+        address /*_executor*/,
+        bytes calldata /*_extraData*/
+    ) internal override {
+        (address _tokenOwner, string memory _projectName) = abi.decode(payload, (address, string));
         _mintPackageToken(_tokenOwner, _projectName);
+    }
+
+    /**
+    * @notice Quotes the gas needed to pay for the full omnichain transaction in native gas or ZRO token.
+     * @param _dstEid Destination chain's endpoint ID.
+     * @param _message The message.
+     * @param _options Message execution options (e.g., for sending gas to destination).
+     * @param _payInLzToken Whether to return fee in ZRO token.
+     * @return fee A `MessagingFee` struct containing the calculated gas fee in either the native token or ZRO token.
+     */
+    function quote(
+        uint32 _dstEid,
+        string memory _message,
+        bytes memory _options,
+        bool _payInLzToken
+    ) public view returns (MessagingFee memory fee) {
+        bytes memory payload = abi.encode(_message);
+        fee = _quote(_dstEid, payload, _options, _payInLzToken);
     }
 
     /**
@@ -170,14 +206,11 @@ contract ForcefiPackage is Ownable, NonblockingLzApp {
      * @dev Function to bridge a creation token to another blockchain.
      * @param _destChainId Destination chain ID.
      * @param _projectName Name of the project associated with the token.
-     * @param gasForDestinationLzReceive Gas required for destination LayerZero receive.
      */
-    function bridgeToken(uint16 _destChainId, string memory _projectName, uint gasForDestinationLzReceive) public payable {
+    function bridgeToken(uint32 _destChainId, string memory _projectName, bytes calldata _options) external payable returns (MessagingReceipt memory receipt){
         require(creationTokens[msg.sender][_projectName], "No token to bridge");
         bytes memory payload = abi.encode(msg.sender, _projectName);
-        uint16 version = 1;
-        bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
-        _lzSend(_destChainId, payload, payable(msg.sender), address(0x0), adapterParams);
+        _lzSend(_destChainId, payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
     }
 
     /**

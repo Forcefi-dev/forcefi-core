@@ -26,7 +26,7 @@ contract PausableContractFactory is ForcefiBaseContract {
      * - PausableMintableBurnable: A pausable ERC20 token with both minting and burning capabilities.
      * - PausableMintable: A pausable ERC20 token with minting capabilities.
      */
-    enum ContractType { Pausable, PausableBurnable, PausableMintableBurnable, PausableMintable }
+    enum ContractType { Pausable, PausableBurnable, PausableMintable, PausableMintableBurnable }
 
     /**
      * @dev Emitted when a new token contract is created.

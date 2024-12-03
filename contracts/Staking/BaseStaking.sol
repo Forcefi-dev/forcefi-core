@@ -3,12 +3,13 @@ pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
+import { OApp, MessagingFee, Origin } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
+import { MessagingReceipt } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title BaseStaking
 /// @notice A base contract for staking functionality that handles staking, fee distribution, and user balances.
-abstract contract BaseStaking is Ownable, NonblockingLzApp, ReentrancyGuard {
+abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     // Counter to track stake IDs
     uint internal _stakeIdCounter;
     uint internal eligibleToReceiveFeeTime;
@@ -19,7 +20,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp, ReentrancyGuard {
     // Mapping from stake ID to active stake details
     mapping(uint => ActiveStake) public activeStake;
     mapping(address => bool) hasStaked;
-    mapping(address => bool) isInvestor;
+    mapping(address => bool) public isInvestor;
     mapping(address => uint) public totalStaked;
 
     // Mapping to track investor token balances by address and token contract
@@ -52,8 +53,7 @@ abstract contract BaseStaking is Ownable, NonblockingLzApp, ReentrancyGuard {
 
     /// @notice Constructor initializes the contract with addresses for fundraising and LayerZero
     /// @param _forcefiFundraisingAddress The address where fundraising fees are sent
-    /// @param _lzContractAddress The LayerZero contract address used for cross-chain communication
-    constructor(address _forcefiFundraisingAddress, address _lzContractAddress) NonblockingLzApp(_lzContractAddress) Ownable(msg.sender) {
+    constructor(address _forcefiFundraisingAddress, address _endpoint, address _delegate) OApp(_endpoint, _delegate) Ownable(_delegate) {
         forcefiFundraisingAddress = _forcefiFundraisingAddress;
     }
 

@@ -15,6 +15,7 @@ contract ForcefiStaking is BaseStaking {
     mapping(uint => address) public silverNftOwner;
     mapping(uint => address) public goldNftOwner;
     mapping(address => bool) public isCurator;
+    mapping(address => uint) public currentStakeId;
 
     uint public minStakingAmount;
     uint public curatorTreshholdAmount;
@@ -32,25 +33,27 @@ contract ForcefiStaking is BaseStaking {
     /// @param _goldNftAddress The address of the gold NFT contract
     /// @param _forcefiTokenAddress The address of the FORCEFI token contract
     /// @param _forcefiFundraisingAddress The address where fundraising fees are sent
-    /// @param _lzContractAddress The LayerZero contract address used for cross-chain communication
     constructor(
         address _silverNftAddress,
         address _goldNftAddress,
         address _forcefiTokenAddress,
         address _forcefiFundraisingAddress,
-        address _lzContractAddress
-    ) BaseStaking(_forcefiFundraisingAddress, _lzContractAddress) {
+        address _endpoint,
+        address _delegate
+    ) BaseStaking(_forcefiFundraisingAddress, _endpoint, _delegate) {
         silverNftContract = _silverNftAddress;
         goldNftContract = _goldNftAddress;
         forcefiTokenAddress = _forcefiTokenAddress;
     }
 
-    /// @notice Handles incoming messages from LayerZero (not implemented in this contract)
-    /// @param _srcChainId The source chain ID from which the message originated
-    /// @param _srcAddress The source address from which the message was sent
-    /// @param _nonce The unique nonce of the message
-    /// @param _payload The payload containing the staking or unstaking details
-    function _nonblockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal override {
+    // No logic to implement
+    function _lzReceive(
+        Origin calldata /*_origin*/,
+        bytes32 /*_guid*/,
+        bytes calldata payload,
+        address /*_executor*/,
+        bytes calldata /*_extraData*/
+    ) internal override {
         // No logic to implement
     }
 
@@ -70,23 +73,34 @@ contract ForcefiStaking is BaseStaking {
     /// @param _stakeAmount The amount of tokens to stake
     /// @param _goldNftId The ID of the gold NFT associated with the stake (0 if not applicable)
     function stake(uint _stakeAmount, uint _goldNftId) public {
-        require(_stakeAmount == minStakingAmount - totalStaked[msg.sender]
-            || _stakeAmount == curatorTreshholdAmount - totalStaked[msg.sender]
-            || _stakeAmount - totalStaked[msg.sender] == investorTreshholdAmount
-            || _goldNftId != 0, "Invalid stake amount");
+//        require(_stakeAmount == minStakingAmount - totalStaked[msg.sender]
+//            || _stakeAmount == curatorTreshholdAmount - totalStaked[msg.sender]
+//            || _stakeAmount - totalStaked[msg.sender] == investorTreshholdAmount
+//            || _stakeAmount - totalStaked[msg.sender] == curatorTreshholdAmount
+//            || _goldNftId != 0, "Invalid stake amount");
+
+        require(
+            (_stakeAmount + totalStaked[msg.sender] == minStakingAmount
+                || _stakeAmount + totalStaked[msg.sender] == curatorTreshholdAmount
+                || _stakeAmount + totalStaked[msg.sender] == investorTreshholdAmount
+                || _goldNftId != 0),
+            "Invalid stake amount"
+        );
 
         if(_goldNftId == 0) {
             ERC20(forcefiTokenAddress).transferFrom(msg.sender, address(this), _stakeAmount);
         }
         hasStaked[msg.sender] = true;
 
-        if(_stakeAmount + totalStaked[msg.sender]== investorTreshholdAmount ){
+        if(_stakeAmount + totalStaked[msg.sender] == investorTreshholdAmount ){
             require(isInvestor[msg.sender] == false, "Only one investor stake is available per address");
             isInvestor[msg.sender] = true;
-            uint stakeId = _stakeIdCounter;
+            isCurator[msg.sender] = true;
             _stakeIdCounter += 1;
+            uint stakeId = _stakeIdCounter;
             investors.push(stakeId);
-            activeStake[stakeId] = ActiveStake(stakeId, msg.sender, _stakeAmount, block.timestamp, _goldNftId);
+            currentStakeId[msg.sender] = stakeId;
+            activeStake[stakeId] = ActiveStake(stakeId, msg.sender, _stakeAmount + totalStaked[msg.sender], block.timestamp, _goldNftId);
             emit Staked(msg.sender, _stakeAmount, stakeId);
         }
         else if (_goldNftId != 0 && goldNftOwner[_goldNftId] != address(0)) {
@@ -95,7 +109,7 @@ contract ForcefiStaking is BaseStaking {
             uint stakeId = _stakeIdCounter;
             _stakeIdCounter += 1;
             investors.push(stakeId);
-            activeStake[stakeId] = ActiveStake(stakeId, msg.sender, _stakeAmount, block.timestamp, _goldNftId);
+            activeStake[stakeId] = ActiveStake(stakeId, msg.sender, _stakeAmount + totalStaked[msg.sender], block.timestamp, _goldNftId);
 
             emit Staked(msg.sender, _stakeAmount, stakeId);
         } else if (_stakeAmount + totalStaked[msg.sender] == curatorTreshholdAmount) {
@@ -107,22 +121,20 @@ contract ForcefiStaking is BaseStaking {
 
     /// @notice Unstakes a given stake by ID and handles associated logic including penalties and bridging
     /// @param _stakeId The ID of the stake to be unstaked
-    /// @param gasForDestinationLzReceive The gas amount provided for the LayerZero receive function on the destination chain
-    function unstake(uint _stakeId, uint gasForDestinationLzReceive) public {
+    function unstake(uint _stakeId, bytes calldata _options) public {
 //        require(activeStake[_stakeId].goldNftId == 0, "Can't unstake gold nft");
 
+        bridgeStakingAccess(chainList[msg.sender], _options, _stakeId, true);
         ERC20(forcefiTokenAddress).transfer(msg.sender, totalStaked[msg.sender]);
-        bridgeStakingAccess(chainList[msg.sender], gasForDestinationLzReceive, _stakeId, true);
-//        activeStake[_stakeId].stakeAmount = 0;
+        //        activeStake[_stakeId].stakeAmount = 0;
         emit Unstaked(msg.sender, _stakeId);
     }
 
     /// @notice Bridges the staking access to multiple destination chains
     /// @param _destChainIds An array of destination chain IDs to which staking access is bridged
-    /// @param gasForDestinationLzReceive The gas amount provided for the LayerZero receive function on the destination chains
     /// @param _stakeId The ID of the stake being bridged
     /// @param _unstake Boolean indicating if the bridging is for unstaking
-    function bridgeStakingAccess(uint16[] memory _destChainIds, uint gasForDestinationLzReceive, uint _stakeId, bool _unstake) public payable {
+    function bridgeStakingAccess(uint16[] memory _destChainIds, bytes calldata _options, uint _stakeId, bool _unstake) public payable {
 //        require(activeStake[_stakeId].stakerAddress == msg.sender, "Not an owner of a stake");
         // Check if user eligibility to bridge
 
@@ -133,6 +145,7 @@ contract ForcefiStaking is BaseStaking {
             stakeAmount = 0;
             isCurator[msg.sender] = false;
             hasStaked[msg.sender] = false;
+            currentStakeId[msg.sender] = 0;
             removeInvestor(_stakeId);
         } else {
             // Loop through all destination chain IDs and add them to the user's chain list
@@ -142,18 +155,15 @@ contract ForcefiStaking is BaseStaking {
         }
 
         bytes memory payload = abi.encode(msg.sender, stakeAmount, _stakeId);
-        executeBridge(_destChainIds, payload, gasForDestinationLzReceive);
+        executeBridge(_destChainIds, payload, _options);
     }
 
     /// @notice Executes the bridge operation to multiple destination chains
     /// @param _destChainIds An array of destination chain IDs to bridge to
     /// @param payload The payload data to send to the destination chains
-    /// @param gasForDestinationLzReceive The gas amount provided for the LayerZero receive function on the destination chains
-    function executeBridge(uint16[] memory _destChainIds, bytes memory payload, uint gasForDestinationLzReceive) internal {
-        uint16 version = 1;
-        bytes memory adapterParams = abi.encodePacked(version, gasForDestinationLzReceive);
+    function executeBridge(uint16[] memory _destChainIds, bytes memory payload, bytes calldata _options) internal {
         for (uint256 i = 0; i < _destChainIds.length; i++) {
-            _lzSend(_destChainIds[i], payload, payable(tx.origin), address(0x0), adapterParams);
+            _lzSend(_destChainIds[i], payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
         }
     }
 

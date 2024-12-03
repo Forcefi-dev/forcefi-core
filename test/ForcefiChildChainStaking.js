@@ -62,7 +62,7 @@ describe("Forcefi Child chain staking", function () {
             expect(await childChainStakingContract.hasAddressStaked(owner.address)).to.equal(false);
 
             await stakingContract.stake(investorTreshhold, 0);
-            await stakingContract.bridgeStakingAccess([dstChainId], 0, 0, false);
+            await stakingContract.bridgeStakingAccess([dstChainId], 0, 1, false);
 
             expect(await stakingContract.hasAddressStaked(owner.address)).to.equal(true);
 
@@ -80,7 +80,7 @@ describe("Forcefi Child chain staking", function () {
             expect(childChainInvestors.length).to.equal(1);
 
             // Test _nonBlockingLzReceive that sets unstake
-            await stakingContract.unstake(0, 0);
+            await stakingContract.unstake(1, 0);
             expect(await stakingContract.hasAddressStaked(owner.address)).to.equal(false);
 
             expect(await childChainStakingContract.hasAddressStaked(owner.address)).to.equal(false);

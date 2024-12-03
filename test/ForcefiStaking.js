@@ -121,7 +121,7 @@ describe("Forcefi staking", function () {
             expect(await forcefiToken.balanceOf(await stakingContract.getAddress())).to.equal(investorTreshhold)
 
             // Unstake event
-            await stakingContract.unstake(0, 0);
+            await stakingContract.unstake(1, 0);
 
             expect(await stakingContract.hasAddressStaked(owner.address)).to.equal(false);
             expect(await stakingContract.isCurator(owner.address)).to.equal(false);
