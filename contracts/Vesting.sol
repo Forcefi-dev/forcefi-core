@@ -208,7 +208,6 @@ contract Vesting {
      * @param _vestingIdx The ID of the vesting plan.
      */
     function withdrawUnallocatedTokens(bytes32 _vestingIdx) public {
-    function withdrawUnallocatedTokens(bytes32 _vestingIdx) public {
         require(vestingPlans[_vestingIdx].initialized, "Invalid vesting plan");
         require(vestingPlans[_vestingIdx].vestingOwner == msg.sender, "Only vesting owner can withdraw tokens");
 
@@ -227,7 +226,6 @@ contract Vesting {
      *
      * @param _vestingIdx The ID of the vesting plan.
      */
-    function releaseVestedTokens(bytes32 _vestingIdx) public {
     function releaseVestedTokens(bytes32 _vestingIdx) public {
         uint256 vestedAmount = calculateVestedTokens(_vestingIdx);
         require(vestedAmount > 0, "TokenVesting: cannot release tokens, no vested tokens");
