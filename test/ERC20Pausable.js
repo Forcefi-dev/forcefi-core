@@ -8,27 +8,21 @@ describe("ERC20 Pausable token factory", function () {
 
     const name = "Test token";
     const symbol = "TST";
-    const projectName = "Test project";
     const initialSupply = 20000;
 
     beforeEach(async function () {
         [owner, addr1, addr2, addr3, mockedLzAddress] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20PausableToken", [name, symbol, initialSupply, owner.address]);
-
     });
 
     describe("factory constructor", function () {
-
         it("should check the ownership of factory contract", async function () {
             const n = await erc20Token.owner();
             expect(n).to.equal(owner.address);
         });
-
     });
 
     describe("erc20 pausable token creation", function () {
-
-
         it("should revert when trying to transfer with insufficient balance", async function () {
             await expect(erc20Token.connect(addr1).transfer(addr2.address, 1000)).to.be.revertedWithCustomError(erc20Token, "ERC20InsufficientBalance");
         });

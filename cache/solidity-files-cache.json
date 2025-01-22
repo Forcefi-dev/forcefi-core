@@ -70,8 +70,8 @@
       "artifacts": []
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ContractFactory.sol": {
-      "lastModificationDate": 1728363855293,
-      "contentHash": "5184e498284807193d60f26c7a6e874e",
+      "lastModificationDate": 1734421010972,
+      "contentHash": "62dcdebe9a244fd2e67bfb12af0daea7",
       "sourceName": "contracts/erc20Contracts/ContractFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -151,8 +151,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20BurnableToken.sol": {
-      "lastModificationDate": 1728363855294,
-      "contentHash": "274a8f2c904b6450881237e21bbf193c",
+      "lastModificationDate": 1733235345696,
+      "contentHash": "172df23c44eecd03d7bd0ead8344f9da",
       "sourceName": "contracts/erc20Contracts/ERC20BurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -179,8 +179,7 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"
       ],
       "versionPragmas": [
         "0.8.20"
@@ -190,8 +189,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableBurnableToken.sol": {
-      "lastModificationDate": 1728363855294,
-      "contentHash": "b056265c16d917b5baf54735b78fa1b1",
+      "lastModificationDate": 1733235144547,
+      "contentHash": "c324e33ebfba90146dbf9d6db80fc9f5",
       "sourceName": "contracts/erc20Contracts/ERC20MintableBurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -218,7 +217,8 @@
         }
       },
       "imports": [
-        "./ERC20BurnableToken.sol"
+        "./ERC20BurnableToken.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "0.8.20"
@@ -228,7 +228,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20Token.sol": {
-      "lastModificationDate": 1733042700002,
+      "lastModificationDate": 1733231167542,
       "contentHash": "e04a284952bc6152c4b55dac359c6157",
       "sourceName": "contracts/erc20Contracts/ERC20Token.sol",
       "solcConfig": {
@@ -305,7 +305,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1732038440911,
+      "lastModificationDate": 1733231285792,
       "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -343,7 +343,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1732038437730,
+      "lastModificationDate": 1733231282775,
       "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -379,7 +379,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Burnable.sol": {
-      "lastModificationDate": 1732038438610,
+      "lastModificationDate": 1733231283327,
       "contentHash": "273d8d24b06f67207dd5f35c3a0c1086",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
       "solcConfig": {
@@ -418,7 +418,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1732038438498,
+      "lastModificationDate": 1733231283290,
       "contentHash": "c6375ef25e84c90b3d15f9ec4eef218f",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -459,7 +459,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1732038440515,
+      "lastModificationDate": 1733231284854,
       "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -495,7 +495,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC6093.sol": {
-      "lastModificationDate": 1732038437854,
+      "lastModificationDate": 1733231282880,
       "contentHash": "4aefc698f77ecbace7f401257dfe182d",
       "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC6093.sol",
       "solcConfig": {
@@ -533,7 +533,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1732038440537,
+      "lastModificationDate": 1733231284874,
       "contentHash": "4c02fa6f7ae7b6c289cef80424f0c875",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -571,7 +571,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\ERC20Pausable.sol": {
-      "lastModificationDate": 1732038438686,
+      "lastModificationDate": 1733231283426,
       "contentHash": "64b7606ccba31af7e49e3b2d8af1b948",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
       "solcConfig": {
@@ -610,7 +610,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Pausable.sol": {
-      "lastModificationDate": 1732038440930,
+      "lastModificationDate": 1733231285835,
       "contentHash": "24e52f6ef3868e6fca664a423140bee9",
       "sourceName": "@openzeppelin/contracts/utils/Pausable.sol",
       "solcConfig": {
@@ -648,7 +648,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableBurnableToken.sol": {
-      "lastModificationDate": 1728363855297,
+      "lastModificationDate": 1733161760750,
       "contentHash": "d86c86197ea0469adc197e2186fc5756",
       "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableBurnableToken.sol",
       "solcConfig": {
@@ -689,8 +689,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\PausableContractFactory.sol": {
-      "lastModificationDate": 1730101128816,
-      "contentHash": "c258d811df344189e954a332452986c7",
+      "lastModificationDate": 1734420976865,
+      "contentHash": "bca9bd675733a35e160fc7e6bff16eeb",
       "sourceName": "contracts/erc20Contracts/pausable/PausableContractFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -888,7 +888,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroReceiver.sol": {
-      "lastModificationDate": 1732038770583,
+      "lastModificationDate": 1733231289505,
       "contentHash": "62703c3b19a452bfdaca90f5bc59cfef",
       "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroReceiver.sol",
       "solcConfig": {
@@ -924,7 +924,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroEndpoint.sol": {
-      "lastModificationDate": 1732038770582,
+      "lastModificationDate": 1733231289500,
       "contentHash": "008cb6eedb0a3be0c12cdd2307d1d9b1",
       "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroEndpoint.sol",
       "solcConfig": {
@@ -962,7 +962,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroUserApplicationConfig.sol": {
-      "lastModificationDate": 1732038770584,
+      "lastModificationDate": 1733231289514,
       "contentHash": "ea8e436e41bc96a3d434edb386b63cda",
       "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroUserApplicationConfig.sol",
       "solcConfig": {
@@ -1075,7 +1075,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
-      "lastModificationDate": 1732601001416,
+      "lastModificationDate": 1733231167539,
       "contentHash": "9cddf86d6278f71cbb5514132eef2f0d",
       "sourceName": "contracts/Staking/BaseStaking.sol",
       "solcConfig": {
@@ -1117,7 +1117,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\ReentrancyGuard.sol": {
-      "lastModificationDate": 1732038440960,
+      "lastModificationDate": 1733231285883,
       "contentHash": "a92331adac11b453a4de0323fc948119",
       "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
       "solcConfig": {
@@ -1153,8 +1153,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiStaking.sol": {
-      "lastModificationDate": 1732602467170,
-      "contentHash": "1683e64bdb88d6d540173c792a286248",
+      "lastModificationDate": 1733509917376,
+      "contentHash": "f957f940fe09b3562fb3c7eaddbde6d5",
       "sourceName": "contracts/Staking/ForcefiStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1192,7 +1192,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcefiChildChainStaking.sol": {
-      "lastModificationDate": 1732601570827,
+      "lastModificationDate": 1733231167540,
       "contentHash": "3f0145f612d1e145b2d1e41255c9d0bb",
       "sourceName": "contracts/Staking/ForcefiChildChainStaking.sol",
       "solcConfig": {
@@ -1230,8 +1230,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ArbitrumStaking.sol": {
-      "lastModificationDate": 1732602338102,
-      "contentHash": "3ab962edd5109976fa101e2dc6c88c96",
+      "lastModificationDate": 1733508945119,
+      "contentHash": "19fc87f79e865ee884e2ceafeb50acd3",
       "sourceName": "contracts/Staking/ArbitrumStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1269,8 +1269,8 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiPackage.sol": {
-      "lastModificationDate": 1732600881802,
-      "contentHash": "cd324aad5130182695fdccbfdfd2c965",
+      "lastModificationDate": 1734677631399,
+      "contentHash": "3b50a88d7f38a4c9b137755ca95af504",
       "sourceName": "contracts/ForcefiPackage.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1312,7 +1312,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@chainlink\\contracts\\src\\v0.8\\shared\\interfaces\\AggregatorV3Interface.sol": {
-      "lastModificationDate": 1732038442351,
+      "lastModificationDate": 1733231288041,
       "contentHash": "64a3f906dc7696aa3c9fa8454b673be7",
       "sourceName": "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol",
       "solcConfig": {
@@ -1348,7 +1348,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@chainlink\\contracts\\src\\v0.8\\shared\\interfaces\\AggregatorV2V3Interface.sol": {
-      "lastModificationDate": 1732038442348,
+      "lastModificationDate": 1733231288035,
       "contentHash": "a045cdf1098c0a0735bee2f727fee0aa",
       "sourceName": "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV2V3Interface.sol",
       "solcConfig": {
@@ -1387,7 +1387,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@chainlink\\contracts\\src\\v0.8\\shared\\interfaces\\AggregatorInterface.sol": {
-      "lastModificationDate": 1732038442345,
+      "lastModificationDate": 1733231288023,
       "contentHash": "1739f42cb7ceb036e6fd94b9d9990506",
       "sourceName": "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorInterface.sol",
       "solcConfig": {
@@ -1423,7 +1423,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@chainlink\\contracts\\src\\v0.8\\tests\\MockV3Aggregator.sol": {
-      "lastModificationDate": 1732038444065,
+      "lastModificationDate": 1733231292676,
       "contentHash": "964c2024720c0de4d9ed9fa3907afa75",
       "sourceName": "@chainlink/contracts/src/v0.8/tests/MockV3Aggregator.sol",
       "solcConfig": {
@@ -1539,7 +1539,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Vesting.sol": {
-      "lastModificationDate": 1732975260891,
+      "lastModificationDate": 1733234909859,
       "contentHash": "ef4eee560bef5a64d5ea2056c382190a",
       "sourceName": "contracts/Vesting.sol",
       "solcConfig": {
@@ -1579,7 +1579,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
-      "lastModificationDate": 1732038440993,
+      "lastModificationDate": 1733231285917,
       "contentHash": "697fd27924863e77c17dace2179018b2",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -1619,7 +1619,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
-      "lastModificationDate": 1732038437334,
+      "lastModificationDate": 1733231282143,
       "contentHash": "79c699f80eb8a9b168cb34e37816f894",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -1655,7 +1655,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol": {
-      "lastModificationDate": 1732038440546,
+      "lastModificationDate": 1733231284884,
       "contentHash": "da291753fa4641f2c5837bfc4aa4c01b",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol",
       "solcConfig": {
@@ -1690,48 +1690,8 @@
         "IERC20Permit"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\ForcStaking.sol": {
-      "lastModificationDate": 1728363848247,
-      "contentHash": "7760e950609e20ef159981947170109d",
-      "sourceName": "contracts/Staking/ForcStaking.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./../VestingLibrary.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "TokenLock"
-      ]
-    },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\InvestmentToken.sol": {
-      "lastModificationDate": 1729571287260,
+      "lastModificationDate": 1733231167545,
       "contentHash": "fa68af3a928bfe7b937a660cd2a9be9c",
       "sourceName": "contracts/test/InvestmentToken.sol",
       "solcConfig": {
@@ -1769,7 +1729,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppSender.sol": {
-      "lastModificationDate": 1732039587815,
+      "lastModificationDate": 1733231278749,
       "contentHash": "8a54c076d80f5711e3511a0bbfcff1a1",
       "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol",
       "solcConfig": {
@@ -1809,7 +1769,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppCore.sol": {
-      "lastModificationDate": 1732039587780,
+      "lastModificationDate": 1733231278637,
       "contentHash": "392cf9b920add3244966148ee8de682a",
       "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppCore.sol",
       "solcConfig": {
@@ -1848,7 +1808,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ILayerZeroEndpointV2.sol": {
-      "lastModificationDate": 1732039588231,
+      "lastModificationDate": 1733231278812,
       "contentHash": "0790766778fa8995935c093d9cf03f84",
       "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
       "solcConfig": {
@@ -1889,7 +1849,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\interfaces\\IOAppCore.sol": {
-      "lastModificationDate": 1732039588042,
+      "lastModificationDate": 1733231279011,
       "contentHash": "f88e6ddf8ff977739a7178f0d1a276b3",
       "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/interfaces/IOAppCore.sol",
       "solcConfig": {
@@ -1927,7 +1887,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessageLibManager.sol": {
-      "lastModificationDate": 1732039588307,
+      "lastModificationDate": 1733231278924,
       "contentHash": "a56a887b2721a98cf82842503bbf0ef0",
       "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLibManager.sol",
       "solcConfig": {
@@ -1963,7 +1923,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingComposer.sol": {
-      "lastModificationDate": 1732039588334,
+      "lastModificationDate": 1733231279003,
       "contentHash": "bcc2df90697b23f02303892874f96324",
       "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingComposer.sol",
       "solcConfig": {
@@ -1999,7 +1959,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingContext.sol": {
-      "lastModificationDate": 1732039588341,
+      "lastModificationDate": 1733231279039,
       "contentHash": "2b8bfa473f049af8c74dffbff0766abf",
       "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingContext.sol",
       "solcConfig": {
@@ -2035,7 +1995,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingChannel.sol": {
-      "lastModificationDate": 1732039588323,
+      "lastModificationDate": 1733231278964,
       "contentHash": "bd92a8f1c9f815025e8e3e676fe40b0d",
       "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingChannel.sol",
       "solcConfig": {
@@ -2071,7 +2031,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OApp.sol": {
-      "lastModificationDate": 1732039587764,
+      "lastModificationDate": 1733231278592,
       "contentHash": "5fff81a48e0699606f1ee7387d4a31a2",
       "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol",
       "solcConfig": {
@@ -2111,7 +2071,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppReceiver.sol": {
-      "lastModificationDate": 1732039587796,
+      "lastModificationDate": 1733231278685,
       "contentHash": "3621393509939962dd64af436aa5d131",
       "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppReceiver.sol",
       "solcConfig": {
@@ -2150,7 +2110,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\interfaces\\IOAppReceiver.sol": {
-      "lastModificationDate": 1732039588089,
+      "lastModificationDate": 1733231279121,
       "contentHash": "8744fbd8f6967b21443fddfccede3f1e",
       "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/interfaces/IOAppReceiver.sol",
       "solcConfig": {
@@ -2188,7 +2148,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ILayerZeroReceiver.sol": {
-      "lastModificationDate": 1732039588256,
+      "lastModificationDate": 1733231278849,
       "contentHash": "07bcbc5377578339628265a849de70f5",
       "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol",
       "solcConfig": {
@@ -2226,7 +2186,7 @@
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\MyOapp.sol": {
-      "lastModificationDate": 1732041785127,
+      "lastModificationDate": 1733231167546,
       "contentHash": "8e1f815cdde7a23d5b53fd46dc699804",
       "sourceName": "contracts/test/MyOapp.sol",
       "solcConfig": {
@@ -2263,6 +2223,87 @@
       ],
       "artifacts": [
         "MyOApp"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\SimpleRewards.sol": {
+      "lastModificationDate": 1737437496054,
+      "contentHash": "ffcbd13874b4046c477193acb3413146",
+      "sourceName": "contracts/Staking/SimpleRewards.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Cast",
+        "LinearStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\prototypes\\PeriodStaking.sol": {
+      "lastModificationDate": 1737527212685,
+      "contentHash": "ab0e29504699c7bce7be946984565e5a",
+      "sourceName": "contracts/prototypes/PeriodStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "./../VestingLibrary.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "PeriodStaking"
       ]
     }
   }

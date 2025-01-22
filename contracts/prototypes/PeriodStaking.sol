@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./../VestingLibrary.sol"; // Importing VestingLibrary for calculating releasable amounts
 
-contract TokenLock is Ownable {
+contract PeriodStaking is Ownable {
 
     using VestingLibrary for uint256;
 
@@ -264,3 +264,20 @@ contract TokenLock is Ownable {
         feeMultiplier.maximumMultiplier = _maximumMultiplier;
     }
 }
+
+// Construct contract - set multipliers, minimal lock time and distribution token address
+
+// Lock tokens as owner of contract
+// Distribute tokens by periods proportionally
+// Set first period of distribution + amount of periods
+
+// Lock investor tokens
+// set lock as future interest gainer
+
+// Get staking interest
+// calculate staking interest by periods starting from first
+// transfer staking interest - set eligible tokens to 0
+
+// Stop staking
+// remove from future interest gainer list
+// transfer staking interest + initial stake

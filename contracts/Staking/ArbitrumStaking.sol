@@ -12,6 +12,7 @@ contract ArbitrumStaking is BaseStaking {
     address public forcefiSilverNFTAddress;
     address public forcefiGoldNFTAddress;
     mapping(uint => bool) public nftBridged;
+    mapping(uint => bool) public goldNftBridged;
 
     /// @notice Constructor initializes the ForcefiChildChainStaking contract
     /// @param _forcefiSilverNFTAddress The address of Forcefi Silver NFT contract
@@ -31,7 +32,14 @@ contract ArbitrumStaking is BaseStaking {
         address /*_executor*/,
         bytes calldata /*_extraData*/
     ) internal override {
-        // No logic to implement
+        (address _staker, uint _stakeAmount, uint _stakeId) = abi.decode(payload, (address, uint, uint));
+        if (_stakeAmount > 0) {
+            _setStaker(_stakeAmount, _staker, _stakeId);
+        } else {
+            unstake(_stakeId);
+            hasStaked[_staker] = false;
+            isInvestor[_staker] = false;
+        }
     }
 
     /// @notice Sets a staker with the given stake amount and address
@@ -54,18 +62,19 @@ contract ArbitrumStaking is BaseStaking {
         removeInvestor(_stakeId);
     }
 
-    function bridgeStakingAccess(uint16 _destChainId, bytes calldata _options, uint _stakeId) public payable {
+    function bridgeStakingAccess(uint16 _destChainId, bytes calldata _options, uint _stakeId, bool _isGoldNft) public payable {
 
-        // check if owner of NFT
-        require(INFTContract(forcefiSilverNFTAddress).isOwnerOf(msg.sender, _stakeId), "Not eligable to bridge access");
+        if(_isGoldNft){
+            require(INFTContract(forcefiGoldNFTAddress).isOwnerOf(msg.sender, _stakeId), "Not eligable to bridge access");
+            require(!goldNftBridged[_stakeId], "NFT already bridged");
+            goldNftBridged[_stakeId] = true;
+        } else {
+            require(INFTContract(forcefiSilverNFTAddress).isOwnerOf(msg.sender, _stakeId), "Not eligable to bridge access");
+            require(!nftBridged[_stakeId], "NFT already bridged");
+            nftBridged[_stakeId] = true;
+        }
 
-        // check if ID wasn't used before
-        require(!nftBridged[_stakeId], "NFT already bridged");
-
-        // Set id as used in mapping
-        nftBridged[_stakeId] = true;
-
-        bytes memory payload = abi.encode(msg.sender);
+        bytes memory payload = abi.encode(msg.sender, _stakeId, _isGoldNft);
 
         _lzSend(_destChainId, payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
     }

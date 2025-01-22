@@ -49,6 +49,11 @@ contract ForcefiPackage is Ownable, OApp {
     // Event emitted when a package is bought
     event PackageBought(string projectName, string tier, address indexed buyer);
 
+    // Event emitted when a referral gets fee from package bought
+    event ReferralFeeSent(string _projectName, address indexed _referralAddress, uint referralFee);
+
+    event TokenBridged(uint32 _destChainId, string _projectName, address indexed _projectOwner);
+
     /**
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
     */
@@ -173,6 +178,7 @@ contract ForcefiPackage is Ownable, OApp {
         if (_referralAddress != address(0)) {
             referralFee = finalAmountToPay * package.referralFee / 100;  // Calculate referral fee
             ERC20(_erc20TokenAddress).transferFrom(msg.sender, _referralAddress, referralFee);  // Transfer referral fee
+            emit ReferralFeeSent(_projectName, _referralAddress, referralFee);
         }
 
         uint256 packagePaymentCost = finalAmountToPay - referralFee;
@@ -211,6 +217,7 @@ contract ForcefiPackage is Ownable, OApp {
         require(creationTokens[msg.sender][_projectName], "No token to bridge");
         bytes memory payload = abi.encode(msg.sender, _projectName);
         _lzSend(_destChainId, payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
+        emit TokenBridged(_destChainId, _projectName, msg.sender);
     }
 
     /**

@@ -32,7 +32,7 @@ contract ContractFactory is ForcefiBaseContract {
      * @param deployer Address of the account that deployed the token contract.
      * @param projectName Name of the project associated with the token contract.
      */
-    event ContractCreated(address indexed contractAddress, address indexed deployer, string projectName);
+    event ContractCreated(address indexed contractAddress, address indexed deployer, string projectName, uint8 contractType);
 
     /**
      * @dev Creates a new token contract based on the specified type.
@@ -75,7 +75,7 @@ contract ContractFactory is ForcefiBaseContract {
             revert("Invalid contract type");
         }
 
-        emit ContractCreated(newContract, msg.sender, _projectName);
+        emit ContractCreated(newContract, msg.sender, _projectName, uint8(_type));
 
         return newContract;
     }

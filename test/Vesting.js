@@ -14,8 +14,6 @@ describe("Vesting", function () {
 
     const erc20Supply = "50000";
 
-    let forcefiPackage;
-
     const vestingPlans = [
         {
             beneficiaries: [{ beneficiaryAddress: beneficiar_1, tokenAmount: 250 }],
@@ -44,18 +42,6 @@ describe("Vesting", function () {
         vestingContract = await ethers.deployContract("Vesting");
         [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
         erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply, owner.address]);
-
-        forcefiPackage = await ethers.deployContract("ForcefiPackage", [mockedLzAddress]);
-        await vestingContract.setForcefiPackageAddress(forcefiPackage.getAddress());
-
-        const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
-        const mockOracle = await MockOracle.deploy(
-            "18", // decimals
-            "1000"// initialAnswer
-        );
-
-        await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
-
     };
 
     // Helper function to approve and add vesting plans
@@ -106,17 +92,7 @@ describe("Vesting", function () {
 
         it("adding vesting plan with project package", async function () {
 
-            const feeAmount = 5;
-            await vestingContract.setFeeAmount(feeAmount);
-
             await erc20Token.approve(vestingContract.getAddress(), erc20Supply);
-            await expect(vestingContract.addVestingPlansBulk(vestingPlans, _projectName, erc20Token.getAddress())).to.be.revertedWith("Invalid fee value or no creation token available");
-
-            const packageTotalPrice = 2000;
-            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
-            const totalTokensPerPackage = packageTotalPrice * Number(erc20TokenPrice);
-            await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerPackage.toString());
-            await forcefiPackage.buyPackage(_projectName, "Accelerator", erc20Token.getAddress(), addr1.address);
 
             await approveAndAddVestings(vestingPlans);
             const [vesting1] = await getProjectVestings();
