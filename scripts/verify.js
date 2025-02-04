@@ -11,20 +11,19 @@ async function main() {
     console.log('0x'.concat('0x80fBEF0fb55885DAbfa38F0f3A5bF01A00F96b97'.slice(2).padStart(64, '0')))
 
 
-    const silverNftAddress = "0x233d98f5590471DBD3ef106beff290971A813092";
-    const goldNftAddress = "0x233d98f5590471DBD3ef106beff290971A813092";
-    const forcefiTokenAddress = "0x290E374362b6d36A0cfF86d682Db57845c913657";
-    const forcefiFundraisingAddress = "0x357efaEf6fDdb79be305a01aBF15A4317004E23E";
-    const lzContractAddress = process.env.LZ_CONTRACT_ADDRESS_ARBITRUMSEPOLIA;
+    const forcefiSilverNftAddress = "0x1e494710ddaF9d297C4DF9d11e6acc94ddA51A15";
+    const forcefiGoldNftAddress = "0xae96b57c5e015c320641675B51B45d6d241288D4";
+    const forcefiTokenAddress = "0xdEB4A034dE9d0935D4F4840026deB2F207aB946e";
+    const forcefiFundraisingAddress = "0x83F994520bBf9A3E05eb3355B869fE2a19A93fB2";
+    const lzContractAddress = process.env.LZ_CONTRACT_ADDRESS_BASESEPOLIA;
 
-    const addressToVerify = "0x39BF161773c5C143C70fd7f9d3e5Ad8b0d1D362F";
+    const addressToVerify = "0x83e187439137624303F1e889623a56F01A612854";
 
     // string memory _name, string memory _ticker, uint256 _initialSupply, address _ownerAddress
     await hre.run("verify:verify", {
         address: addressToVerify,
-        constructorArguments: ["0x3253193F7d1D3a1Ce5E27e8783c80890BC330467",
-            "0x3253193F7d1D3a1Ce5E27e8783c80890BC330467",
-            1734508754, 1734512354, "100000000000000000000000", 0],
+        constructorArguments: [forcefiFundraisingAddress,
+            lzContractAddress, deployer.address],
     });
 }
 

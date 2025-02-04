@@ -19,12 +19,12 @@ async function main() {
 
   const PausableContractFactory = await ethers.deployContract("PausableContractFactory");
   console.log("PausableContractFactory contract address " + await PausableContractFactory.getAddress())
-  //
-  // const Fundraising = await ethers.deployContract("Fundraising");
-  // console.log("Fundraising contract address " + await Fundraising.getAddress())
 
-  // const Vesting = await ethers.deployContract("Vesting");
-  // console.log("Vesting contract address " + await Vesting.getAddress())
+  const Fundraising = await ethers.deployContract("Fundraising");
+  console.log("Fundraising contract address " + await Fundraising.getAddress())
+
+  const Vesting = await ethers.deployContract("Vesting");
+  console.log("Vesting contract address " + await Vesting.getAddress())
 
 }
 

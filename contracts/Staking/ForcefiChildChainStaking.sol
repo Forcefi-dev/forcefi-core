@@ -18,7 +18,7 @@ contract ForcefiChildChainStaking is BaseStaking {
         address /*_executor*/,
         bytes calldata /*_extraData*/
     ) internal override {
-        (address _staker, uint _stakeAmount, uint _stakeId) = abi.decode(payload, (address, uint, uint));
+        (address _staker, uint _stakeAmount, uint _stakeId,,) = abi.decode(payload, (address, uint, uint, uint, uint));
         if (_stakeAmount > 0) {
             _setStaker(_stakeAmount, _staker, _stakeId);
         } else {
@@ -35,7 +35,7 @@ contract ForcefiChildChainStaking is BaseStaking {
         hasStaked[_stakerAddress] = true;
         if (_stakeAmount >= investorTreshholdAmount) {
             isInvestor[_stakerAddress] = true;
-            activeStake[_stakeId] = ActiveStake(_stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, 0);
+            activeStake[_stakeId] = ActiveStake(_stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, 0, 0);
             investors.push(_stakeId);
         }
         emit Staked(msg.sender, _stakeAmount, _stakeId);

@@ -37,12 +37,14 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     /// @param stakerAddress Address of the user who staked
     /// @param stakeAmount Amount of tokens staked
     /// @param stakeEventTimestamp Timestamp when the stake was made
+    /// @param silverNftId Optional NFT ID associated with the stake
     /// @param goldNftId Optional NFT ID associated with the stake
     struct ActiveStake {
         uint stakeId;
         address stakerAddress;
         uint stakeAmount;
         uint stakeEventTimestamp;
+        uint silverNftId;
         uint goldNftId;
     }
 

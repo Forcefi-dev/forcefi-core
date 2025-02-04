@@ -8,10 +8,11 @@ interface IERC20Burnable {
     function burn(uint256 amount) external;
 }
 
-contract ForcefiStaking is BaseStaking {
+contract AccessStaking is BaseStaking {
 
     address public forcefiTokenAddress;
 
+    mapping(uint => address) public silverNftOwner;
     mapping(uint => address) public goldNftOwner;
     mapping(address => bool) public isCurator;
     mapping(address => uint) public currentStakeId;
@@ -44,9 +45,22 @@ contract ForcefiStaking is BaseStaking {
         address /*_executor*/,
         bytes calldata /*_extraData*/
     ) internal override {
-        (address _staker, uint _stakeAmount, uint _golfNftId) = abi.decode(payload, (address, uint, uint));
-        stake(_stakeAmount, _golfNftId, _staker);
-
+        (address _stakerAddress, uint _silverNftId, uint _goldNftId) = abi.decode(payload, (address, uint, uint));
+        if(_silverNftId != 0){
+            silverNftOwner[_silverNftId] = msg.sender;
+            hasStaked[_stakerAddress] = true;
+            uint stakeId = _stakeIdCounter;
+            _stakeIdCounter += 1;
+            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
+        } else if(_goldNftId != 0){
+            goldNftOwner[_goldNftId] = _stakerAddress;
+            isInvestor[_stakerAddress] = true;
+            uint stakeId = _stakeIdCounter;
+            _stakeIdCounter += 1;
+            investors.push(stakeId);
+            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
+            emit Staked(_stakerAddress, investorTreshholdAmount, stakeId);
+        }
     }
 
     /// @notice Sets the minimum staking amount required for staking
@@ -63,20 +77,14 @@ contract ForcefiStaking is BaseStaking {
 
     /// @notice Stakes a given amount of tokens and associates an optional gold NFT
     /// @param _stakeAmount The amount of tokens to stake
-    /// @param _goldNftId The ID of the gold NFT associated with the stake (0 if not applicable)
-    function stake(uint _stakeAmount, uint _goldNftId, address _stakerAddress) public {
-
+    function stake(uint _stakeAmount, address _stakerAddress) public {
         require(
             (_stakeAmount + totalStaked[_stakerAddress] == minStakingAmount
                 || _stakeAmount + totalStaked[_stakerAddress] == curatorTreshholdAmount
-                || _stakeAmount + totalStaked[_stakerAddress] == investorTreshholdAmount
-                || _goldNftId != 0),
+                || _stakeAmount + totalStaked[_stakerAddress] == investorTreshholdAmount),
             "Invalid stake amount"
         );
 
-        if(_goldNftId == 0) {
-            ERC20(forcefiTokenAddress).transferFrom(_stakerAddress, address(this), _stakeAmount);
-        }
         hasStaked[_stakerAddress] = true;
 
         if(_stakeAmount + totalStaked[_stakerAddress] == investorTreshholdAmount ){
@@ -87,62 +95,49 @@ contract ForcefiStaking is BaseStaking {
             uint stakeId = _stakeIdCounter;
             investors.push(stakeId);
             currentStakeId[_stakerAddress] = stakeId;
-            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, _stakeAmount + totalStaked[_stakerAddress], block.timestamp, _goldNftId);
+            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, _stakeAmount + totalStaked[_stakerAddress], block.timestamp, 0, 0);
             emit Staked(_stakerAddress, _stakeAmount, stakeId);
         }
-        else if (_goldNftId != 0 && goldNftOwner[_goldNftId] != address(0)) {
-            goldNftOwner[_goldNftId] = _stakerAddress;
-            isInvestor[_stakerAddress] = true;
-            uint stakeId = _stakeIdCounter;
-            _stakeIdCounter += 1;
-            investors.push(stakeId);
-            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, _stakeAmount + totalStaked[_stakerAddress], block.timestamp, _goldNftId);
-
-            emit Staked(_stakerAddress, _stakeAmount, stakeId);
-        } else if (_stakeAmount + totalStaked[_stakerAddress] == curatorTreshholdAmount) {
+        else if (_stakeAmount + totalStaked[_stakerAddress] == curatorTreshholdAmount) {
             isCurator[_stakerAddress] = true;
             emit CuratorAdded(_stakerAddress);
         }
         totalStaked[_stakerAddress] += _stakeAmount;
     }
 
-    /// @notice Unstakes a given stake by ID and handles associated logic including penalties and bridging
-    /// @param _stakeId The ID of the stake to be unstaked
-    function unstake(uint _stakeId, bytes calldata _options) public {
-        require(activeStake[_stakeId].goldNftId == 0, "Can't unstake gold nft");
-
-        bridgeStakingAccess(chainList[msg.sender], _options, _stakeId, true);
-        ERC20(forcefiTokenAddress).transfer(msg.sender, totalStaked[msg.sender]);
-        //        activeStake[_stakeId].stakeAmount = 0;
-        emit Unstaked(msg.sender, _stakeId);
-    }
-
     /// @notice Bridges the staking access to multiple destination chains
     /// @param _destChainIds An array of destination chain IDs to which staking access is bridged
-    /// @param _stakeId The ID of the stake being bridged
     /// @param _unstake Boolean indicating if the bridging is for unstaking
-    function bridgeStakingAccess(uint16[] memory _destChainIds, bytes calldata _options, uint _stakeId, bool _unstake) public payable {
-//        require(activeStake[_stakeId].stakerAddress == msg.sender, "Not an owner of a stake");
-        // Check if user eligibility to bridge
+    function bridgeStakingAccess(uint16[] memory _destChainIds, bytes calldata _options, bool _unstake) public payable {
+        ActiveStake storage activeStake = activeStake[currentStakeId[msg.sender]];
+        require(activeStake.stakerAddress == msg.sender, "Not an owner of a stake");
 
-        // Get the amount of the stake; if unstake is true, set the amount to 0
         uint stakeAmount = totalStaked[msg.sender];
+        bytes memory payload = abi.encode(msg.sender, stakeAmount, activeStake.stakeId, activeStake.silverNftId, activeStake.goldNftId);
+
         if (_unstake) {
             require(hasStaked[msg.sender], "Sender doesn't have active stake");
+            if(activeStake.silverNftId != 0){
+                silverNftOwner[activeStake.silverNftId] = address(0);
+            }
+            if(activeStake.goldNftId != 0){
+                goldNftOwner[activeStake.goldNftId] = address(0);
+            }
             stakeAmount = 0;
             isCurator[msg.sender] = false;
             hasStaked[msg.sender] = false;
             currentStakeId[msg.sender] = 0;
-            removeInvestor(_stakeId);
+            removeInvestor(activeStake.stakeId);
+            ERC20(forcefiTokenAddress).transfer(msg.sender, totalStaked[msg.sender]);
+            emit Unstaked(msg.sender, activeStake.stakeId);
+            executeBridge(chainList[msg.sender], payload, _options);
         } else {
             // Loop through all destination chain IDs and add them to the user's chain list
             for (uint i = 0; i < _destChainIds.length; i++) {
                 addChain(_destChainIds[i]);
+                executeBridge(_destChainIds, payload, _options);
             }
         }
-
-        bytes memory payload = abi.encode(msg.sender, stakeAmount, _stakeId);
-        executeBridge(_destChainIds, payload, _options);
     }
 
     /// @notice Executes the bridge operation to multiple destination chains

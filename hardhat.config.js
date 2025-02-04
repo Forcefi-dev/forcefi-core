@@ -40,13 +40,21 @@ module.exports = {
         mnemonic: process.env.MNEMONIC_TEST,
       },
     },
+    baseSepolia: {
+      url: process.env.BASE_SEPOLIA_RPC_URL,
+      chainId: 84532,
+      accounts: {
+        mnemonic: process.env.MNEMONIC_TEST,
+      },
+    },
   },
   etherscan: {
     apiKey: {
       mainnet: process.env.ETHERSCAN_API_KEY,
       sepolia: process.env.ETHERSCAN_API_KEY,
       lineaSepolia: process.env.LINEASCAN_API_KEY,
-      arbitrumSepolia: process.env.ARBITRUM_API_KEY
+      arbitrumSepolia: process.env.ARBITRUM_API_KEY,
+      baseSepolia: process.env.BASE_API_KEY
     },
     customChains: [
       {
@@ -63,6 +71,14 @@ module.exports = {
         urls: {
           apiURL: "https://api-sepolia.arbiscan.io/api",
           browserURL: "https://sepolia.arbiscan.io",
+        },
+      },
+      {
+        network: "baseSepolia",
+        chainId: 84532,
+        urls: {
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org/",
         },
       },
     ],

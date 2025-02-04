@@ -24,7 +24,6 @@ contract ArbitrumStaking is BaseStaking {
         forcefiGoldNFTAddress = _forcefiGoldNFTAddress;
     }
 
-    // No logic to implement
     function _lzReceive(
         Origin calldata /*_origin*/,
         bytes32 /*_guid*/,
@@ -32,11 +31,11 @@ contract ArbitrumStaking is BaseStaking {
         address /*_executor*/,
         bytes calldata /*_extraData*/
     ) internal override {
-        (address _staker, uint _stakeAmount, uint _stakeId) = abi.decode(payload, (address, uint, uint));
+        (address _staker, uint _stakeAmount, uint _stakeId, uint _silverNftId, uint _goldNftId) = abi.decode(payload, (address, uint, uint, uint, uint));
         if (_stakeAmount > 0) {
-            _setStaker(_stakeAmount, _staker, _stakeId);
+            _setStaker(_stakeAmount, _staker, _stakeId, _silverNftId, _goldNftId);
         } else {
-            unstake(_stakeId);
+            unstake(_stakeId, _silverNftId, _goldNftId);
             hasStaked[_staker] = false;
             isInvestor[_staker] = false;
         }
@@ -45,11 +44,11 @@ contract ArbitrumStaking is BaseStaking {
     /// @notice Sets a staker with the given stake amount and address
     /// @param _stakeAmount The amount of tokens staked
     /// @param _stakerAddress The address of the user who staked
-    function _setStaker(uint _stakeAmount, address _stakerAddress, uint _stakeId) private {
+    function _setStaker(uint _stakeAmount, address _stakerAddress, uint _stakeId, uint _silverNftId, uint _goldNftId) private {
         hasStaked[_stakerAddress] = true;
         if (_stakeAmount >= investorTreshholdAmount) {
             isInvestor[_stakerAddress] = true;
-            activeStake[_stakeId] = ActiveStake(_stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, 0);
+            activeStake[_stakeId] = ActiveStake(_stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
             investors.push(_stakeId);
         }
         emit Staked(msg.sender, _stakeAmount, _stakeId);
@@ -57,24 +56,30 @@ contract ArbitrumStaking is BaseStaking {
 
     /// @notice Unstakes a given stake by ID and updates related data
     /// @param _stakeId The ID of the stake to be unstaked
-    function unstake(uint _stakeId) private {
+    function unstake(uint _stakeId, uint _silverNftId, uint _goldNftId) private {
         activeStake[_stakeId].stakeAmount = 0;
-        removeInvestor(_stakeId);
+
+        if(_silverNftId != 0){
+            nftBridged[_stakeId] = false;
+        } else if(_goldNftId != 0){
+            goldNftBridged[_stakeId] = false;
+            removeInvestor(_stakeId);
+        }
     }
 
-    function bridgeStakingAccess(uint16 _destChainId, bytes calldata _options, uint _stakeId, bool _isGoldNft) public payable {
+    function bridgeStakingAccess(uint16 _destChainId, bytes calldata _options, uint _silverNftId, uint _goldNftId) public payable {
 
-        if(_isGoldNft){
-            require(INFTContract(forcefiGoldNFTAddress).isOwnerOf(msg.sender, _stakeId), "Not eligable to bridge access");
-            require(!goldNftBridged[_stakeId], "NFT already bridged");
-            goldNftBridged[_stakeId] = true;
-        } else {
-            require(INFTContract(forcefiSilverNFTAddress).isOwnerOf(msg.sender, _stakeId), "Not eligable to bridge access");
-            require(!nftBridged[_stakeId], "NFT already bridged");
-            nftBridged[_stakeId] = true;
+        if(_goldNftId != 0){
+            require(INFTContract(forcefiGoldNFTAddress).isOwnerOf(msg.sender, _goldNftId), "Not eligable to bridge access");
+            require(!goldNftBridged[_goldNftId], "NFT already bridged");
+            goldNftBridged[_goldNftId] = true;
+        } else if(_silverNftId != 0) {
+            require(INFTContract(forcefiSilverNFTAddress).isOwnerOf(msg.sender, _silverNftId), "Not eligable to bridge access");
+            require(!nftBridged[_silverNftId], "NFT already bridged");
+            nftBridged[_silverNftId] = true;
         }
 
-        bytes memory payload = abi.encode(msg.sender, _stakeId, _isGoldNft);
+        bytes memory payload = abi.encode(msg.sender, _silverNftId, _goldNftId);
 
         _lzSend(_destChainId, payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
     }
