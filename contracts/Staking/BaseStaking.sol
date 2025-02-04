@@ -20,8 +20,6 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     // Mapping from stake ID to active stake details
     mapping(address => ActiveStake) public activeStake;
     mapping(address => bool) hasStaked;
-    mapping(address => bool) public isInvestor;
-    mapping(address => uint) public totalStaked;
 
     // Mapping to track investor token balances by address and token contract
     mapping(address => mapping(address => uint)) public investorTokenBalance;

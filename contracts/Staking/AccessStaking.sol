@@ -54,7 +54,6 @@ contract AccessStaking is BaseStaking {
             activeStake[_stakerAddress] = ActiveStake(stakeId, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
         } else if(_goldNftId != 0){
             goldNftOwner[_goldNftId] = _stakerAddress;
-            isInvestor[_stakerAddress] = true;
             uint stakeId = _stakeIdCounter;
             _stakeIdCounter += 1;
             investors.push(_stakerAddress);
@@ -78,31 +77,29 @@ contract AccessStaking is BaseStaking {
     /// @notice Stakes a given amount of tokens and associates an optional gold NFT
     /// @param _stakeAmount The amount of tokens to stake
     function stake(uint _stakeAmount, address _stakerAddress) public {
+        ActiveStake storage stake = activeStake[_stakerAddress];
         require(
-            (_stakeAmount + totalStaked[_stakerAddress] == minStakingAmount
-                || _stakeAmount + totalStaked[_stakerAddress] == curatorTreshholdAmount
-                || _stakeAmount + totalStaked[_stakerAddress] == investorTreshholdAmount),
+            (_stakeAmount + stake.stakeAmount == minStakingAmount
+                || _stakeAmount + stake.stakeAmount == curatorTreshholdAmount
+                || _stakeAmount + stake.stakeAmount == investorTreshholdAmount),
             "Invalid stake amount"
         );
 
         hasStaked[_stakerAddress] = true;
 
-        if(_stakeAmount + totalStaked[_stakerAddress] == investorTreshholdAmount ){
-            require(isInvestor[_stakerAddress] == false, "Only one investor stake is available per address");
-            isInvestor[_stakerAddress] = true;
+        if(_stakeAmount + stake.stakeAmount == investorTreshholdAmount ){
             isCurator[_stakerAddress] = true;
             _stakeIdCounter += 1;
             uint stakeId = _stakeIdCounter;
             investors.push(_stakerAddress);
             currentStakeId[_stakerAddress] = stakeId;
-            activeStake[_stakerAddress] = ActiveStake(stakeId, _stakeAmount + totalStaked[_stakerAddress], block.timestamp, 0, 0);
+            activeStake[_stakerAddress] = ActiveStake(stakeId, _stakeAmount + stake.stakeAmount, block.timestamp, 0, 0);
             emit Staked(_stakerAddress, _stakeAmount, stakeId);
         }
-        else if (_stakeAmount + totalStaked[_stakerAddress] == curatorTreshholdAmount) {
+        else if (_stakeAmount + stake.stakeAmount == curatorTreshholdAmount) {
             isCurator[_stakerAddress] = true;
             emit CuratorAdded(_stakerAddress);
         }
-        totalStaked[_stakerAddress] += _stakeAmount;
     }
 
     /// @notice Bridges the staking access to multiple destination chains
@@ -111,8 +108,7 @@ contract AccessStaking is BaseStaking {
     function bridgeStakingAccess(uint16[] memory _destChainIds, bytes calldata _options, bool _unstake) public payable {
         ActiveStake storage activeStake = activeStake[msg.sender];
 
-        uint stakeAmount = totalStaked[msg.sender];
-        bytes memory payload = abi.encode(msg.sender, stakeAmount, activeStake.stakeId, activeStake.silverNftId, activeStake.goldNftId);
+        bytes memory payload = abi.encode(msg.sender, activeStake.stakeAmount, activeStake.stakeId);
 
         if (_unstake) {
             require(hasStaked[msg.sender], "Sender doesn't have active stake");
@@ -122,12 +118,12 @@ contract AccessStaking is BaseStaking {
             if(activeStake.goldNftId != 0){
                 goldNftOwner[activeStake.goldNftId] = address(0);
             }
-            stakeAmount = 0;
+            activeStake.stakeAmount = 0;
             isCurator[msg.sender] = false;
             hasStaked[msg.sender] = false;
             currentStakeId[msg.sender] = 0;
             removeInvestor(msg.sender);
-            ERC20(forcefiTokenAddress).transfer(msg.sender, totalStaked[msg.sender]);
+            ERC20(forcefiTokenAddress).transfer(msg.sender, activeStake.stakeAmount);
             emit Unstaked(msg.sender, activeStake.stakeId);
             executeBridge(chainList[msg.sender], payload, _options);
         } else {
