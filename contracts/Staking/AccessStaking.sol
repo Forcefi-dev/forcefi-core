@@ -51,14 +51,14 @@ contract AccessStaking is BaseStaking {
             hasStaked[_stakerAddress] = true;
             uint stakeId = _stakeIdCounter;
             _stakeIdCounter += 1;
-            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
+            activeStake[_stakerAddress] = ActiveStake(stakeId, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
         } else if(_goldNftId != 0){
             goldNftOwner[_goldNftId] = _stakerAddress;
             isInvestor[_stakerAddress] = true;
             uint stakeId = _stakeIdCounter;
             _stakeIdCounter += 1;
-            investors.push(stakeId);
-            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
+            investors.push(_stakerAddress);
+            activeStake[_stakerAddress] = ActiveStake(stakeId, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
             emit Staked(_stakerAddress, investorTreshholdAmount, stakeId);
         }
     }
@@ -93,9 +93,9 @@ contract AccessStaking is BaseStaking {
             isCurator[_stakerAddress] = true;
             _stakeIdCounter += 1;
             uint stakeId = _stakeIdCounter;
-            investors.push(stakeId);
+            investors.push(_stakerAddress);
             currentStakeId[_stakerAddress] = stakeId;
-            activeStake[stakeId] = ActiveStake(stakeId, _stakerAddress, _stakeAmount + totalStaked[_stakerAddress], block.timestamp, 0, 0);
+            activeStake[_stakerAddress] = ActiveStake(stakeId, _stakeAmount + totalStaked[_stakerAddress], block.timestamp, 0, 0);
             emit Staked(_stakerAddress, _stakeAmount, stakeId);
         }
         else if (_stakeAmount + totalStaked[_stakerAddress] == curatorTreshholdAmount) {
@@ -109,8 +109,7 @@ contract AccessStaking is BaseStaking {
     /// @param _destChainIds An array of destination chain IDs to which staking access is bridged
     /// @param _unstake Boolean indicating if the bridging is for unstaking
     function bridgeStakingAccess(uint16[] memory _destChainIds, bytes calldata _options, bool _unstake) public payable {
-        ActiveStake storage activeStake = activeStake[currentStakeId[msg.sender]];
-        require(activeStake.stakerAddress == msg.sender, "Not an owner of a stake");
+        ActiveStake storage activeStake = activeStake[msg.sender];
 
         uint stakeAmount = totalStaked[msg.sender];
         bytes memory payload = abi.encode(msg.sender, stakeAmount, activeStake.stakeId, activeStake.silverNftId, activeStake.goldNftId);
@@ -127,7 +126,7 @@ contract AccessStaking is BaseStaking {
             isCurator[msg.sender] = false;
             hasStaked[msg.sender] = false;
             currentStakeId[msg.sender] = 0;
-            removeInvestor(activeStake.stakeId);
+            removeInvestor(msg.sender);
             ERC20(forcefiTokenAddress).transfer(msg.sender, totalStaked[msg.sender]);
             emit Unstaked(msg.sender, activeStake.stakeId);
             executeBridge(chainList[msg.sender], payload, _options);

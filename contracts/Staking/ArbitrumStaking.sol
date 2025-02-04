@@ -35,7 +35,7 @@ contract ArbitrumStaking is BaseStaking {
         if (_stakeAmount > 0) {
             _setStaker(_stakeAmount, _staker, _stakeId, _silverNftId, _goldNftId);
         } else {
-            unstake(_stakeId, _silverNftId, _goldNftId);
+            unstake(_staker);
             hasStaked[_staker] = false;
             isInvestor[_staker] = false;
         }
@@ -48,23 +48,23 @@ contract ArbitrumStaking is BaseStaking {
         hasStaked[_stakerAddress] = true;
         if (_stakeAmount >= investorTreshholdAmount) {
             isInvestor[_stakerAddress] = true;
-            activeStake[_stakeId] = ActiveStake(_stakeId, _stakerAddress, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
-            investors.push(_stakeId);
+            activeStake[_stakerAddress] = ActiveStake(_stakeId, investorTreshholdAmount, block.timestamp, _silverNftId, _goldNftId);
+            investors.push(_stakerAddress);
         }
         emit Staked(msg.sender, _stakeAmount, _stakeId);
     }
 
     /// @notice Unstakes a given stake by ID and updates related data
-    /// @param _stakeId The ID of the stake to be unstaked
-    function unstake(uint _stakeId, uint _silverNftId, uint _goldNftId) private {
-        activeStake[_stakeId].stakeAmount = 0;
+    function unstake(address _stakerAddress) private {
+        ActiveStake storage stake = activeStake[msg.sender];
 
-        if(_silverNftId != 0){
-            nftBridged[_stakeId] = false;
-        } else if(_goldNftId != 0){
-            goldNftBridged[_stakeId] = false;
-            removeInvestor(_stakeId);
+        if(stake.silverNftId != 0){
+            nftBridged[stake.silverNftId] = false;
+        } else if(stake.goldNftId != 0){
+            goldNftBridged[stake.goldNftId] = false;
+            removeInvestor(_stakerAddress);
         }
+        activeStake[msg.sender] = ActiveStake(0,0,0,0,0);
     }
 
     function bridgeStakingAccess(uint16 _destChainId, bytes calldata _options, uint _silverNftId, uint _goldNftId) public payable {

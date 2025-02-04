@@ -18,7 +18,7 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     address private forcefiFundraisingAddress;
 
     // Mapping from stake ID to active stake details
-    mapping(uint => ActiveStake) public activeStake;
+    mapping(address => ActiveStake) public activeStake;
     mapping(address => bool) hasStaked;
     mapping(address => bool) public isInvestor;
     mapping(address => uint) public totalStaked;
@@ -27,7 +27,7 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     mapping(address => mapping(address => uint)) public investorTokenBalance;
 
     // Array to store investor addresses
-    uint256[] public investors;
+    address[] public investors;
 
     // Minimum stake amount required to be considered an investor
     uint public investorTreshholdAmount;
@@ -41,7 +41,6 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     /// @param goldNftId Optional NFT ID associated with the stake
     struct ActiveStake {
         uint stakeId;
-        address stakerAddress;
         uint stakeAmount;
         uint stakeEventTimestamp;
         uint silverNftId;
@@ -71,7 +70,7 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
         for (uint256 i = 0; i < investors.length; i++) {
             // Check if the stake is eligible for receiving fees
             if (activeStake[investors[i]].stakeEventTimestamp + eligibleToReceiveFeeTime < block.timestamp) {
-                eligibleFeeReceivers[count] = activeStake[investors[i]].stakerAddress;
+                eligibleFeeReceivers[count] = investors[i];
                 count++;
             }
         }
@@ -117,9 +116,8 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     }
 
     /// @notice Removes an investor from the list of active investors
-    /// @param investorId The ID of the investor to remove
-    function removeInvestor(uint investorId) internal {
-        uint index = findInvestorIndex(investorId);
+    function removeInvestor(address investorAddress) internal {
+        uint index = findInvestorIndex(investorAddress);
         require(index < investors.length, "Investor not found");
 
         for (uint i = index; i < investors.length - 1; i++) {
@@ -129,11 +127,9 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
     }
 
     /// @notice Finds the index of an investor in the list
-    /// @param investorId The ID of the investor
-    /// @return The index of the investor
-    function findInvestorIndex(uint investorId) internal view returns (uint) {
+    function findInvestorIndex(address investorAddress) internal view returns (uint) {
         for (uint i = 0; i < investors.length; i++) {
-            if (investors[i] == investorId) {
+            if (investors[i] == investorAddress) {
                 return i;
             }
         }
@@ -142,7 +138,7 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
 
     /// @notice Returns the list of all investors
     /// @return An array of investor IDs
-    function getInvestors() public view returns (uint[] memory) {
+    function getInvestors() public view returns (address[] memory) {
         return investors;
     }
 
