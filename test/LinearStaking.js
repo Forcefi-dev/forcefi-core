@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("LinearStaking", function () {
+describe("Erc20YieldStaking", function () {
     let token, treasuryToken;
     let user1, user2;
     const stakingTokenSupply = 1000;
@@ -13,7 +13,7 @@ describe("LinearStaking", function () {
 
     // Helper function to deploy a new TokenLock instance
     async function deployTokenLock(startTimestampOffset, endTimestampOffset, rewards) {
-        const TokenLock = await ethers.getContractFactory("LinearStaking");
+        const TokenLock = await ethers.getContractFactory("Erc20YieldStaking");
         const now = Math.floor(Date.now() / 1000);
         return await TokenLock.deploy(
             token.getAddress(),

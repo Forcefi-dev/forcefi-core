@@ -5,12 +5,30 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-/// @title LinearStaking
+interface IUniswapV3PositionManager {
+    function positions(uint256 tokenId) external view returns (
+        uint96 nonce,
+        address operator,
+        address token0,
+        address token1,
+        uint24 fee,
+        int24 tickLower,
+        int24 tickUpper,
+        uint128 liquidity,
+        uint256 feeGrowthInside0LastX128,
+        uint256 feeGrowthInside1LastX128,
+        uint128 tokensOwed0,
+        uint128 tokensOwed1
+    );
+    function safeTransferFrom(address from, address to, uint256 tokenId) external;
+}
+
+/// @title Erc20YieldStaking
 /// @notice A permissionless staking contract for a single rewards program.
 /// @dev Rewards are distributed linearly over a fixed period of time, with a fixed total rewards pool.
 /// The rewards distribution is proportional to the amount staked by each user. Rewards tokens must
 /// be locked in the contract before the staking period begins.
-contract LinearStaking is Ownable{
+contract NftYieldStaking is Ownable{
     using SafeERC20 for ERC20;
     using Cast for uint256;
 
@@ -35,11 +53,12 @@ contract LinearStaking is Ownable{
     }
 
     // State variables
-    ERC20 public immutable stakingToken; // Token that users stake
+    IUniswapV3PositionManager public immutable positionManager;
+
+    ERC20 public immutable lpStakingToken1; // Token that users stake
+    ERC20 public immutable lpStakingToken2; // Token that users stake
     ERC20 public immutable rewardsToken; // Token distributed as rewards
     uint256 public immutable totalLocked; // Total rewards pool locked in the contract
-    uint256 public immutable minStakingAmount; // Minimum amount a user can stake
-    uint256 public immutable maxStakingAmount; // Maximum total staking amount across all users
     uint256 public immutable rewardsRate; // Rewards rate per second
     uint256 public immutable rewardsStart; // Start time for rewards distribution
     uint256 public immutable rewardsEnd;   // End time for rewards distribution
@@ -48,35 +67,36 @@ contract LinearStaking is Ownable{
     uint256 public totalStaked; // Total amount currently staked
     mapping(address => uint256) public userStake; // Mapping of user address to staked amount
     mapping(address => UserRewards) public accumulatedRewards; // Mapping of user address to their rewards data
+    mapping(uint256 => address) public nftOwner; // Mapping of user address to their rewards data
 
     bool public rewardTokenLocked; // Indicates whether rewards tokens are locked in the contract
 
     /// @dev Initializes the contract with staking and rewards tokens, staking limits, and rewards configuration.
-    /// @param stakingToken_ The token to be staked.
+    /// @param lpStakingToken1_ The token to be staked.
+    /// @param lpStakingToken2_ The token to be staked.
     /// @param rewardsToken_ The token distributed as rewards.
     /// @param rewardsStart_ Start time for the rewards program.
     /// @param rewardsEnd_ End time for the rewards program.
     /// @param totalRewards_ Total rewards to be distributed over the program's duration.
-    /// @param minStakingAmount_ Minimum staking amount for users.
-    /// @param maxStakingAmount_ Maximum total staking amount across all users.
     constructor(
-        ERC20 stakingToken_,
+        ERC20 lpStakingToken1_,
+        ERC20 lpStakingToken2_,
         ERC20 rewardsToken_,
         uint256 rewardsStart_,
         uint256 rewardsEnd_,
         uint256 totalRewards_,
-        uint256 minStakingAmount_,
-        uint256 maxStakingAmount_
+        IUniswapV3PositionManager _positionManager
     ) Ownable(tx.origin) {
-        stakingToken = stakingToken_;
+        lpStakingToken1 = lpStakingToken1_;
+        lpStakingToken2 = lpStakingToken2_;
         rewardsToken = rewardsToken_;
         rewardsStart = rewardsStart_;
         rewardsEnd = rewardsEnd_;
         rewardsRate = totalRewards_ / (rewardsEnd_ - rewardsStart_);
         rewardsPerToken.lastUpdated = rewardsStart_.u128();
         totalLocked = totalRewards_;
-        minStakingAmount = minStakingAmount_;
-        maxStakingAmount = maxStakingAmount_;
+
+        positionManager = _positionManager;
     }
 
     function depositTreasuryTokens() external onlyOwner {
@@ -147,29 +167,36 @@ contract LinearStaking is Ownable{
         return userRewards_;
     }
 
-    /// @notice Stake tokens.
-    function _stake(address user, uint256 amount) internal
-    {
-        require(rewardTokenLocked, "Reward token has not been locked yet");
-        require(amount >= minStakingAmount, "Stake amount is less than minimum");
-        require(amount + totalStaked <= maxStakingAmount, "The maximum staking amount has been reached for all holders");
+    function _stake(address user, uint256 tokenId) internal {
+        (, , address token0, address token1, , , , uint128 liquidity, , , ,) = positionManager.positions(tokenId);
+        require(liquidity > 0, "No liquidity in NFT");
+        require(token0 == address(lpStakingToken1) || token1 == address(lpStakingToken1), "Invalid lpStakingToken1 token");
+        require(token0 == address(lpStakingToken2) || token1 == address(lpStakingToken2), "Invalid lpStakingToken2 token");
+
         _updateUserRewards(user);
-        totalStaked += amount;
-        userStake[user] += amount;
-        stakingToken.safeTransferFrom(user, address(this), amount);
-        emit Staked(user, amount);
+        totalStaked += liquidity;
+        userStake[user] += liquidity;
+        nftOwner[tokenId] = user;
+
+        positionManager.safeTransferFrom(user, address(this), tokenId);
+
+        emit Staked(user, tokenId);
     }
 
 
     /// @notice Unstake tokens.
-    function _unstake(address user, uint256 amount) internal
+    function _unstake(address user, uint256 tokenId) internal
     {
-        require(userStake[user] - amount >= minStakingAmount || userStake[user] == amount, "Either unstake whole stake amount, or the amount left has to be more than minimal stake amount");
+        require (user == nftOwner[tokenId], "Only initial owner of NFT token can unstake");
+
+        (, , , , , , , uint128 liquidity, , , ,) = positionManager.positions(tokenId);
         _updateUserRewards(user);
-        totalStaked -= amount;
-        userStake[user] -= amount;
-        stakingToken.safeTransfer(user, amount);
-        emit Unstaked(user, amount);
+        totalStaked -= liquidity;
+        userStake[user] -= liquidity;
+
+        positionManager.safeTransferFrom(address(this), user, tokenId);
+
+        emit Unstaked(user, liquidity);
     }
 
     /// @notice Claim rewards.
@@ -187,16 +214,16 @@ contract LinearStaking is Ownable{
 
 
     /// @notice Stake tokens.
-    function stake(uint256 amount) public virtual
+    function stake(uint256 tokenId) public virtual
     {
-        _stake(msg.sender, amount);
+        _stake(msg.sender, tokenId);
     }
 
 
     /// @notice Unstake tokens.
-    function unstake(uint256 amount) public virtual
+    function unstake(uint256 tokenId) public virtual
     {
-        _unstake(msg.sender, amount);
+        _unstake(msg.sender, tokenId);
     }
 
     /// @notice Claim all rewards for the caller.

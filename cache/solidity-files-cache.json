@@ -2186,47 +2186,6 @@
         "MyOApp"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\SimpleRewards.sol": {
-      "lastModificationDate": 1737437496054,
-      "contentHash": "ffcbd13874b4046c477193acb3413146",
-      "sourceName": "contracts/Staking/SimpleRewards.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Cast",
-        "LinearStaking"
-      ]
-    },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\prototypes\\PeriodStaking.sol": {
       "lastModificationDate": 1737527212685,
       "contentHash": "ab0e29504699c7bce7be946984565e5a",
@@ -2683,6 +2642,128 @@
       ],
       "artifacts": [
         "SimpleNFT"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\NftYieldStaking.sol": {
+      "lastModificationDate": 1738823243725,
+      "contentHash": "b0a3ca21a70f9a9b2e8db56d40d009f5",
+      "sourceName": "contracts/Staking/NftYieldStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Cast",
+        "IUniswapV3PositionManager",
+        "NftYieldStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\YieldStaking.sol": {
+      "lastModificationDate": 1738823122955,
+      "contentHash": "3f3e4fd5e644a0cb0b03db356bf566ff",
+      "sourceName": "contracts/Staking/YieldStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Cast",
+        "YieldStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\Erc20YieldStaking.sol": {
+      "lastModificationDate": 1738823188768,
+      "contentHash": "1c21fb89999532ad10535a1a71be1826",
+      "sourceName": "contracts/Staking/Erc20YieldStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./YieldStaking.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Erc20YieldStaking"
       ]
     }
   }
