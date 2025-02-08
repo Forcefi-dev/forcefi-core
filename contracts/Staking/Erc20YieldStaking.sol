@@ -9,6 +9,8 @@ contract Erc20YieldStaking is YieldStaking{
 
     using SafeERC20 for ERC20;
 
+    ERC20 public immutable stakingToken; // Token that users stake
+
     uint256 public immutable minStakingAmount; // Minimum amount a user can stake
     uint256 public immutable maxStakingAmount; // Maximum total staking amount across all users
 
@@ -21,7 +23,8 @@ contract Erc20YieldStaking is YieldStaking{
         uint256 totalRewards_,
         uint256 minStakingAmount_,
         uint256 maxStakingAmount_)
-    YieldStaking(stakingToken_, rewardsToken_, rewardsStart_, rewardsEnd_, totalRewards_) {
+    YieldStaking(rewardsToken_, rewardsStart_, rewardsEnd_, totalRewards_) {
+        stakingToken = stakingToken_;
         minStakingAmount = minStakingAmount_;
         maxStakingAmount = maxStakingAmount_;
     }

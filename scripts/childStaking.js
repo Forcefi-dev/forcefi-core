@@ -5,10 +5,10 @@ async function main() {
 
     console.log("Deploying staking contract with the account:", deployer.address);
 
-    const forcefiFundraisingAddress = "0x357efaEf6fDdb79be305a01aBF15A4317004E23E";
+    const forcefiFundraisingAddress = "0x5622023bcAe407681F387852b3df62beCeA24950";
     const lzContractAddress = process.env.LZ_CONTRACT_ADDRESS_ARBITRUMSEPOLIA;
 
-    const ChildStaking = await ethers.deployContract("ForcefiChildChainStaking", [forcefiFundraisingAddress, lzContractAddress]);
+    const ChildStaking = await ethers.deployContract("ForcefiChildChainStaking", [forcefiFundraisingAddress, lzContractAddress, deployer.address]);
     console.log("ChildStaking staking address " + await ChildStaking.getAddress())
 }
 

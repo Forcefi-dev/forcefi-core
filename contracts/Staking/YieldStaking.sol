@@ -10,11 +10,11 @@ abstract contract YieldStaking is Ownable {
     using Cast for uint256;
 
     // Events for logging key actions
-    event Staked(address user, uint256 amount);
-    event Unstaked(address user, uint256 amount);
-    event Claimed(address user, uint256 amount);
+    event Staked(address indexed user, uint256 amount);
+    event Unstaked(address indexed user, uint256 amount);
+    event Claimed(address indexed user, uint256 amount);
     event RewardsPerTokenUpdated(uint256 accumulated);
-    event UserRewardsUpdated(address user, uint256 rewards, uint256 checkpoint);
+    event UserRewardsUpdated(address indexed user, uint256 rewards, uint256 checkpoint);
 
     /// @notice Tracks rewards per token over time.
     /// @dev Accumulated rewards per token are scaled by 1e18 for precision.
@@ -30,7 +30,6 @@ abstract contract YieldStaking is Ownable {
     }
 
     // State variables
-    ERC20 public immutable stakingToken; // Token that users stake
     ERC20 public immutable rewardsToken; // Token distributed as rewards
     uint256 public immutable totalLocked; // Total rewards pool locked in the contract
 
@@ -46,19 +45,16 @@ abstract contract YieldStaking is Ownable {
     bool public rewardTokenLocked; // Indicates whether rewards tokens are locked in the contract
 
     /// @dev Initializes the contract with staking and rewards tokens, staking limits, and rewards configuration.
-    /// @param stakingToken_ The token to be staked.
     /// @param rewardsToken_ The token distributed as rewards.
     /// @param rewardsStart_ Start time for the rewards program.
     /// @param rewardsEnd_ End time for the rewards program.
     /// @param totalRewards_ Total rewards to be distributed over the program's duration.
     constructor(
-        ERC20 stakingToken_,
         ERC20 rewardsToken_,
         uint256 rewardsStart_,
         uint256 rewardsEnd_,
         uint256 totalRewards_
     ) Ownable(tx.origin) {
-        stakingToken = stakingToken_;
         rewardsToken = rewardsToken_;
         rewardsStart = rewardsStart_;
         rewardsEnd = rewardsEnd_;
