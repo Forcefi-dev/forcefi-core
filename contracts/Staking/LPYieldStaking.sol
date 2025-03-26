@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./YieldStaking.sol";
 
@@ -22,23 +23,33 @@ interface IUniswapV3PositionManager {
     function safeTransferFrom(address from, address to, uint256 tokenId) external;
 }
 
-/// @title NftYieldStaking
-/// @notice A permissionless staking contract for a single rewards program.
-/// @dev Rewards are distributed linearly over a fixed period of time, with a fixed total rewards pool.
-/// The rewards distribution is proportional to the amount staked by each user. Rewards tokens must
-/// be locked in the contract before the staking period begins.
-contract LPYieldStaking is YieldStaking{
+/// @title LPYieldStaking
+/// @notice A staking contract that allows users to stake Uniswap V3 LP NFTs in exchange for yield rewards.
+/// @dev Users stake NFTs representing liquidity positions and earn proportional rewards based on liquidity size.
+contract LPYieldStaking is YieldStaking, IERC721Receiver {
     using SafeERC20 for ERC20;
 
     // State variables
     IUniswapV3PositionManager public immutable positionManager;
 
-    ERC20 public immutable lpStakingToken1; // Token that users stake
-    ERC20 public immutable lpStakingToken2; // Token that users stake
+    ERC20 public immutable lpStakingToken1; // First token in the LP pair
+    ERC20 public immutable lpStakingToken2; // Second token in the LP pair
 
-    mapping(uint256 => address) public nftOwner; // Mapping of nft token owner
-    mapping(address => uint256 []) public lockedNfts; // Mapping of nft token owner
+    mapping(uint256 => uint256) public tokenLockupTimestamp; // Timestamp when an NFT was locked
+    uint256 public immutable lockupPeriod; // Minimum lockup period for staked NFTs
 
+    mapping(uint256 => address) public nftOwner; // Mapping of NFT token ID to owner
+    mapping(address => uint256[]) public lockedNfts; // Mapping of user address to their staked NFTs
+
+    /// @notice Initializes the LP yield staking contract.
+    /// @param rewardsToken_ The token distributed as rewards.
+    /// @param rewardsStart_ The start time of the rewards program.
+    /// @param rewardsEnd_ The end time of the rewards program.
+    /// @param totalRewards_ The total rewards available for distribution.
+    /// @param lpStakingToken1_ The first token in the LP pair.
+    /// @param lpStakingToken2_ The second token in the LP pair.
+    /// @param _positionManager The Uniswap V3 position manager contract.
+    /// @param _lockupPeriod The minimum period an NFT must be locked before unstaking.
     constructor(
         ERC20 rewardsToken_,
         uint256 rewardsStart_,
@@ -46,14 +57,18 @@ contract LPYieldStaking is YieldStaking{
         uint256 totalRewards_,
         ERC20 lpStakingToken1_,
         ERC20 lpStakingToken2_,
-        IUniswapV3PositionManager _positionManager
+        IUniswapV3PositionManager _positionManager,
+        uint256 _lockupPeriod
     ) YieldStaking(rewardsToken_, rewardsStart_, rewardsEnd_, totalRewards_) {
         lpStakingToken1 = lpStakingToken1_;
         lpStakingToken2 = lpStakingToken2_;
-
         positionManager = _positionManager;
+        lockupPeriod = _lockupPeriod;
     }
 
+    /// @notice Stake an LP NFT position.
+    /// @param user The address of the user staking the NFT.
+    /// @param tokenId The ID of the Uniswap V3 LP NFT being staked.
     function _stake(address user, uint256 tokenId) internal virtual override {
         (, , address token0, address token1, , , , uint128 liquidity, , , ,) = positionManager.positions(tokenId);
         require(liquidity > 0, "No liquidity in NFT");
@@ -65,16 +80,19 @@ contract LPYieldStaking is YieldStaking{
         userStake[user] += liquidity;
         nftOwner[tokenId] = user;
         lockedNfts[user].push(tokenId);
+        tokenLockupTimestamp[tokenId] = block.timestamp;
 
         positionManager.safeTransferFrom(user, address(this), tokenId);
 
         emit Staked(user, tokenId);
     }
 
-    /// @notice Unstake tokens.
-    function _unstake(address user, uint256 tokenId) internal virtual override
-    {
-        require (user == nftOwner[tokenId], "Only initial owner of NFT token can unstake");
+    /// @notice Unstake an LP NFT position.
+    /// @param user The address of the user unstaking the NFT.
+    /// @param tokenId The ID of the Uniswap V3 LP NFT being unstaked.
+    function _unstake(address user, uint256 tokenId) internal virtual override {
+        require(user == nftOwner[tokenId], "Only initial owner of NFT token can unstake");
+        require(tokenLockupTimestamp[tokenId] + lockupPeriod <= block.timestamp, "Token lockup period hasn't passed");
 
         (, , , , , , , uint128 liquidity, , , ,) = positionManager.positions(tokenId);
         _updateUserRewards(user);
@@ -87,16 +105,34 @@ contract LPYieldStaking is YieldStaking{
         emit Unstaked(user, liquidity);
     }
 
+    /// @notice Removes an NFT from a user's locked NFT list.
+    /// @param user The address of the user.
+    /// @param tokenId The ID of the NFT to remove.
     function removeLockedNft(address user, uint256 tokenId) internal {
         uint256[] storage userNfts = lockedNfts[user];
         for (uint256 i = 0; i < userNfts.length; i++) {
             if (userNfts[i] == tokenId) {
-                userNfts[i] = userNfts[userNfts.length - 1]; // Move last element to current index
-                userNfts.pop(); // Remove the last element
+                userNfts[i] = userNfts[userNfts.length - 1]; // Replace with last element
+                userNfts.pop(); // Remove last element
                 break;
             }
         }
     }
 
-}
+    /// @notice Returns all locked NFTs for a given user.
+    /// @param user The address of the user.
+    /// @return An array of NFT token IDs owned by the user.
+    function getLockedNfts(address user) external view returns (uint256[] memory) {
+        return lockedNfts[user];
+    }
 
+    /// @notice Implements IERC721Receiver to allow the contract to receive ERC721 tokens.
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external override returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+}

@@ -4,25 +4,31 @@ const { ethers } = require("hardhat");
 describe("Erc20YieldStaking", function () {
     let token, treasuryToken;
     let user1, user2;
+    let mockContract;
     const stakingTokenSupply = 1000;
     const treasuryAmount = 5000000;
     const user2Stake = 200;
     const user1Stake = stakingTokenSupply - user2Stake;
     const minStakingAmount = 100;
-    const maxStakingAmount = 1000;
+    const lockupPeriod = 0;
 
     // Helper function to deploy a new TokenLock instance
     async function deployTokenLock(startTimestampOffset, endTimestampOffset, rewards) {
-        const TokenLock = await ethers.getContractFactory("Erc20YieldStaking");
+        const MockUniswapV3 = await ethers.getContractFactory("MockUniswapV3PositionManager");
+        mockContract = await MockUniswapV3.deploy();
+
+        const TokenLock = await ethers.getContractFactory("LPYieldStaking");
         const now = Math.floor(Date.now() / 1000);
+
         return await TokenLock.deploy(
-            token.getAddress(),
             treasuryToken.getAddress(),
             now + startTimestampOffset,
             now + endTimestampOffset,
             rewards,
-            minStakingAmount,
-            maxStakingAmount
+            token.getAddress(),
+            treasuryToken.getAddress(),
+            mockContract.getAddress(),
+            lockupPeriod
         );
     }
 
@@ -40,8 +46,9 @@ describe("Erc20YieldStaking", function () {
         await token.transfer(user2.address, user2Stake);
     });
 
-    describe("Token locking", function () {
+    describe("LP Yield Staking token locking", function () {
         let tokenLock;
+        let uniswapManagerMock;
 
         it("should calculate rewards for multiple users correctly", async function () {
             // Deploy and initialize
@@ -49,9 +56,18 @@ describe("Erc20YieldStaking", function () {
             await treasuryToken.approve(tokenLock.getAddress(), treasuryAmount);
             await tokenLock.depositTreasuryTokens();
 
+            const tokenId = 1;  // Example tokenId
+            const liquidity = ethers.parseUnits("800", 18)
+            // Call setPosition
+            await mockContract.setPosition(tokenId, treasuryToken.getAddress(), token.getAddress(), liquidity);
+
             // Owner stakes
-            await token.approve(tokenLock.getAddress(), user1Stake);
-            await tokenLock.stake(user1Stake);
+            await tokenLock.stake(tokenId);
+
+            expect(await tokenLock.totalStaked()).to.be.eq(liquidity);
+            expect(await tokenLock.userStake(owner.address)).to.be.eq(liquidity);
+            expect(await tokenLock.nftOwner(tokenId)).to.be.eq(owner.address);
+            expect((await tokenLock.getLockedNfts(owner.address))[0]).to.be.eq(tokenId);
 
             const rewardsRate = BigInt(treasuryAmount) / BigInt(10000);
             const initialTimestamp = (await ethers.provider.getBlock("latest")).timestamp;
@@ -65,26 +81,27 @@ describe("Erc20YieldStaking", function () {
             const elapsedTime = BigInt(firstHalfTimestamp - initialTimestamp - 100); // Calculate elapsed time dynamically
 
             // Expected rewardsPerToken calculation
-            const firstUserStake = BigInt(user1Stake);
+            const firstUserStake = BigInt(liquidity);
             const expectedRewardsPerToken = (rewardsRate * elapsedTime * BigInt(1e18)) / firstUserStake;
 
             // Get actual rewardsPerToken from the contract
             const actualRewardsPerToken = await tokenLock.currentRewardsPerToken();
 
-            // Use a small tolerance to compare expected and actual values
-            const rewardsPerTokentolerance = BigInt(1e20); // Define an acceptable margin of error
-            expect(BigInt(actualRewardsPerToken)).to.be.closeTo(expectedRewardsPerToken, rewardsPerTokentolerance);
+            expect(BigInt(actualRewardsPerToken)).to.be.closeTo(expectedRewardsPerToken, 10);
 
             const expectedOwnerReward = (rewardsRate * elapsedTime * BigInt(user1Stake)) / BigInt(user1Stake);
 
-            // User1 stakes later
-            await token.connect(user2).approve(tokenLock.getAddress(), user2Stake);
-            await tokenLock.connect(user2).stake(user2Stake);
+            const user2TokenId = 2;  // Example tokenId
+            const user2Liquidity = ethers.parseUnits("200", 18)
+            // Call setPosition
+            await mockContract.connect(user2).setPosition(user2TokenId, treasuryToken.getAddress(), token.getAddress(), user2Liquidity);
+            // User2 stakes later
+            await tokenLock.connect(user2).stake(user2TokenId);
 
-            // Owner tries to stake more
-            await token.approve(tokenLock.getAddress(), user1Stake);
-            await expect(tokenLock.stake(user1Stake))
-                .to.be.revertedWith("The maximum staking amount has been reached for all holders");
+            // Try to stake invalid NFT
+            const invalitTokenId = 3;
+            await expect(tokenLock.stake(invalitTokenId))
+                .to.be.revertedWith("No liquidity in NFT");
 
             // Simulate more time passage
             await ethers.provider.send("evm_increaseTime", [halfPeriod + 100]);
@@ -130,27 +147,11 @@ describe("Erc20YieldStaking", function () {
             expect(BigInt(user1Balance)).to.equal(actualUser2Reward);
 
             // Unstake tokens
-            await tokenLock.unstake(user1Stake);
-            await expect(await token.balanceOf(user1.address)).to.equal(user1Stake);
+            await tokenLock.unstake(tokenId);
+            await expect(await mockContract.tokenOwner(tokenId)).to.equal(owner.address);
 
-            await expect(tokenLock.connect(user2).unstake(user2Stake - minStakingAmount + 1))
-                  .to.be.revertedWith("Either unstake the whole amount or leave more than the minimum stake amount");
-
-            await tokenLock.connect(user2).unstake(user2Stake);
-            await expect(await token.balanceOf(user2.address)).to.equal(user2Stake);
+            await tokenLock.connect(user2).unstake(user2TokenId);
+            await expect(await mockContract.tokenOwner(user2TokenId)).to.equal(user2.address);
         });
-
-        it("should handle two stakers with different stake amounts and entry times correctly", async function () {
-            // Deploy and initialize
-            tokenLock = await deployTokenLock(100, 110, treasuryAmount);
-            await treasuryToken.approve(tokenLock.getAddress(), treasuryAmount);
-
-            await ethers.provider.send("evm_increaseTime", [5000]);
-            await ethers.provider.send("evm_mine");
-
-            await expect(tokenLock.depositTreasuryTokens())
-                .to.be.revertedWith("Can't deposit treasury tokens if staking period has started");
-        });
-
     });
 });

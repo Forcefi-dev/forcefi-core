@@ -1,74 +1,6 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\MockV3Aggregator.sol": {
-      "lastModificationDate": 1728363848261,
-      "contentHash": "4402bf664e7d97a9398f2924c8baf541",
-      "sourceName": "contracts/test/MockV3Aggregator.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@chainlink/contracts/src/v0.8/tests/MockV3Aggregator.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": []
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\CuratorTokenDistributor.sol": {
-      "lastModificationDate": 1728363848246,
-      "contentHash": "8da4c05aae4568444e41cb4fd35356dc",
-      "sourceName": "contracts/Staking/CuratorTokenDistributor.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
-    },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ContractFactory.sol": {
       "lastModificationDate": 1734421010972,
       "contentHash": "62dcdebe9a244fd2e67bfb12af0daea7",
@@ -88,12 +20,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -130,12 +69,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -148,44 +94,6 @@
       "artifacts": [
         "ForcefiBaseContract",
         "IForcefiPackage"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20BurnableToken.sol": {
-      "lastModificationDate": 1733235345696,
-      "contentHash": "172df23c44eecd03d7bd0ead8344f9da",
-      "sourceName": "contracts/erc20Contracts/ERC20BurnableToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "ERC20BurnableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableBurnableToken.sol": {
@@ -207,12 +115,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -227,10 +142,10 @@
         "ERC20MintableBurnableToken"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20Token.sol": {
-      "lastModificationDate": 1733231167542,
-      "contentHash": "e04a284952bc6152c4b55dac359c6157",
-      "sourceName": "contracts/erc20Contracts/ERC20Token.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20BurnableToken.sol": {
+      "lastModificationDate": 1733235345696,
+      "contentHash": "172df23c44eecd03d7bd0ead8344f9da",
+      "sourceName": "contracts/erc20Contracts/ERC20BurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -246,24 +161,30 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol"
       ],
       "versionPragmas": [
         "0.8.20"
       ],
       "artifacts": [
-        "ERC20Token"
+        "ERC20BurnableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20MintableToken.sol": {
@@ -285,12 +206,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -302,6 +230,52 @@
       ],
       "artifacts": [
         "ERC20MintableToken"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\ERC20Token.sol": {
+      "lastModificationDate": 1739940993721,
+      "contentHash": "efee194b2980b3df69aa4684864f6271",
+      "sourceName": "contracts/erc20Contracts/ERC20Token.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "ERC20Token"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
@@ -323,12 +297,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -361,12 +342,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -397,12 +385,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -436,12 +431,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -477,12 +479,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -513,12 +522,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -551,12 +567,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -589,12 +612,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -628,12 +658,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -647,10 +684,10 @@
         "Pausable"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableBurnableToken.sol": {
-      "lastModificationDate": 1733161760750,
-      "contentHash": "d86c86197ea0469adc197e2186fc5756",
-      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableBurnableToken.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol": {
+      "lastModificationDate": 1733231284102,
+      "contentHash": "1e64e2ad597dc5b2dae11346502baad4",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -666,190 +703,42 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "ERC20PausableBurnableToken"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\PausableContractFactory.sol": {
-      "lastModificationDate": 1734420976865,
-      "contentHash": "bca9bd675733a35e160fc7e6bff16eeb",
-      "sourceName": "contracts/erc20Contracts/pausable/PausableContractFactory.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
           },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
-        "./../../ForcefiBaseContract.sol",
-        "./ERC20PausableMintableBurnableToken.sol",
-        "./ERC20PausableBurnableToken.sol",
-        "./ERC20PausableMintableToken.sol",
-        "./ERC20PausableToken.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "PausableContractFactory"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableBurnableToken.sol": {
-      "lastModificationDate": 1728363855298,
-      "contentHash": "15abbb6fac20ef3864a6f46c10be2973",
-      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableBurnableToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./ERC20PausableBurnableToken.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "ERC20PausableMintableBurnableToken"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableToken.sol": {
-      "lastModificationDate": 1728363855298,
-      "contentHash": "1aed3d65a44c7f735ade9d8c37c5f30d",
-      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./ERC20PausableToken.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "ERC20PausableMintableToken"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableToken.sol": {
-      "lastModificationDate": 1728926208757,
-      "contentHash": "959778f20849e82cb63104ced227071c",
-      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "./IERC721.sol",
+        "./IERC721Receiver.sol",
+        "./extensions/IERC721Metadata.sol",
+        "../../utils/Context.sol",
+        "../../utils/Strings.sol",
+        "../../utils/introspection/ERC165.sol",
+        "../../interfaces/draft-IERC6093.sol"
       ],
       "versionPragmas": [
         "^0.8.20"
       ],
       "artifacts": [
-        "ERC20PausableToken"
+        "ERC721"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\lzApp\\LzApp.sol": {
-      "lastModificationDate": 1732038770598,
-      "contentHash": "c0e564af4c541b1b844b2171c4f46cf1",
-      "sourceName": "@layerzerolabs/solidity-examples/contracts/lzApp/LzApp.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721Receiver.sol": {
+      "lastModificationDate": 1733231285615,
+      "contentHash": "fc8a9841f4bdd6329c26a00d5e75f4b3",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -865,32 +754,701 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC721Receiver"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Strings.sol": {
+      "lastModificationDate": 1733231285965,
+      "contentHash": "ba57ff4ddf1d9cae9d2009792795b7f6",
+      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./math/Math.sol",
+        "./math/SignedMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Strings"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
+      "lastModificationDate": 1733231283168,
+      "contentHash": "6a55c353946e471d9792965d06208295",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ERC165"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721.sol": {
+      "lastModificationDate": 1733231285534,
+      "contentHash": "5df8fdb527e563085847cad29e3c5f2e",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../../utils/introspection/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC721"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Metadata.sol": {
+      "lastModificationDate": 1733231285599,
+      "contentHash": "12c206f185cb951213799561fdcaa40d",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../IERC721.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC721Metadata"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\math\\Math.sol": {
+      "lastModificationDate": 1733231285734,
+      "contentHash": "718fa8ba0ff269c92e364c1429d9de57",
+      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Math"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SignedMath.sol": {
+      "lastModificationDate": 1733231285944,
+      "contentHash": "b6c6bdc7aaca4fe5b680760a72e09d3e",
+      "sourceName": "@openzeppelin/contracts/utils/math/SignedMath.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SignedMath"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
+      "lastModificationDate": 1733231284805,
+      "contentHash": "de0163561b417b800d01749cbbe2147e",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessageLib.sol": {
+      "lastModificationDate": 1733231278886,
+      "contentHash": "fa5082ec9a32dc00ab9dd5f759f3a756",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+        "./IMessageLibManager.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IMessageLib"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessageLibManager.sol": {
+      "lastModificationDate": 1733231278924,
+      "contentHash": "a56a887b2721a98cf82842503bbf0ef0",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLibManager.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IMessageLibManager"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ILayerZeroEndpointV2.sol": {
+      "lastModificationDate": 1733231278812,
+      "contentHash": "0790766778fa8995935c093d9cf03f84",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./IMessageLibManager.sol",
+        "./IMessagingComposer.sol",
+        "./IMessagingChannel.sol",
+        "./IMessagingContext.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "ILayerZeroEndpointV2"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingComposer.sol": {
+      "lastModificationDate": 1733231279003,
+      "contentHash": "bcc2df90697b23f02303892874f96324",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingComposer.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IMessagingComposer"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingChannel.sol": {
+      "lastModificationDate": 1733231278964,
+      "contentHash": "bd92a8f1c9f815025e8e3e676fe40b0d",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingChannel.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IMessagingChannel"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingContext.sol": {
+      "lastModificationDate": 1733231279039,
+      "contentHash": "2b8bfa473f049af8c74dffbff0766abf",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingContext.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IMessagingContext"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\interfaces\\IOAppCore.sol": {
+      "lastModificationDate": 1733231279011,
+      "contentHash": "f88e6ddf8ff977739a7178f0d1a276b3",
+      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/interfaces/IOAppCore.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IOAppCore"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppCore.sol": {
+      "lastModificationDate": 1733231278637,
+      "contentHash": "392cf9b920add3244966148ee8de682a",
+      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppCore.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
         "@openzeppelin/contracts/access/Ownable.sol",
-        "../interfaces/ILayerZeroReceiver.sol",
-        "../interfaces/ILayerZeroUserApplicationConfig.sol",
-        "../interfaces/ILayerZeroEndpoint.sol"
+        "./interfaces/IOAppCore.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "^0.8.20"
       ],
       "artifacts": [
-        "LzApp"
+        "OAppCore"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroReceiver.sol": {
-      "lastModificationDate": 1733231289505,
-      "contentHash": "62703c3b19a452bfdaca90f5bc59cfef",
-      "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroReceiver.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\oapp-evm\\contracts\\oapp\\OAppCore.sol": {
+      "lastModificationDate": 1733231286744,
+      "contentHash": "392cf9b920add3244966148ee8de682a",
+      "sourceName": "@layerzerolabs/oapp-evm/contracts/oapp/OAppCore.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -906,27 +1464,218 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "./interfaces/IOAppCore.sol"
+      ],
       "versionPragmas": [
-        ">=0.5.0"
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OAppCore"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\oapp-evm\\contracts\\oapp\\interfaces\\IOAppCore.sol": {
+      "lastModificationDate": 1733231286615,
+      "contentHash": "f88e6ddf8ff977739a7178f0d1a276b3",
+      "sourceName": "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppCore.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IOAppCore"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\oapp-evm\\contracts\\oapp\\OAppReceiver.sol": {
+      "lastModificationDate": 1733231286834,
+      "contentHash": "3621393509939962dd64af436aa5d131",
+      "sourceName": "@layerzerolabs/oapp-evm/contracts/oapp/OAppReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IOAppReceiver.sol",
+        "./OAppCore.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OAppReceiver"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\oapp-evm\\contracts\\oapp\\interfaces\\IOAppReceiver.sol": {
+      "lastModificationDate": 1733231286675,
+      "contentHash": "8744fbd8f6967b21443fddfccede3f1e",
+      "sourceName": "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/IOAppReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IOAppReceiver"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ILayerZeroReceiver.sol": {
+      "lastModificationDate": 1733231278849,
+      "contentHash": "07bcbc5377578339628265a849de70f5",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./ILayerZeroEndpointV2.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0"
       ],
       "artifacts": [
         "ILayerZeroReceiver"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroEndpoint.sol": {
-      "lastModificationDate": 1733231289500,
-      "contentHash": "008cb6eedb0a3be0c12cdd2307d1d9b1",
-      "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroEndpoint.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\interfaces\\IOAppReceiver.sol": {
+      "lastModificationDate": 1733231279121,
+      "contentHash": "8744fbd8f6967b21443fddfccede3f1e",
+      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/interfaces/IOAppReceiver.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -942,29 +1691,36 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
-        "./ILayerZeroUserApplicationConfig.sol"
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol"
       ],
       "versionPragmas": [
-        ">=0.5.0"
+        "^0.8.20"
       ],
       "artifacts": [
-        "ILayerZeroEndpoint"
+        "IOAppReceiver"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroUserApplicationConfig.sol": {
-      "lastModificationDate": 1733231289514,
-      "contentHash": "ea8e436e41bc96a3d434edb386b63cda",
-      "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroUserApplicationConfig.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppReceiver.sol": {
+      "lastModificationDate": 1733231278685,
+      "contentHash": "3621393509939962dd64af436aa5d131",
+      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppReceiver.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -980,27 +1736,221 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IOAppReceiver.sol",
+        "./OAppCore.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OAppReceiver"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OApp.sol": {
+      "lastModificationDate": 1733231278592,
+      "contentHash": "5fff81a48e0699606f1ee7387d4a31a2",
+      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./OAppSender.sol",
+        "./OAppReceiver.sol",
+        "./OAppCore.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OApp"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppSender.sol": {
+      "lastModificationDate": 1733231278749,
+      "contentHash": "8a54c076d80f5711e3511a0bbfcff1a1",
+      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
+        "./OAppCore.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OAppSender"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
+      "lastModificationDate": 1733231285917,
+      "contentHash": "697fd27924863e77c17dace2179018b2",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol",
+        "../extensions/IERC20Permit.sol",
+        "../../../utils/Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
+      "lastModificationDate": 1733231282143,
+      "contentHash": "79c699f80eb8a9b168cb34e37816f894",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [],
       "versionPragmas": [
-        ">=0.5.0"
+        "^0.8.20"
       ],
       "artifacts": [
-        "ILayerZeroUserApplicationConfig"
+        "Address"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\LZEndpointMock.sol": {
-      "lastModificationDate": 1725949690644,
-      "contentHash": "a8f91cc5e0637a16b48f56164bff868f",
-      "sourceName": "contracts/test/LZEndpointMock.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol": {
+      "lastModificationDate": 1733231284884,
+      "contentHash": "da291753fa4641f2c5837bfc4aa4c01b",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -1016,30 +1966,80 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20Permit"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\libs\\Transfer.sol": {
+      "lastModificationDate": 1733231279335,
+      "contentHash": "0762bff24288fb82803c259e336cfa6f",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/Transfer.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
-        "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroReceiver.sol",
-        "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroEndpoint.sol"
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
       ],
       "versionPragmas": [
-        "^0.8.4"
+        "^0.8.20"
       ],
       "artifacts": [
-        "LZEndpointMock"
+        "Transfer"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\lzApp\\NonblockingLzApp.sol": {
-      "lastModificationDate": 1732038770601,
-      "contentHash": "d6d1ff25e57f920cbf73aeed35b11a17",
-      "sourceName": "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\prototypes\\PeriodStaking.sol": {
+      "lastModificationDate": 1741115317034,
+      "contentHash": "6a87b7107ff5657e0db5a43896717049",
+      "sourceName": "contracts/prototypes/PeriodStaking.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -1055,23 +2055,1434 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\VestingLibrary.sol": {
+      "lastModificationDate": 1728363848251,
+      "contentHash": "0ab17b08632dca0453293fd446137c2b",
+      "sourceName": "contracts/VestingLibrary.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "VestingLibrary"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Vesting.sol": {
+      "lastModificationDate": 1733234909859,
+      "contentHash": "ef4eee560bef5a64d5ea2056c382190a",
+      "sourceName": "contracts/Vesting.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
-        "./LzApp.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "./VestingLibrary.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "Vesting"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\SendLibBase.sol": {
+      "lastModificationDate": 1733231284781,
+      "contentHash": "30e24e7ba40e38e1f6158f8b0cb58bbc",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/SendLibBase.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/Transfer.sol",
+        "./interfaces/ILayerZeroExecutor.sol",
+        "./interfaces/ILayerZeroTreasury.sol",
+        "./libs/SafeCall.sol",
+        "./MessageLibBase.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SendLibBase"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\MessageLibBase.sol": {
+      "lastModificationDate": 1733231284743,
+      "contentHash": "0b85d555b2dac6680d32d9a06c865fdb",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/MessageLibBase.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MessageLibBase"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\libs\\SafeCall.sol": {
+      "lastModificationDate": 1733231285035,
+      "contentHash": "6bcbea64901aae43d392623f058bc624",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/libs/SafeCall.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SafeCall"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\interfaces\\ILayerZeroExecutor.sol": {
+      "lastModificationDate": 1733231284916,
+      "contentHash": "d88dda6b54baa83df374c0c09d76303a",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/interfaces/ILayerZeroExecutor.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "ILayerZeroExecutor"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\interfaces\\ILayerZeroTreasury.sol": {
+      "lastModificationDate": 1733231284936,
+      "contentHash": "ba0a95638eb5d1a06ec7d020b83e2989",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/interfaces/ILayerZeroTreasury.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "ILayerZeroTreasury"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\interfaces\\IExecutor.sol": {
+      "lastModificationDate": 1733231284895,
+      "contentHash": "6611b1246e91c7e160c7682c33af6c4e",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/interfaces/IExecutor.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
+        "./IWorker.sol",
+        "./ILayerZeroExecutor.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IExecutor"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\interfaces\\IWorker.sol": {
+      "lastModificationDate": 1733231284945,
+      "contentHash": "dea42535acffea4d2bd1ec9681d88a1c",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/interfaces/IWorker.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IWorker"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\interfaces\\IExecutorFeeLib.sol": {
+      "lastModificationDate": 1733231284907,
+      "contentHash": "ccd3c9f71ab46b75d8d606adf415eacb",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/interfaces/IExecutorFeeLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./IExecutor.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "IExecutorFeeLib"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\EdnpointV2Mock.sol": {
+      "lastModificationDate": 1741115577984,
+      "contentHash": "9f85eef70d7446598dd4713f9af70a89",
+      "sourceName": "contracts/test/EdnpointV2Mock.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SafeCast.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/EndpointV2ViewUpgradeable.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLibManager.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/MessagingContext.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ISendLib.sol",
+        "@layerzerolabs/oft-evm/contracts/libs/OFTMsgCodec.sol",
+        "@layerzerolabs/oapp-evm/contracts/oapp/OAppReceiver.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/Errors.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/GUID.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/ExecutorOptions.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/PacketV1Codec.sol",
+        "@layerzerolabs/lz-evm-messagelib-v2/contracts/SendLibBase.sol",
+        "@layerzerolabs/lz-evm-messagelib-v2/contracts/interfaces/IExecutorFeeLib.sol",
+        "@layerzerolabs/lz-evm-messagelib-v2/contracts/uln/libs/DVNOptions.sol",
+        "@layerzerolabs/lz-evm-messagelib-v2/contracts/uln/libs/UlnOptions.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/CalldataBytesLib.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "EndpointV2Mock"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\EndpointV2ViewUpgradeable.sol": {
+      "lastModificationDate": 1733231278491,
+      "contentHash": "e24f5f0aa88ecc22a599362facdbb73c",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/EndpointV2ViewUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "./interfaces/ILayerZeroEndpointV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "EndpointV2ViewUpgradeable"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\MessagingContext.sol": {
+      "lastModificationDate": 1733231278708,
+      "contentHash": "60c0bd581632272ab475f236282b70b0",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/MessagingContext.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IMessagingContext.sol",
+        "./libs/Errors.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MessagingContext"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SafeCast.sol": {
+      "lastModificationDate": 1733231285895,
+      "contentHash": "d72cdfaacd4b1b8e090b57f4b7200ddc",
+      "sourceName": "@openzeppelin/contracts/utils/math/SafeCast.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SafeCast"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ISendLib.sol": {
+      "lastModificationDate": 1733231279079,
+      "contentHash": "2ed59a174607c55048374a27816752aa",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ISendLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./ILayerZeroEndpointV2.sol",
+        "./IMessageLib.sol"
+      ],
+      "versionPragmas": [
+        ">=0.8.0"
+      ],
+      "artifacts": [
+        "ISendLib"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\libs\\GUID.sol": {
+      "lastModificationDate": 1733231279269,
+      "contentHash": "664c7211dae3441b1ab2ccccbd62eef4",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/GUID.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./AddressCast.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "GUID"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\libs\\Errors.sol": {
+      "lastModificationDate": 1733231279223,
+      "contentHash": "5e30d65ecaa3b73c091bd32a32573cba",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/Errors.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Errors"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\libs\\CalldataBytesLib.sol": {
+      "lastModificationDate": 1733231279172,
+      "contentHash": "673ca16094a43c577ed24243c20361aa",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/CalldataBytesLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "CalldataBytesLib"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\oft-evm\\contracts\\libs\\OFTMsgCodec.sol": {
+      "lastModificationDate": 1739003122707,
+      "contentHash": "721d3e26148a5d6794537302ed308863",
+      "sourceName": "@layerzerolabs/oft-evm/contracts/libs/OFTMsgCodec.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "OFTMsgCodec"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\messagelib\\libs\\ExecutorOptions.sol": {
+      "lastModificationDate": 1733231279883,
+      "contentHash": "d9e985d1c5d407ba110da010983bcfb6",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/ExecutorOptions.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../../libs/CalldataBytesLib.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ExecutorOptions"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\messagelib\\libs\\PacketV1Codec.sol": {
+      "lastModificationDate": 1733231279935,
+      "contentHash": "fb446531f87e319bbe661e5d6845964f",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/PacketV1Codec.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../../interfaces/ISendLib.sol",
+        "../../libs/AddressCast.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "PacketV1Codec"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\uln\\libs\\DVNOptions.sol": {
+      "lastModificationDate": 1733231285910,
+      "contentHash": "d2b1c66f564862f65b37230b44da37c0",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/uln/libs/DVNOptions.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "solidity-bytes-utils/contracts/BytesLib.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/BitMaps.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/CalldataBytesLib.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "DVNOptions"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-messagelib-v2\\contracts\\uln\\libs\\UlnOptions.sol": {
+      "lastModificationDate": 1733231285921,
+      "contentHash": "20cecbf89aebfddf23ef52f007923f1e",
+      "sourceName": "@layerzerolabs/lz-evm-messagelib-v2/contracts/uln/libs/UlnOptions.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/math/SafeCast.sol",
+        "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/ExecutorOptions.sol",
+        "./DVNOptions.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "UlnOptions"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol": {
+      "lastModificationDate": 1733231281740,
+      "contentHash": "f0cedd674b4863ee90d1521a92ab82df",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Initializable"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\libs\\AddressCast.sol": {
+      "lastModificationDate": 1733231279121,
+      "contentHash": "4ede58e59ea7779e777942a5da252697",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/libs/AddressCast.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AddressCast"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\solidity-bytes-utils\\contracts\\BytesLib.sol": {
+      "lastModificationDate": 1739003221419,
+      "contentHash": "9c6b01be648f655631038d79648a7c05",
+      "sourceName": "solidity-bytes-utils/contracts/BytesLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.0 <0.9.0"
+      ],
+      "artifacts": [
+        "BytesLib"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\messagelib\\libs\\BitMaps.sol": {
+      "lastModificationDate": 1733231279766,
+      "contentHash": "b2d6a04de0dde1607086d9872aac790e",
+      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/BitMaps.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "BitMaps"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\YieldStaking.sol": {
+      "lastModificationDate": 1740632367284,
+      "contentHash": "22eb5e9def35649dabbea7009208392b",
+      "sourceName": "contracts/Staking/YieldStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "NonblockingLzApp"
+        "Cast",
+        "YieldStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\LPYieldStaking.sol": {
+      "lastModificationDate": 1741116493599,
+      "contentHash": "d1b921dbfbdd2ce9d342982946d42c9c",
+      "sourceName": "contracts/Staking/LPYieldStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "./YieldStaking.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IUniswapV3PositionManager",
+        "LPYieldStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\Erc20YieldStaking.sol": {
+      "lastModificationDate": 1740632393259,
+      "contentHash": "3e65ad1c99828db224649a2396651561",
+      "sourceName": "contracts/Staking/Erc20YieldStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./YieldStaking.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Erc20YieldStaking"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\MyOapp.sol": {
+      "lastModificationDate": 1741115569049,
+      "contentHash": "8e1f815cdde7a23d5b53fd46dc699804",
+      "sourceName": "contracts/test/MyOapp.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol",
+        "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MyOApp"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\BaseStaking.sol": {
@@ -1093,12 +3504,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1135,12 +3553,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1171,12 +3596,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1209,12 +3641,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1227,6 +3666,52 @@
       "artifacts": [
         "ArbitrumStaking",
         "INFTContract"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\AccessStaking.sol": {
+      "lastModificationDate": 1738651517779,
+      "contentHash": "cf5ffe3b3ce58d9891407d7989e49db3",
+      "sourceName": "contracts/Staking/AccessStaking.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./BaseStaking.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "AccessStaking",
+        "IERC20Burnable"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\ForcefiPackage.sol": {
@@ -1248,12 +3733,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1291,12 +3783,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1327,12 +3826,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1366,12 +3872,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1402,12 +3915,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -1421,10 +3941,10 @@
         "MockV3Aggregator"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Fundraising.sol": {
-      "lastModificationDate": 1728364954331,
-      "contentHash": "6585d17af70f0cd29f389e1a254235cb",
-      "sourceName": "contracts/Fundraising.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\PausableContractFactory.sol": {
+      "lastModificationDate": 1734420976865,
+      "contentHash": "bca9bd675733a35e160fc7e6bff16eeb",
+      "sourceName": "contracts/erc20Contracts/pausable/PausableContractFactory.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -1440,33 +3960,88 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./../../ForcefiBaseContract.sol",
+        "./ERC20PausableMintableBurnableToken.sol",
+        "./ERC20PausableBurnableToken.sol",
+        "./ERC20PausableMintableToken.sol",
+        "./ERC20PausableToken.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "PausableContractFactory"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableBurnableToken.sol": {
+      "lastModificationDate": 1733161760750,
+      "contentHash": "d86c86197ea0469adc197e2186fc5756",
+      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableBurnableToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "./ForcefiBaseContract.sol",
-        "./VestingLibrary.sol",
-        "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol"
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol",
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol"
       ],
       "versionPragmas": [
         "0.8.20"
       ],
       "artifacts": [
-        "Fundraising",
-        "IForcefiStaking"
+        "ERC20PausableBurnableToken"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\VestingLibrary.sol": {
-      "lastModificationDate": 1728363848251,
-      "contentHash": "0ab17b08632dca0453293fd446137c2b",
-      "sourceName": "contracts/VestingLibrary.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableBurnableToken.sol": {
+      "lastModificationDate": 1728363855298,
+      "contentHash": "15abbb6fac20ef3864a6f46c10be2973",
+      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableBurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -1482,27 +4057,36 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "./ERC20PausableBurnableToken.sol"
+      ],
       "versionPragmas": [
         "0.8.20"
       ],
       "artifacts": [
-        "VestingLibrary"
+        "ERC20PausableMintableBurnableToken"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Vesting.sol": {
-      "lastModificationDate": 1733234909859,
-      "contentHash": "ef4eee560bef5a64d5ea2056c382190a",
-      "sourceName": "contracts/Vesting.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableMintableToken.sol": {
+      "lastModificationDate": 1728363855298,
+      "contentHash": "1aed3d65a44c7f735ade9d8c37c5f30d",
+      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableMintableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -1518,1092 +4102,77 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./ERC20PausableToken.sol"
+      ],
+      "versionPragmas": [
+        "0.8.20"
+      ],
+      "artifacts": [
+        "ERC20PausableMintableToken"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\erc20Contracts\\pausable\\ERC20PausableToken.sol": {
+      "lastModificationDate": 1728926208757,
+      "contentHash": "959778f20849e82cb63104ced227071c",
+      "sourceName": "contracts/erc20Contracts/pausable/ERC20PausableToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "./VestingLibrary.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "Vesting"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
-      "lastModificationDate": 1733231285917,
-      "contentHash": "697fd27924863e77c17dace2179018b2",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../IERC20.sol",
-        "../extensions/IERC20Permit.sol",
-        "../../../utils/Address.sol"
+        "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.20"
       ],
       "artifacts": [
-        "SafeERC20"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
-      "lastModificationDate": 1733231282143,
-      "contentHash": "79c699f80eb8a9b168cb34e37816f894",
-      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "Address"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol": {
-      "lastModificationDate": 1733231284884,
-      "contentHash": "da291753fa4641f2c5837bfc4aa4c01b",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC20Permit"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\InvestmentToken.sol": {
-      "lastModificationDate": 1733231167545,
-      "contentHash": "fa68af3a928bfe7b937a660cd2a9be9c",
-      "sourceName": "contracts/test/InvestmentToken.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "InvestmentToken"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppSender.sol": {
-      "lastModificationDate": 1733231278749,
-      "contentHash": "8a54c076d80f5711e3511a0bbfcff1a1",
-      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
-        "./OAppCore.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "OAppSender"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppCore.sol": {
-      "lastModificationDate": 1733231278637,
-      "contentHash": "392cf9b920add3244966148ee8de682a",
-      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppCore.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./interfaces/IOAppCore.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "OAppCore"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ILayerZeroEndpointV2.sol": {
-      "lastModificationDate": 1733231278812,
-      "contentHash": "0790766778fa8995935c093d9cf03f84",
-      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./IMessageLibManager.sol",
-        "./IMessagingComposer.sol",
-        "./IMessagingChannel.sol",
-        "./IMessagingContext.sol"
-      ],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "ILayerZeroEndpointV2"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\interfaces\\IOAppCore.sol": {
-      "lastModificationDate": 1733231279011,
-      "contentHash": "f88e6ddf8ff977739a7178f0d1a276b3",
-      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/interfaces/IOAppCore.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IOAppCore"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessageLibManager.sol": {
-      "lastModificationDate": 1733231278924,
-      "contentHash": "a56a887b2721a98cf82842503bbf0ef0",
-      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLibManager.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "IMessageLibManager"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingComposer.sol": {
-      "lastModificationDate": 1733231279003,
-      "contentHash": "bcc2df90697b23f02303892874f96324",
-      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingComposer.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "IMessagingComposer"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingContext.sol": {
-      "lastModificationDate": 1733231279039,
-      "contentHash": "2b8bfa473f049af8c74dffbff0766abf",
-      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingContext.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "IMessagingContext"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\IMessagingChannel.sol": {
-      "lastModificationDate": 1733231278964,
-      "contentHash": "bd92a8f1c9f815025e8e3e676fe40b0d",
-      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessagingChannel.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "IMessagingChannel"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OApp.sol": {
-      "lastModificationDate": 1733231278592,
-      "contentHash": "5fff81a48e0699606f1ee7387d4a31a2",
-      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./OAppSender.sol",
-        "./OAppReceiver.sol",
-        "./OAppCore.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "OApp"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\OAppReceiver.sol": {
-      "lastModificationDate": 1733231278685,
-      "contentHash": "3621393509939962dd64af436aa5d131",
-      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppReceiver.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./interfaces/IOAppReceiver.sol",
-        "./OAppCore.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "OAppReceiver"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-oapp-v2\\contracts\\oapp\\interfaces\\IOAppReceiver.sol": {
-      "lastModificationDate": 1733231279121,
-      "contentHash": "8744fbd8f6967b21443fddfccede3f1e",
-      "sourceName": "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/interfaces/IOAppReceiver.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IOAppReceiver"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\lz-evm-protocol-v2\\contracts\\interfaces\\ILayerZeroReceiver.sol": {
-      "lastModificationDate": 1733231278849,
-      "contentHash": "07bcbc5377578339628265a849de70f5",
-      "sourceName": "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroReceiver.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./ILayerZeroEndpointV2.sol"
-      ],
-      "versionPragmas": [
-        ">=0.8.0"
-      ],
-      "artifacts": [
-        "ILayerZeroReceiver"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\MyOapp.sol": {
-      "lastModificationDate": 1733231167546,
-      "contentHash": "8e1f815cdde7a23d5b53fd46dc699804",
-      "sourceName": "contracts/test/MyOapp.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol",
-        "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "MyOApp"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\prototypes\\PeriodStaking.sol": {
-      "lastModificationDate": 1737527212685,
-      "contentHash": "ab0e29504699c7bce7be946984565e5a",
-      "sourceName": "contracts/prototypes/PeriodStaking.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./../VestingLibrary.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "PeriodStaking"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\AccessStaking.sol": {
-      "lastModificationDate": 1738651517779,
-      "contentHash": "cf5ffe3b3ce58d9891407d7989e49db3",
-      "sourceName": "contracts/Staking/AccessStaking.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./BaseStaking.sol"
-      ],
-      "versionPragmas": [
-        "0.8.20"
-      ],
-      "artifacts": [
-        "AccessStaking",
-        "IERC20Burnable"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol": {
-      "lastModificationDate": 1733231284102,
-      "contentHash": "1e64e2ad597dc5b2dae11346502baad4",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./IERC721.sol",
-        "./IERC721Receiver.sol",
-        "./extensions/IERC721Metadata.sol",
-        "../../utils/Context.sol",
-        "../../utils/Strings.sol",
-        "../../utils/introspection/ERC165.sol",
-        "../../interfaces/draft-IERC6093.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "ERC721"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\Strings.sol": {
-      "lastModificationDate": 1733231285965,
-      "contentHash": "ba57ff4ddf1d9cae9d2009792795b7f6",
-      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./math/Math.sol",
-        "./math/SignedMath.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "Strings"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
-      "lastModificationDate": 1733231283168,
-      "contentHash": "6a55c353946e471d9792965d06208295",
-      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./IERC165.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "ERC165"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721.sol": {
-      "lastModificationDate": 1733231285534,
-      "contentHash": "5df8fdb527e563085847cad29e3c5f2e",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../utils/introspection/IERC165.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC721"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721Receiver.sol": {
-      "lastModificationDate": 1733231285615,
-      "contentHash": "fc8a9841f4bdd6329c26a00d5e75f4b3",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC721Receiver"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Metadata.sol": {
-      "lastModificationDate": 1733231285599,
-      "contentHash": "12c206f185cb951213799561fdcaa40d",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../IERC721.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC721Metadata"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SignedMath.sol": {
-      "lastModificationDate": 1733231285944,
-      "contentHash": "b6c6bdc7aaca4fe5b680760a72e09d3e",
-      "sourceName": "@openzeppelin/contracts/utils/math/SignedMath.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "SignedMath"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\math\\Math.sol": {
-      "lastModificationDate": 1733231285734,
-      "contentHash": "718fa8ba0ff269c92e364c1429d9de57",
-      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "Math"
-      ]
-    },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
-      "lastModificationDate": 1733231284805,
-      "contentHash": "de0163561b417b800d01749cbbe2147e",
-      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC165"
+        "ERC20PausableToken"
       ]
     },
     "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\SimpleNft.sol": {
@@ -2625,12 +4194,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
@@ -2644,10 +4220,10 @@
         "SimpleNFT"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\YieldStaking.sol": {
-      "lastModificationDate": 1738824064051,
-      "contentHash": "294ee9f15130a8c08ef5ba670f39f399",
-      "sourceName": "contracts/Staking/YieldStaking.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\InvestmentToken.sol": {
+      "lastModificationDate": 1733231167545,
+      "contentHash": "fa68af3a928bfe7b937a660cd2a9be9c",
+      "sourceName": "contracts/test/InvestmentToken.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -2663,32 +4239,85 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "InvestmentToken"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Fundraising.sol": {
+      "lastModificationDate": 1741115577945,
+      "contentHash": "1997b4f5ae7d30d172781ec8dce2d780",
+      "sourceName": "contracts/Fundraising.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
         "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "./ForcefiBaseContract.sol",
+        "./VestingLibrary.sol",
+        "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol"
       ],
       "versionPragmas": [
-        "^0.8.0"
+        "0.8.20"
       ],
       "artifacts": [
-        "Cast",
-        "YieldStaking"
+        "Fundraising",
+        "IForcefiStaking"
       ]
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\Erc20YieldStaking.sol": {
-      "lastModificationDate": 1738823807238,
-      "contentHash": "847592841761051cc1dacf59bd4388cc",
-      "sourceName": "contracts/Staking/Erc20YieldStaking.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\CuratorTokenDistributor.sol": {
+      "lastModificationDate": 1728363848246,
+      "contentHash": "8da4c05aae4568444e41cb4fd35356dc",
+      "sourceName": "contracts/Staking/CuratorTokenDistributor.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -2704,30 +4333,30 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
-      "imports": [
-        "./YieldStaking.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Erc20YieldStaking"
-      ]
+      "imports": [],
+      "versionPragmas": [],
+      "artifacts": []
     },
-    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\Staking\\LPYieldStaking.sol": {
-      "lastModificationDate": 1738858637226,
-      "contentHash": "2ea053967f71266f820803d8e0d4d836",
-      "sourceName": "contracts/Staking/LPYieldStaking.sol",
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\LZEndpointMock.sol": {
+      "lastModificationDate": 1741115564318,
+      "contentHash": "a8f91cc5e0637a16b48f56164bff868f",
+      "sourceName": "contracts/test/LZEndpointMock.sol",
       "solcConfig": {
         "version": "0.8.20",
         "settings": {
@@ -2743,25 +4372,205 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "./YieldStaking.sol"
+        "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroReceiver.sol",
+        "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroEndpoint.sol"
       ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "LZEndpointMock"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroReceiver.sol": {
+      "lastModificationDate": 1733231289505,
+      "contentHash": "62703c3b19a452bfdaca90f5bc59cfef",
+      "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "ILayerZeroReceiver"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroEndpoint.sol": {
+      "lastModificationDate": 1733231289500,
+      "contentHash": "008cb6eedb0a3be0c12cdd2307d1d9b1",
+      "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroEndpoint.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "./ILayerZeroUserApplicationConfig.sol"
+      ],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "ILayerZeroEndpoint"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\node_modules\\@layerzerolabs\\solidity-examples\\contracts\\interfaces\\ILayerZeroUserApplicationConfig.sol": {
+      "lastModificationDate": 1733231289514,
+      "contentHash": "ea8e436e41bc96a3d434edb386b63cda",
+      "sourceName": "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroUserApplicationConfig.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "ILayerZeroUserApplicationConfig"
+      ]
+    },
+    "C:\\Users\\ilmar\\forcefi-git\\forcefi-core\\contracts\\test\\MockUniswapV3PositionManager.sol": {
+      "lastModificationDate": 1740466119952,
+      "contentHash": "99f9b2bb633c4981d058b20d07fc1f48",
+      "sourceName": "contracts/test/MockUniswapV3PositionManager.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "IUniswapV3PositionManager",
-        "LPYieldStaking"
+        "MockUniswapV3PositionManager"
       ]
     }
   }
