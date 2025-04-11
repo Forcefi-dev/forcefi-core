@@ -5,7 +5,7 @@ async function main() {
 
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const SimpleNft = await ethers.deployContract("SimpleNFT", ["Gold Forcefi NFT", "Gold"]);
+    const SimpleNft = await ethers.deployContract("SimpleNFT", ["Silver Forcefi NFT", "Silver"]);
     console.log("SimpleNft contract address " + await SimpleNft.getAddress())
 }
 

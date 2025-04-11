@@ -2,6 +2,8 @@
 pragma solidity 0.8.20;
 
 import "./BaseStaking.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // Interface for an ERC20 token with a burn function
 interface IERC20Burnable {
@@ -10,7 +12,9 @@ interface IERC20Burnable {
 
 contract AccessStaking is BaseStaking {
 
-    address public forcefiTokenAddress;
+    using SafeERC20 for IERC20;
+
+    IERC20 public immutable forcefiTokenAddress;  // ERC20 token used for staking
 
     mapping(uint => address) public silverNftOwner;
     mapping(uint => address) public goldNftOwner;
@@ -34,7 +38,7 @@ contract AccessStaking is BaseStaking {
         address _endpoint,
         address _delegate
     ) BaseStaking(_forcefiFundraisingAddress, _endpoint, _delegate) {
-        forcefiTokenAddress = _forcefiTokenAddress;
+        forcefiTokenAddress = IERC20(_forcefiTokenAddress);
     }
 
     // No logic to implement
@@ -77,29 +81,37 @@ contract AccessStaking is BaseStaking {
     /// @notice Stakes a given amount of tokens and associates an optional gold NFT
     /// @param _stakeAmount The amount of tokens to stake
     function stake(uint _stakeAmount, address _stakerAddress) public {
-        ActiveStake storage stake = activeStake[_stakerAddress];
+        require(_stakeAmount > 0, "Stake amount must be greater than zero");
+
+        ActiveStake storage userStake = activeStake[_stakerAddress]; // Renamed variable
+        uint newTotalStake = _stakeAmount + userStake.stakeAmount;
+
         require(
-            (_stakeAmount + stake.stakeAmount == minStakingAmount
-                || _stakeAmount + stake.stakeAmount == curatorTreshholdAmount
-                || _stakeAmount + stake.stakeAmount == investorTreshholdAmount),
+            (newTotalStake == minStakingAmount ||
+        newTotalStake == curatorTreshholdAmount ||
+        newTotalStake == investorTreshholdAmount),
             "Invalid stake amount"
         );
 
+        // Transfer tokens from the staker to the contract
+        forcefiTokenAddress.safeTransferFrom(_stakerAddress, address(this), _stakeAmount);
+
         hasStaked[_stakerAddress] = true;
 
-        if(_stakeAmount + stake.stakeAmount == investorTreshholdAmount ){
+        uint stakeId = _stakeIdCounter;
+
+        if (newTotalStake == investorTreshholdAmount) {
             isCurator[_stakerAddress] = true;
             _stakeIdCounter += 1;
-            uint stakeId = _stakeIdCounter;
             investors.push(_stakerAddress);
             currentStakeId[_stakerAddress] = stakeId;
-            activeStake[_stakerAddress] = ActiveStake(stakeId, _stakeAmount + stake.stakeAmount, block.timestamp, 0, 0);
-            emit Staked(_stakerAddress, _stakeAmount, stakeId);
+            activeStake[_stakerAddress] = ActiveStake(stakeId, newTotalStake, block.timestamp, 0, 0);
         }
-        else if (_stakeAmount + stake.stakeAmount == curatorTreshholdAmount) {
+        else if (newTotalStake == curatorTreshholdAmount) {
             isCurator[_stakerAddress] = true;
             emit CuratorAdded(_stakerAddress);
         }
+        emit Staked(_stakerAddress, _stakeAmount, stakeId);
     }
 
     /// @notice Bridges the staking access to multiple destination chains
@@ -123,7 +135,7 @@ contract AccessStaking is BaseStaking {
             hasStaked[msg.sender] = false;
             currentStakeId[msg.sender] = 0;
             removeInvestor(msg.sender);
-            ERC20(forcefiTokenAddress).transfer(msg.sender, activeStake.stakeAmount);
+            forcefiTokenAddress.safeTransfer(msg.sender, activeStake.stakeAmount);
             emit Unstaked(msg.sender, activeStake.stakeId);
             executeBridge(chainList[msg.sender], payload, _options);
         } else {

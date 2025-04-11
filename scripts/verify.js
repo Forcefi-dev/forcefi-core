@@ -17,12 +17,12 @@ async function main() {
     const forcefiFundraisingAddress = "0x59b006583C77173920a0FC62270243Cd4B6E2669";
     const lzContractAddress = process.env.LZ_CONTRACT_ADDRESS_BASESEPOLIA;
 
-    const addressToVerify = "0x31da54BC8465a29e07b3896D53B9b81F3b88dEde";
+    const addressToVerify = "0x03f82b19f734cD92D093dB9C09512d271A7bD579";
 
     // string memory _name, string memory _ticker, uint256 _initialSupply, address _ownerAddress
     await hre.run("verify:verify", {
         address: addressToVerify,
-        constructorArguments: []
+        constructorArguments: ["Silver Forcefi NFT", "Silver"]
         // constructorArguments: ["0x1e494710ddaF9d297C4DF9d11e6acc94ddA51A15",
         //     "1740638989", "1743230989", "1000000000000000000000000", "0x1e494710ddaF9d297C4DF9d11e6acc94ddA51A15", "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14", "0x1238536071E1c677A632429e3655c799b22cDA52", 3600],
     });

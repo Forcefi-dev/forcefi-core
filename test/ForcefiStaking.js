@@ -23,7 +23,7 @@
 //         const srcChainMock = await LZEndpointMock.deploy(srcChainId);
 //         const dstChainMock = await LZEndpointMock.deploy(dstChainId);
 //
-//         const forcefiStaking = await hre.ethers.getContractFactory("ForcefiStaking");
+//         const forcefiStaking = await hre.ethers.getContractFactory("AccessStaking");
 //
 //         [owner, addr1, addr2, silverNftAddress, goldNftAddress] = await ethers.getSigners();
 //

@@ -227,7 +227,7 @@ contract Fundraising is ForcefiBaseContract{
      * @param sentTokenAddress The address of the token sent for investment
      * @param fundraisingAddress The address of the fundraising contract
      */
-    event Invested(address indexed investor, uint amount, address sentTokenAddress, address fundraisingAddress);
+    event Invested(address indexed investor, uint amount, address sentTokenAddress, bytes32 indexed fundraisingAddress);
 
     /**
      * @notice Emitted when an address is whitelisted for a private fundraising campaign
@@ -459,7 +459,7 @@ contract Fundraising is ForcefiBaseContract{
         fundraisingBalance[_fundraisingIdx][_whitelistedTokenAddress] += investTokenAmount;
 
         fundraising.totalFundraised += _amount;
-        emit Invested(msg.sender, _amount, _whitelistedTokenAddress, address(this));
+        emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
     }
 
     /**
