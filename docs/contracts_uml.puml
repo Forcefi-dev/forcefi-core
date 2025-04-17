@@ -1,0 +1,209 @@
+@startuml ForcefiContracts
+
+' Style and theme
+skinparam class {
+    BackgroundColor white
+    ArrowColor #666666
+    BorderColor #666666
+}
+
+' Base Contracts & Interfaces
+abstract class Ownable
+abstract class OApp
+abstract class ReentrancyGuard
+abstract class ERC20
+interface IERC721Receiver
+interface IUniswapV3PositionManager
+interface IForcefiPackage
+interface IForcefiStaking
+interface IERC20Burnable
+
+' Core Contracts
+class ForcefiBaseContract {
+    +uint feeAmount
+    +address forcefiPackageAddress
+    +setFeeAmount()
+    +setForcefiPackageAddress()
+    +withdrawFee()
+}
+
+class ForcefiPackage {
+    +Package[] packages
+    +mapping(address => bool) whitelistedToken
+    +mapping(string => string[]) individualPackages
+    +mapping(string => uint256) amountInvestedByProject
+    +buyPackage()
+    +bridgeToken()
+    +addPackage()
+    +updatePackage()
+    +hasCreationToken()
+    +ownerMintToken()
+    +whitelistTokenForInvestment()
+    +removeWhitelistInvestmentToken()
+    +viewProjectPackages()
+}
+
+class Fundraising {
+    +mapping(bytes32 => FundraisingInstance) fundraisings
+    +mapping(bytes32 => VestingPlan) vestingPlans
+    +uint256 referralFee
+    +FeeConfig feeConfig
+    +createFundraising()
+    +invest()
+    +closeCampaign()
+    +claimTokens()
+    +reclaimTokens()
+    +setReferralFee()
+    +setFeeConfig()
+    +unlockFundsFromCampaign()
+    +computeReleasableAmount()
+}
+
+class Vesting {
+    +mapping(string => bytes32[]) projectVestings
+    +mapping(bytes32 => VestingPlan) vestingPlans
+    +addVestingPlansBulk()
+    +addVestingPlan()
+    +addVestingBeneficiaries()
+    +withdrawUnallocatedTokens()
+    +releaseVestedTokens()
+    +calculateVestedTokens()
+    +getVestingsByProjectName()
+}
+
+' Staking Contracts
+abstract class YieldStaking {
+    +ERC20 rewardsToken
+    +uint256 totalStaked
+    +uint256 totalLocked
+    +uint256 rewardsRate
+    +mapping(address => uint256) userStake
+    +mapping(address => UserRewards) accumulatedRewards
+    +stake()
+    +unstake()
+    +claim()
+    +currentRewardsPerToken()
+    +currentUserRewards()
+}
+
+class LPYieldStaking {
+    +IUniswapV3PositionManager positionManager
+    +ERC20 lpStakingToken1
+    +ERC20 lpStakingToken2
+    +uint256 lockupPeriod
+    +mapping(uint => address) nftOwner
+    +mapping(address => uint256[]) lockedNfts
+    +getLockedNfts()
+    +removeLockedNft()
+}
+
+class Erc20YieldStaking {
+    +ERC20 stakingToken
+    +uint256 minStakingAmount
+    +uint256 maxStakingAmount
+    +_stake()
+    +_unstake()
+}
+
+abstract class BaseStaking {
+    +uint _stakeIdCounter
+    +uint eligibleToReceiveFeeTime
+    +mapping(address => ActiveStake) activeStake
+    +mapping(address => bool) hasStaked
+    +mapping(address => mapping(address => uint)) investorTokenBalance
+    +address[] investors
+    +receiveFees()
+    +claimFees()
+    +setInvestorTreshholdAmount()
+    +removeInvestor()
+    +getInvestors()
+}
+
+class AccessStaking {
+    +IERC20 forcefiTokenAddress
+    +mapping(uint => address) silverNftOwner
+    +mapping(uint => address) goldNftOwner
+    +mapping(address => bool) isCurator
+    +uint minStakingAmount
+    +uint curatorTreshholdAmount
+    +stake()
+    +bridgeStakingAccess()
+}
+
+class ArbitrumStaking {
+    +address forcefiSilverNFTAddress
+    +address forcefiGoldNFTAddress
+    +mapping(uint => bool) nftBridged
+    +mapping(uint => bool) goldNftBridged
+    +_setStaker()
+    +unstake()
+    +bridgeStakingAccess()
+}
+
+' ERC20 Contracts
+class ERC20Token {
+    +constructor()
+    +decimals()
+}
+
+class ERC20MintableToken {
+    +mint()
+}
+
+class ERC20BurnableToken {
+    +burn()
+}
+
+class ERC20MintableBurnableToken {
+    +mint()
+    +burn()
+}
+
+class ERC20PausableToken {
+    +pause()
+    +unpause()
+    +addWhitelistedContract()
+}
+
+' Libraries
+class VestingLibrary <<Library>> {
+    +computeReleasableAmount()
+    +generateUUID()
+}
+
+class Cast <<Library>> {
+    +u128()
+}
+
+' Relationships
+ForcefiBaseContract --|> Ownable
+ForcefiPackage --|> Ownable
+ForcefiPackage --|> OApp
+Fundraising --|> ForcefiBaseContract
+Fundraising ..> VestingLibrary
+Vesting ..> VestingLibrary
+
+YieldStaking --|> Ownable
+YieldStaking ..> Cast
+
+LPYieldStaking --|> YieldStaking
+LPYieldStaking --|> IERC721Receiver
+
+Erc20YieldStaking --|> YieldStaking
+
+BaseStaking --|> Ownable
+BaseStaking --|> OApp
+BaseStaking --|> ReentrancyGuard
+
+AccessStaking --|> BaseStaking
+ArbitrumStaking --|> BaseStaking
+
+ERC20Token --|> ERC20
+ERC20MintableToken --|> ERC20Token
+ERC20BurnableToken --|> ERC20
+ERC20MintableBurnableToken --|> ERC20BurnableToken
+
+ERC20PausableToken --|> ERC20
+ERC20PausableToken --|> Ownable
+
+@enduml

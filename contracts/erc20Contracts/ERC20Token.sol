@@ -12,8 +12,8 @@ contract ERC20Token is ERC20, Ownable {
         _mint(_ownerAddress, _initialSupply);
     }
 
-    // Override the decimals function to set decimals to 1
-    function decimals() public view virtual override returns (uint8) {
-        return 14;
-    }
+    // // Override the decimals function to set decimals to 1
+    // function decimals() public view virtual override returns (uint8) {
+    //     return 14;
+    // }
 }

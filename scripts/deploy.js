@@ -14,11 +14,11 @@ async function main() {
   // const ForcefiPackage = await ethers.deployContract("ForcefiPackage", [oAppEndpoint, deployer.address]);
   // console.log("ForcefiPackage contract address " + await ForcefiPackage.getAddress())
   //
-  // const ContractFactory = await ethers.deployContract("ContractFactory");
-  // console.log("ContractFactory contract address " + await ContractFactory.getAddress())
-  //
-  // const PausableContractFactory = await ethers.deployContract("PausableContractFactory");
-  // console.log("PausableContractFactory contract address " + await PausableContractFactory.getAddress())
+  const ContractFactory = await ethers.deployContract("ContractFactory");
+  console.log("ContractFactory contract address " + await ContractFactory.getAddress())
+  
+  const PausableContractFactory = await ethers.deployContract("PausableContractFactory");
+  console.log("PausableContractFactory contract address " + await PausableContractFactory.getAddress())
 
   const Fundraising = await ethers.deployContract("Fundraising");
   console.log("Fundraising contract address " + await Fundraising.getAddress())

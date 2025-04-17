@@ -221,8 +221,8 @@
       ]
     },
     "C:\\Users\\anarx\\forcefi\\forcefi-core3\\forcefi-core\\contracts\\erc20Contracts\\ERC20Token.sol": {
-      "lastModificationDate": 1744269766287,
-      "contentHash": "efee194b2980b3df69aa4684864f6271",
+      "lastModificationDate": 1744781254064,
+      "contentHash": "e34e8e9195f290e9e3f37aa1b70d065d",
       "sourceName": "contracts/erc20Contracts/ERC20Token.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -312,8 +312,8 @@
       ]
     },
     "C:\\Users\\anarx\\forcefi\\forcefi-core3\\forcefi-core\\contracts\\erc20Contracts\\ERC20BurnableToken.sol": {
-      "lastModificationDate": 1744269766287,
-      "contentHash": "172df23c44eecd03d7bd0ead8344f9da",
+      "lastModificationDate": 1744380953294,
+      "contentHash": "6cd6227e8f18d4edc568937cb17742cc",
       "sourceName": "contracts/erc20Contracts/ERC20BurnableToken.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -4222,8 +4222,8 @@
       ]
     },
     "C:\\Users\\anarx\\forcefi\\forcefi-core3\\forcefi-core\\contracts\\test\\LZEndpointMock.sol": {
-      "lastModificationDate": 1744269766349,
-      "contentHash": "a8f91cc5e0637a16b48f56164bff868f",
+      "lastModificationDate": 1744385137138,
+      "contentHash": "cdb17a1b6b18a578e3e0f4eed9e0f298",
       "sourceName": "contracts/test/LZEndpointMock.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -4257,13 +4257,13 @@
         }
       },
       "imports": [
-        "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroReceiver.sol",
-        "@layerzerolabs/solidity-examples/contracts/interfaces/ILayerZeroEndpoint.sol"
+        "@openzeppelin/contracts/utils/introspection/ERC165.sol"
       ],
       "versionPragmas": [
-        "^0.8.4"
+        "0.8.20"
       ],
       "artifacts": [
+        "ILayerZeroEndpointV2Mock",
         "LZEndpointMock"
       ]
     },
