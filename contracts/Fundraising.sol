@@ -11,6 +11,10 @@ interface IForcefiStaking {
     function receiveFees(address, uint) external;
 }
 
+interface IForcefiCuratorContract {
+    function receiveCuratorFees(address, uint, bytes32) external;
+}
+
 /**
  * @title Fundraising
  * @notice The Fundraising contract is designed to facilitate fundraising campaigns with vesting plans for token distribution.
