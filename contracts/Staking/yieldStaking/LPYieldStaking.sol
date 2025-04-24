@@ -60,6 +60,9 @@ contract LPYieldStaking is YieldStaking, IERC721Receiver {
         IUniswapV3PositionManager _positionManager,
         uint256 _lockupPeriod
     ) YieldStaking(rewardsToken_, rewardsStart_, rewardsEnd_, totalRewards_) {
+        require(address(_positionManager) != address(0), "Position manager cannot be zero address");
+        require(address(lpStakingToken1_) != address(lpStakingToken2_), "LP tokens must be different");
+
         lpStakingToken1 = lpStakingToken1_;
         lpStakingToken2 = lpStakingToken2_;
         positionManager = _positionManager;
@@ -132,7 +135,7 @@ contract LPYieldStaking is YieldStaking, IERC721Receiver {
         address from,
         uint256 tokenId,
         bytes calldata data
-    ) external override returns (bytes4) {
+    ) external pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
 }

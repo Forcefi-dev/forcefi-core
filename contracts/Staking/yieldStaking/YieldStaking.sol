@@ -67,6 +67,10 @@ abstract contract YieldStaking is Ownable {
         uint256 rewardsEnd_,
         uint256 totalRewards_
     ) Ownable(tx.origin) {
+        require(address(rewardsToken_) != address(0), "Rewards token cannot be zero address");
+        require(rewardsEnd_ > rewardsStart_, "Rewards end must be after rewards start");
+        require(totalRewards_ > 0, "Total rewards must be greater than zero");
+
         rewardsToken = rewardsToken_;
         rewardsStart = rewardsStart_;
         rewardsEnd = rewardsEnd_;

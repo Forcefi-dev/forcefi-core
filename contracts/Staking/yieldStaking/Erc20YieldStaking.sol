@@ -35,6 +35,10 @@ contract Erc20YieldStaking is YieldStaking {
         uint256 minStakingAmount_,
         uint256 maxStakingAmount_
     ) YieldStaking(rewardsToken_, rewardsStart_, rewardsEnd_, totalRewards_) {
+        require(address(stakingToken_) != address(0), "Staking token cannot be zero address");
+        require(maxStakingAmount_ > 0, "Max stake must be greater than zero");
+        require(minStakingAmount_ < maxStakingAmount_, "Min stake must be less than max stake");
+        
         stakingToken = stakingToken_;
         minStakingAmount = minStakingAmount_;
         maxStakingAmount = maxStakingAmount_;
