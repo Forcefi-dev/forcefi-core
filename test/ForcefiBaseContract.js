@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
 describe("ForcefiBaseContract", function () {
 
@@ -40,6 +41,45 @@ describe("ForcefiBaseContract", function () {
             const updatedForcefiPackageAddress = await forcefiBaseContract.forcefiPackageAddress();
             expect(updatedForcefiPackageAddress).to.equal(forcefiPackageAddress);
 
+        });
+    });
+
+    describe("contract ownership", function () {
+        it("should set the right owner", async function () {
+            expect(await forcefiBaseContract.owner()).to.equal(owner.address);
+        });
+
+        it("should prevent non-owners from accessing owner-only functions", async function () {
+            await expect(forcefiBaseContract.connect(addr1).setFeeAmount(100))
+                .to.be.revertedWithCustomError(forcefiBaseContract, "OwnableUnauthorizedAccount");
+            await expect(forcefiBaseContract.connect(addr1).setForcefiPackageAddress(addr2.address))
+                .to.be.revertedWithCustomError(forcefiBaseContract, "OwnableUnauthorizedAccount");
+            await expect(forcefiBaseContract.connect(addr1).withdrawFee(addr1.address))
+                .to.be.revertedWithCustomError(forcefiBaseContract, "OwnableUnauthorizedAccount");
+        });
+    });
+
+    describe("forcefi package management", function () {
+        it("should update package address correctly", async function () {
+            const newPackageAddress = addr2.address;
+            await forcefiBaseContract.setForcefiPackageAddress(newPackageAddress);
+            expect(await forcefiBaseContract.forcefiPackageAddress()).to.equal(newPackageAddress);
+        });
+
+        it("should handle multiple package address updates", async function () {
+            const firstUpdate = addr1.address;
+            const secondUpdate = addr2.address;
+
+            await forcefiBaseContract.setForcefiPackageAddress(firstUpdate);
+            expect(await forcefiBaseContract.forcefiPackageAddress()).to.equal(firstUpdate);
+
+            await forcefiBaseContract.setForcefiPackageAddress(secondUpdate);
+            expect(await forcefiBaseContract.forcefiPackageAddress()).to.equal(secondUpdate);
+        });
+
+        it("should allow setting package address to zero address", async function () {
+            await forcefiBaseContract.setForcefiPackageAddress(ethers.ZeroAddress);
+            expect(await forcefiBaseContract.forcefiPackageAddress()).to.equal(ethers.ZeroAddress);
         });
     });
 });

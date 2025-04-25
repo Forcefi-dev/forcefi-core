@@ -118,6 +118,11 @@ describe("Forcefi Package", function () {
 
             expect(await forcefiPackage.whitelistedToken(erc20Token.getAddress())).to.equal(true);
 
+            await expect(
+                forcefiPackage.connect(addr1).removeWhitelistInvestmentToken(erc20Token.getAddress(), erc20Token.getAddress())
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+            
             // Now remove from whitelist
             await forcefiPackage.removeWhitelistInvestmentToken(erc20Token.getAddress(), erc20Token.getAddress());
             expect(await forcefiPackage.whitelistedToken(erc20Token.getAddress())).to.equal(false);
@@ -217,6 +222,11 @@ describe("Forcefi Package", function () {
             await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerExplorerPackage.toString());
             await forcefiPackage.buyPackage(_projectName, _packageLabel, erc20Token.getAddress(), "0x0000000000000000000000000000000000000000")
 
+            await expect(
+                forcefiPackage.connect(addr1).withdrawToken(erc20Token.getAddress(), addr1.address, totalTokensPerExplorerPackage.toString())
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+
             await forcefiPackage.withdrawToken(erc20Token.getAddress(), addr1.address, totalTokensPerExplorerPackage.toString());
 
             await expect(await erc20Token.balanceOf(forcefiPackage.getAddress())).to.equal(0)
@@ -224,4 +234,145 @@ describe("Forcefi Package", function () {
         });
 
     });
+
+    describe("bridgeToken", function () {
+        const _projectName = "Forcefi";
+        
+        beforeEach(async function () {
+            // Buy Accelerator package to get creation token
+            const packageTotalPrice = 2000;
+            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+            const totalTokensPerPackage = packageTotalPrice * Number(erc20TokenPrice);
+            await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerPackage.toString());
+            await forcefiPackage.buyPackage(_projectName, "Accelerator", erc20Token.getAddress(), addr1.address);
+        });
+
+        it("should fail bridging without creation token", async function () {
+            await expect(
+                forcefiPackage.connect(addr2).bridgeToken(dstChainId, _projectName, bridgeOptions)
+            ).to.be.revertedWith("No token to bridge");
+        });
+    });
+
+    describe("quote", function () {
+        it("should return quote for bridging", async function () {
+            const fee = await forcefiPackage.quote(dstChainId, "TestMessage", bridgeOptions, false);
+            expect(fee.nativeFee).to.be.gt(0);
+            expect(fee.lzTokenFee).to.equal(0);
+        });
+    });
+
+    describe("package management", function () {
+        it("should not allow non-owner to add package", async function () {
+            await expect(
+                forcefiPackage.connect(addr1).addPackage("Premium", 10000, true, 10, true)
+            ).to.be.reverted;
+        });
+
+        it("should not allow updating non-existent package", async function () {
+            await expect(
+                forcefiPackage.updatePackage("NonExistent", 5000, true, 5)
+            ).to.be.revertedWith("Package not found");
+        });
+
+        it("should validate package purchase requirements", async function () {
+            await expect(
+                forcefiPackage.buyPackage("Test", "Explorer", addr2.address, addr1.address)
+            ).to.be.revertedWith("Not whitelisted investment token");
+        });
+
+        it("should not allow non-owner to update package", async function () {
+            await forcefiPackage.addPackage("Premium", 10000, false, 10, true);
+            await expect(
+                forcefiPackage.connect(addr1).updatePackage("Premium", 15000, true, 15)
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+        });
+
+    });
+
+    describe("owner functions", function () {
+        it("should allow owner to mint token directly", async function () {
+            expect(await forcefiPackage.hasCreationToken(addr2.address, "TestProject")).to.equal(false);
+
+            await expect(
+                forcefiPackage.connect(addr1).ownerMintToken(addr2.address, "TestProject")
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+
+            await forcefiPackage.ownerMintToken(addr2.address, "TestProject");
+            expect(await forcefiPackage.hasCreationToken(addr2.address, "TestProject")).to.equal(true);
+        });
+    });
+
+    describe("price feed calculations", function () {
+        it("should handle different token decimals correctly", async function () {
+            const Token18Dec = await ethers.getContractFactory("ERC20Token");
+            const token18 = await Token18Dec.deploy("Token18", "T18", "1000000000000000000000", owner.address);
+
+            const Token6Dec = await ethers.getContractFactory("ERC20Token6Dec");
+            const token6 = await Token6Dec.deploy("Token6", "T6", "1000000", owner.address);
+
+            const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const mockOracle18 = await MockOracle.deploy("8", "100000000"); // $1.00 with 8 decimals
+
+            await expect(
+                forcefiPackage.connect(addr1).whitelistTokenForInvestment(token18.getAddress(), mockOracle18.getAddress())
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+
+            await forcefiPackage.whitelistTokenForInvestment(token18.getAddress(), mockOracle18.getAddress());
+            await forcefiPackage.whitelistTokenForInvestment(token6.getAddress(), mockOracle18.getAddress());
+
+            const price18 = await forcefiPackage.getChainlinkDataFeedLatestAnswer(token18.getAddress());
+            const price6 = await forcefiPackage.getChainlinkDataFeedLatestAnswer(token6.getAddress());
+
+            expect(price18).to.equal(ethers.parseUnits("1", 18));
+            expect(price6).to.equal(ethers.parseUnits("1", 6));
+        });
+    });
+
+    describe("viewProjectPackages", function () {
+        const _projectName = "TestProject";
+        
+        it("should return empty array for project with no packages", async function () {
+            const packages = await forcefiPackage.viewProjectPackages(_projectName);
+            expect(packages).to.be.an('array').that.is.empty;
+        });
+
+        it("should return single package for project", async function () {
+            const packageTotalPrice = 750;
+            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+            const totalTokens = BigInt(packageTotalPrice * Number(erc20TokenPrice));
+            await erc20Token.approve(forcefiPackage.getAddress(), totalTokens.toString());
+
+            await forcefiPackage.buyPackage(_projectName, "Explorer", erc20Token.getAddress(), addr1.address);
+            
+            const packages = await forcefiPackage.viewProjectPackages(_projectName);
+            expect(packages).to.have.lengthOf(1);
+            expect(packages[0]).to.equal("Explorer");
+        });
+
+        it("should return all packages for project with multiple packages", async function () {
+            // Buy Explorer package
+            const explorerPrice = 750;
+            const acceleratorPrice = 2000;
+            const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+            
+            const explorerTokens = BigInt(explorerPrice * Number(erc20TokenPrice));
+            await erc20Token.approve(forcefiPackage.getAddress(), explorerTokens.toString());
+            await forcefiPackage.buyPackage(_projectName, "Explorer", erc20Token.getAddress(), addr1.address);
+
+            // Buy Accelerator package
+            const acceleratorTokens = BigInt(acceleratorPrice * Number(erc20TokenPrice));
+            await erc20Token.approve(forcefiPackage.getAddress(), acceleratorTokens.toString());
+            await forcefiPackage.buyPackage(_projectName, "Accelerator", erc20Token.getAddress(), addr1.address);
+
+            const packages = await forcefiPackage.viewProjectPackages(_projectName);
+            expect(packages).to.have.lengthOf(2);
+            expect(packages).to.include("Explorer");
+            expect(packages).to.include("Accelerator");
+        });
+    });
+
 });

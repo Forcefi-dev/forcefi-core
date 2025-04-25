@@ -39,6 +39,24 @@ describe("ERC20 token factory", function () {
 
         forcefiPackage = await ForcefiPackageFactory.deploy(mockEndpointA.getAddress(), owner.address);
         await erc20TokenFactory.setForcefiPackageAddress(forcefiPackage.getAddress());
+
+        const tokensPerExplorerPackage = 2000;
+        const MockOracle = await ethers.getContractFactory("MockV3Aggregator");
+        const mockOracle = await MockOracle.deploy(
+            "18", // decimals
+            "1"// initialAnswer
+        );
+
+        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, tokensPerExplorerPackage, owner.address]);
+        await forcefiPackage.whitelistTokenForInvestment(erc20Token.getAddress(), mockOracle.getAddress());
+
+        const erc20TokenPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(erc20Token.getAddress());
+        const totalTokensPerExplorerPackage = tokensPerExplorerPackage * Number(erc20TokenPrice);
+        await erc20Token.approve(forcefiPackage.getAddress(), totalTokensPerExplorerPackage.toString());
+
+        const packageLabel = "Accelerator";
+        await forcefiPackage.buyPackage(projectName, packageLabel, erc20Token.getAddress(), "0x0000000000000000000000000000000000000000")
+
     });
 
     describe("factory constructor", function () {
@@ -117,6 +135,99 @@ describe("ERC20 token factory", function () {
             await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply);
             await expect(await contract.balanceOf(owner.address)).to.equal(newMintedTokens + initialSupply);
 
+            // Test unauthorized minting
+            await expect(contract.connect(addr1).mint(addr1.address, newMintedTokens))
+                .to.be.revertedWithCustomError(contract, `OwnableUnauthorizedAccount`);
+            // Verify balance and total supply didn't change after failed mint
+            await expect(await contract.totalSupply()).to.equal(newMintedTokens + initialSupply);
+            await expect(await contract.balanceOf(addr1.address)).to.equal(0);
+
         });
+
+        it("create standard token", async function () {
+            const standardContractType = 0;
+            let capturedValue
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            await expect(erc20TokenFactory.createContract(standardContractType, name, symbol, projectName, initialSupply))
+                .to.emit(erc20TokenFactory, 'ContractCreated')
+                .withArgs(captureValue, owner.address, projectName, standardContractType);
+
+            const MyContract = await ethers.getContractFactory("ERC20Token");
+            const contract = MyContract.attach(capturedValue);
+
+            await expect(await contract.totalSupply()).to.equal(initialSupply);
+            await expect(await contract.balanceOf(owner.address)).to.equal(initialSupply);
+        });
+
+        it("create burnable token", async function () {
+            const burnableContractType = 2;
+            let capturedValue
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            await expect(erc20TokenFactory.createContract(burnableContractType, name, symbol, projectName, initialSupply))
+                .to.emit(erc20TokenFactory, 'ContractCreated')
+                .withArgs(captureValue, owner.address, projectName, burnableContractType);
+
+            const MyContract = await ethers.getContractFactory("ERC20BurnableToken");
+            const contract = MyContract.attach(capturedValue);
+
+            await expect(await contract.totalSupply()).to.equal(initialSupply);
+
+            const burnableTokens = 250;
+            await contract.burn(burnableTokens);
+            await expect(await contract.totalSupply()).to.equal(initialSupply - burnableTokens);
+            await expect(await contract.balanceOf(owner.address)).to.equal(initialSupply - burnableTokens);
+        });
+
+        it("should revert when fee amount doesn't match and no creation token", async function () {
+            const standardContractType = 0;
+            const invalidFeeAmount = ethers.parseEther("0.1"); // wrong fee amount
+
+            // Remove creation token by using a different project name
+            const differentProjectName = "Different Project";
+            
+            await expect(erc20TokenFactory.createContract(
+                standardContractType, 
+                name, 
+                symbol, 
+                differentProjectName, 
+                initialSupply,
+                { value: invalidFeeAmount }
+            )).to.be.revertedWith("Invalid fee value or no creation token available");
+        });
+
+        it("should succeed when fee amount doesn't match but has creation token", async function () {
+            const standardContractType = 0;
+            const invalidFeeAmount = ethers.parseEther("0.1"); // wrong fee amount
+            
+            // Using projectName that has creation token from beforeEach
+            let capturedValue
+            const captureValue = (value) => {
+                capturedValue = value
+                return true
+            }
+
+            await expect(erc20TokenFactory.createContract(
+                standardContractType, 
+                name, 
+                symbol, 
+                projectName, // using project name that has creation token
+                initialSupply,
+                { value: invalidFeeAmount }
+            )).to.emit(erc20TokenFactory, 'ContractCreated')
+              .withArgs(captureValue, owner.address, projectName, standardContractType);
+
+            const MyContract = await ethers.getContractFactory("ERC20Token");
+            const contract = MyContract.attach(capturedValue);
+            await expect(await contract.totalSupply()).to.equal(initialSupply);
+        });
+
     });
 });
