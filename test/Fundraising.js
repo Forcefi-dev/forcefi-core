@@ -274,6 +274,52 @@ describe("EquityFundraising", function () {
             expect(await equityFundraising.isInvestmentToken(investmentToken.getAddress())).to.be.true;
         });
 
+        it("Should handle Chainlink price with different token decimals", async function () {
+            // Create a mock oracle with 8 decimals (like most Chainlink feeds)
+            const mockOracle = await ethers.deployContract("MockedV3Aggregator", [8, 100000000]); // $1.00 with 8 decimals
+            
+            // Deploy 6 decimal token (like USDC)
+            const token6Dec = await ethers.deployContract("ERC20Token6Dec", ["USDC Mock", "USDC", 1000000, owner.address]);
+            
+            // Whitelist the 6-decimal token
+            await equityFundraising.whitelistTokenForInvestment(token6Dec.getAddress(), mockOracle.getAddress());
+            
+            // Get price from Chainlink feed
+            const price = await equityFundraising.getChainlinkDataFeedLatestAnswer(token6Dec.getAddress());
+            
+            // Since token has 6 decimals and feed has 8 decimals,
+            // The price should be adjusted from 8 decimals to 6 decimals
+            // 100000000 (8 decimals) -> 1000000 (6 decimals)
+            expect(price).to.equal(1000000);
+        });
+
+        it("Should handle Chainlink price conversion with token having more decimals than feed", async function () {
+            // Create mock oracle with 8 decimals (like Chainlink)
+            const mockOracle = await ethers.deployContract("MockedV3Aggregator", [
+                8, // 8 decimals
+                100000000 // $1.00 with 8 decimals
+            ]);
+
+            // Deploy token with 20 decimals
+            const token20Dec = await ethers.deployContract("ERC20Token20Dec", [
+                "TwentyDec", 
+                "TWD", 
+                1000000, 
+                owner.address
+            ]);
+
+            // Whitelist the 20-decimal token
+            await equityFundraising.whitelistTokenForInvestment(token20Dec.getAddress(), mockOracle.getAddress());
+
+            // Get price from Chainlink feed
+            const price = await equityFundraising.getChainlinkDataFeedLatestAnswer(token20Dec.getAddress());
+
+            // Since token has 20 decimals and feed has 8 decimals,
+            // the price should be multiplied by 10^(20-8) = 10^12
+            // 100000000 * 10^12 = 100000000000000000000
+            expect(price).to.equal(ethers.parseUnits("100", 18)); // 100 with 18 zeros
+        });
+
         it("Should set referral fee", async function () {
             const newFee = 10;
 
