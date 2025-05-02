@@ -13,6 +13,7 @@ interface IForcefiStaking {
 
 interface IForcefiCuratorContract {
     function receiveCuratorFees(address, uint, bytes32) external;
+    function getCurrentTotalPercentage(bytes32) external view returns (uint);
 }
 
 /**
@@ -21,6 +22,7 @@ interface IForcefiCuratorContract {
  * @dev It allows project owners to create fundraising campaigns, accept investments in various tokens, and manage the vesting schedule for token distribution to investors.
  */
 contract Fundraising is ForcefiBaseContract{
+
     /// @notice Counter used to generate unique fundraising IDs
     uint256 private _fundraisingIdCounter;
 
@@ -432,9 +434,9 @@ contract Fundraising is ForcefiBaseContract{
         require(_amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
         require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + _amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
         require(fundraising.campaignHardCap >= _amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
-        require(block.timestamp >= fundraising.startDate, "Campaign hasn't started yet");
-        require(block.timestamp <= fundraising.endDate, "Campaign has ended");
+        require(block.timestamp >= fundraising.startDate, "Campaign hasn't started yet");        
         require(!fundraising.campaignClosed, "Campaign is closed");
+        require(block.timestamp <= fundraising.endDate, "Campaign has ended");
 
         bool isWhitelistedToken = false;
         for(uint i=0; i< whitelistedTokens[_fundraisingIdx].length; i++){
@@ -448,7 +450,6 @@ contract Fundraising is ForcefiBaseContract{
             require(IForcefiStaking(forcefiStakingAddress).hasAddressStaked(msg.sender), "To participate in the sale, users must stake a sufficient amount of FORC tokens.");
         }
 
-        require(isInvestmentToken[_whitelistedTokenAddress], "Not whitelisted investment token address");
         if(fundraising.privateFundraising){
             require(whitelistedAddresses[_fundraisingIdx][msg.sender], "not whitelisted address");
         }
@@ -474,8 +475,10 @@ contract Fundraising is ForcefiBaseContract{
     function closeCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(!fundraising.campaignClosed, "Campaign already closed");
+        
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * fundraising.fundraisingFeeConfig.minCampaignThreshold / 100;
-        require(hasReachedLimit && fundraising.endDate + fundraising.fundraisingFeeConfig.reclaimWindow >= block.timestamp, "Campaign is not yet ended or didn't reach minimal threshold");
+        require(hasReachedLimit, "Campaign didn't reach minimal threshold");
+        require(fundraising.endDate + fundraising.fundraisingFeeConfig.reclaimWindow <= block.timestamp, "Campaign is still within reclaim window");
 
         fundraising.campaignClosed = true;
 
@@ -514,9 +517,13 @@ contract Fundraising is ForcefiBaseContract{
             // Handle curator fee (1/2 of the base fee)
             if(curatorContractAddress != address(0)) {
                 uint curatorFee = feeInWei / 2;
-                ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, curatorFee);
-                IForcefiStaking(curatorContractAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], curatorFee);
-                distributedFees += curatorFee;
+                uint curatorPercentage = IForcefiCuratorContract(curatorContractAddress).getCurrentTotalPercentage(_fundraisingIdx);
+                uint adjustedCuratorFee = curatorFee * curatorPercentage / 100;
+                if (adjustedCuratorFee > 0) {
+                    ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, adjustedCuratorFee);
+                    IForcefiCuratorContract(curatorContractAddress).receiveCuratorFees(whitelistedTokens[_fundraisingIdx][i], adjustedCuratorFee, _fundraisingIdx);
+                    distributedFees += adjustedCuratorFee;
+                }
             }
 
             // Calculate total amount to send to msg.sender:
@@ -539,15 +546,15 @@ contract Fundraising is ForcefiBaseContract{
      * @dev Only callable by the campaign owner
      * @param _fundraisingIdx The ID of the campaign
      */
-    function unlockFundsFromCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx){
+    function unlockFundsFromCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
+        require(!fundraising.campaignClosed, "Campaign already closed");
+        require(block.timestamp >= fundraising.endDate + feeConfig.reclaimWindow, "Campaign end date + reclaim window has not passed");
+        
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
-        require(!hasReachedLimit && fundraising.endDate + feeConfig.reclaimWindow >= block.timestamp, "Campaign has reachead minimal threshold");
+        require(!hasReachedLimit, "Campaign has reached minimal threshold");
 
         fundraising.campaignClosed = true;
-
-        require(!fundraising.campaignClosed, "Campaign already closed");
-        require(block.timestamp >= fundraising.endDate, "Campaign has not ended");
         ERC20(fundraising.mintingErc20TokenAddress).transfer(msg.sender, fundraising.campaignHardCap);
     }
 
@@ -589,19 +596,26 @@ contract Fundraising is ForcefiBaseContract{
     function reclaimTokens(bytes32 _fundraisingIdx) external {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(block.timestamp >= fundraising.endDate, "Campaign has not ended");
+        
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
-        require(!hasReachedLimit || block.timestamp <= fundraising.endDate + feeConfig.reclaimWindow, "Campaign not closed");
+        
+        // Fix the logic for successful campaigns
+        if (hasReachedLimit) {
+            require(block.timestamp <= fundraising.endDate + feeConfig.reclaimWindow, "Campaign not closed");
+        }
+
 
         for(uint i=0; i< whitelistedTokens[_fundraisingIdx].length; i++){
             uint reclaimAmount = individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[whitelistedTokens[_fundraisingIdx][i]];
-            individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[whitelistedTokens[_fundraisingIdx][i]] = 0;
-
             if(reclaimAmount > 0){
+                individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[whitelistedTokens[_fundraisingIdx][i]] = 0;
                 ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(msg.sender, reclaimAmount);
                 emit TokensReclaimed(msg.sender, whitelistedTokens[_fundraisingIdx][i], reclaimAmount);
             }
         }
+
         fundraising.totalFundraised -= individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance;
+        individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance = 0;
     }
 
     /**
@@ -659,15 +673,16 @@ contract Fundraising is ForcefiBaseContract{
         ) = dataFeed.latestRoundData();
 
         uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
-
         uint256 decimals = uint256(dataFeed.decimals());
         uint256 chainlinkPrice = uint256(answer);
 
         if(erc20Decimals > decimals){
             return chainlinkPrice * (10 ** (erc20Decimals - decimals));
-        } else if(decimals > erc20Decimals ) {
+        } else if(decimals > erc20Decimals) {
             return chainlinkPrice / (10 ** (decimals - erc20Decimals));
-        } else return chainlinkPrice;
+        } else {
+            return chainlinkPrice;
+        }
     }
 
     /**
