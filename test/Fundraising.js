@@ -772,94 +772,251 @@ describe("EquityFundraising", function () {
             expect(receivedFee).to.equal(0);
         });
 
-        describe("Token Claims", function() {
-            it("Should prevent claiming if campaign hasn't reached threshold", async function () {
-                const { campaignId } = await createNewFundraising(
-                    equityFundraising,
-                    projectToken,
-                    investmentToken,
-                    {
-                        _totalCampaignLimit: 1000,
-                        _vestingPeriod: 1000,
-                        _cliffPeriod: 0,
-                        _tgePercent: 10,
-                        _campaignMinTicketLimit: 100,
-                        _campaignMaxTicketLimit: 1000 // Increased max ticket limit
-                    },
-                    user1
-                );
-    
-                // Invest less than threshold (only 50%)
-                await investmentToken.approve(equityFundraising.getAddress(), 500);
-                await equityFundraising.invest(500, investmentToken.getAddress(), campaignId);
-    
-                await ethers.provider.send("evm_increaseTime", [1100]);
-                await ethers.provider.send("evm_mine");
-    
-                await expect(
-                    equityFundraising.claimTokens(campaignId)
-                ).to.be.revertedWith("Campaign isnt closed");
-            });
-    
-            it("Should prevent claiming before campaign end + reclaim window", async function () {
-                const { campaignId } = await createNewFundraising(
-                    equityFundraising,
-                    projectToken,
-                    investmentToken,
-                    {
-                        _totalCampaignLimit: 1000,
-                        _vestingPeriod: 1000,
-                        _cliffPeriod: 0,
-                        _tgePercent: 10,
-                        _campaignMinTicketLimit: 100,
-                        _campaignMaxTicketLimit: 1000 // Increased max ticket limit
-                    },
-                    user1
-                );
-    
-                // Invest more than threshold (80%)
-                await investmentToken.approve(equityFundraising.getAddress(), 800);
-                await equityFundraising.invest(800, investmentToken.getAddress(), campaignId);
-    
-                // Try to claim before end date
-                await expect(
-                    equityFundraising.claimTokens(campaignId)
-                ).to.be.revertedWith("Campaign isnt closed");
-            });
-    
-            it("Should prevent claiming when no tokens are vested", async function () {
-                const currentTime = await getCurrentTime();
-                const { campaignId } = await createNewFundraising(
-                    equityFundraising,
-                    projectToken,
-                    investmentToken,
-                    {
-                        _totalCampaignLimit: 1000,
-                        _vestingPeriod: 1000,
-                        _cliffPeriod: 500,
-                        _tgePercent: 0,
-                        _vestingStart: currentTime + 2000,
-                        _campaignMinTicketLimit: 100,
-                        _campaignMaxTicketLimit: 1000 // Increased max ticket limit
-                    },
-                    user1
-                );
-    
-                // Invest and close campaign
-                await investmentToken.approve(equityFundraising.getAddress(), 800);
-                await equityFundraising.invest(800, investmentToken.getAddress(), campaignId);
-    
-                await ethers.provider.send("evm_increaseTime", [1100]);
-                await ethers.provider.send("evm_mine");
-    
-                await equityFundraising.closeCampaign(campaignId);
-    
-                // Try to claim before any tokens are vested
-                await expect(
-                    equityFundraising.claimTokens(campaignId)
-                ).to.be.revertedWith("TokenVesting: this vesting has not started yet");
-            });
+        it("Should enforce campaign hard cap limit", async function () {
+            // Create a campaign with a specific hard cap
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 500, // Set hard cap to 500
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 500
+                },
+                user1
+            );
+
+            // Setup stake for users to allow investment
+            await forcefiToken.transfer(user2.address, minStakingAmount);
+            await forcefiToken.connect(user2).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user2).stake(minStakingAmount, user2.address);
+
+            await forcefiToken.transfer(user3.address, minStakingAmount);
+            await forcefiToken.connect(user3).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user3).stake(minStakingAmount, user3.address);
+
+            // First investment from user2 - 300 tokens (within hard cap)
+            await investmentToken.transfer(user2.address, 300);
+            await investmentToken.connect(user2).approve(equityFundraising.getAddress(), 300);
+            await equityFundraising.connect(user2).invest(300, investmentToken.getAddress(), campaignId);
+
+            // Second investment from user3 - 250 tokens (should fail as it would exceed hard cap)
+            await investmentToken.transfer(user3.address, 250);
+            await investmentToken.connect(user3).approve(equityFundraising.getAddress(), 250);
+            await expect(
+                equityFundraising.connect(user3).invest(250, investmentToken.getAddress(), campaignId)
+            ).to.be.revertedWith("Campaign has reached its total fund raised required");
+
+            // Verify the total raised amount is still 300
+            const fundraisingInstance = await equityFundraising.getFundraisingInstance(campaignId);
+            expect(fundraisingInstance.totalFundraised).to.equal(300);
+
+            // Try investing the exact remaining amount with user3 (should succeed)
+            await investmentToken.connect(user3).approve(equityFundraising.getAddress(), 200);
+            await expect(
+                equityFundraising.connect(user3).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.not.be.reverted;
+
+            // Verify final total equals hard cap
+            const finalFundraisingInstance = await equityFundraising.getFundraisingInstance(campaignId);
+            expect(finalFundraisingInstance.totalFundraised).to.equal(500);
         });
+
+        it("Should enforce campaign timing requirements", async function () {
+            const currentTime = await getCurrentTime();
+            const startTime = currentTime + 1000; // Start in 1000 seconds
+            
+            // Create campaign with future start time
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 500,
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 500,
+                    _startDate: startTime,
+                    _endDate: startTime + 1000
+                },
+                user1
+            );
+
+            // Setup stake for user2 to allow investment
+            await forcefiToken.transfer(user2.address, minStakingAmount);
+            await forcefiToken.connect(user2).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user2).stake(minStakingAmount, user2.address);
+
+            // Try to invest before start time
+            await investmentToken.transfer(user2.address, 200);
+            await investmentToken.connect(user2).approve(equityFundraising.getAddress(), 200);
+            await expect(
+                equityFundraising.connect(user2).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.be.revertedWith("Campaign hasn't started yet");
+
+            // Fast forward to after start time
+            await ethers.provider.send("evm_increaseTime", [1100]);
+            await ethers.provider.send("evm_mine");
+
+            // Investment should now succeed
+            await expect(
+                equityFundraising.connect(user2).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.not.be.reverted;
+        });
+
+        it("Should prevent investment in closed campaign", async function () {
+            // Create campaign
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 500,
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 500
+                },
+                user1
+            );
+
+            // Setup user for investment
+            await forcefiToken.transfer(user2.address, minStakingAmount);
+            await forcefiToken.connect(user2).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user2).stake(minStakingAmount, user2.address);
+
+            // Make initial investment to reach threshold
+            await investmentToken.transfer(user2.address, 400);
+            await investmentToken.connect(user2).approve(equityFundraising.getAddress(), 400);
+            await equityFundraising.connect(user2).invest(400, investmentToken.getAddress(), campaignId);
+
+            // Fast forward past end date + reclaim window
+            await ethers.provider.send("evm_increaseTime", [1100]);
+            await ethers.provider.send("evm_mine");
+
+            // Close the campaign
+            await equityFundraising.closeCampaign(campaignId);
+
+            // Try to invest in closed campaign
+            await investmentToken.transfer(user3.address, 100);
+            await investmentToken.connect(user3).approve(equityFundraising.getAddress(), 100);
+            await expect(
+                equityFundraising.connect(user3).invest(100, investmentToken.getAddress(), campaignId)
+            ).to.be.revertedWith("Campaign is closed");
+        });
+
+        it("Should prevent investment after campaign end date", async function () {
+            const currentTime = await getCurrentTime();
+            const startTime = currentTime;
+            const endTime = currentTime + 1000; // End in 1000 seconds
+            
+            // Create campaign with specific end time
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 500,
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 500,
+                    _startDate: startTime,
+                    _endDate: endTime
+                },
+                user1
+            );
+
+            // Setup stake for user2 to allow investment
+            await forcefiToken.transfer(user2.address, minStakingAmount);
+            await forcefiToken.connect(user2).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user2).stake(minStakingAmount, user2.address);
+
+            // Fast forward past end date
+            await ethers.provider.send("evm_increaseTime", [1100]); // Past end time
+            await ethers.provider.send("evm_mine");
+
+            // Try to invest after end date
+            await investmentToken.transfer(user2.address, 200);
+            await investmentToken.connect(user2).approve(equityFundraising.getAddress(), 200);
+            await expect(
+                equityFundraising.connect(user2).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.be.revertedWith("Campaign has ended");
+        });
+
+        it("Should prevent investment with non-whitelisted token", async function () {
+            // Create campaign
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 500,
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 500
+                },
+                user1
+            );
+
+            // Deploy a new non-whitelisted token
+            const nonWhitelistedToken = await ethers.deployContract("ERC20Token", [
+                "NonWhitelisted",
+                "NWT",
+                additionalTokens,
+                owner.address
+            ]);
+
+            // Setup stake for user2
+            await forcefiToken.transfer(user2.address, minStakingAmount);
+            await forcefiToken.connect(user2).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user2).stake(minStakingAmount, user2.address);
+
+            // Try to invest with non-whitelisted token
+            await nonWhitelistedToken.transfer(user2.address, 200);
+            await nonWhitelistedToken.connect(user2).approve(equityFundraising.getAddress(), 200);
+            await expect(
+                equityFundraising.connect(user2).invest(200, nonWhitelistedToken.getAddress(), campaignId)
+            ).to.be.revertedWith("Only project whitelisted token can be accepted as investment");
+        });
+
+        it("Should enforce staking requirements for investment", async function () {
+            // Create campaign
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 500,
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 500
+                },
+                user1
+            );
+
+            // Try to invest without staking
+            await investmentToken.transfer(user2.address, 200);
+            await investmentToken.connect(user2).approve(equityFundraising.getAddress(), 200);
+            await expect(
+                equityFundraising.connect(user2).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.be.revertedWith("To participate in the sale, users must stake a sufficient amount of FORC tokens.");
+
+            // Now set staking address to zero
+            await equityFundraising.setForcefiStakingAddress(ethers.ZeroAddress);
+
+            // Should now be able to invest without staking
+            await expect(
+                equityFundraising.connect(user2).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.not.be.reverted;
+
+            // Restore staking address and add stake
+            await equityFundraising.setForcefiStakingAddress(forcefiStaking.getAddress());
+            await forcefiToken.transfer(user3.address, minStakingAmount);
+            await forcefiToken.connect(user3).approve(forcefiStaking.getAddress(), minStakingAmount);
+            await forcefiStaking.connect(user3).stake(minStakingAmount, user3.address);
+
+            // Should now be able to invest with stake
+            await investmentToken.transfer(user3.address, 200);
+            await investmentToken.connect(user3).approve(equityFundraising.getAddress(), 200);
+            await expect(
+                equityFundraising.connect(user3).invest(200, investmentToken.getAddress(), campaignId)
+            ).to.not.be.reverted;
+        });
+
     });
 
     describe("Campaign Closing and Token Claims", function () {
@@ -956,6 +1113,11 @@ describe("EquityFundraising", function () {
             
             // Try claiming tokens
             await equityFundraising.claimTokens(capturedValue);
+
+            // Should revert claiming tokens once more when there is no claimable amount            
+            await expect(
+                equityFundraising.claimTokens(capturedValue)
+            ).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
             
             // Check released amount
             const released = await equityFundraising.released(capturedValue, owner.address);
@@ -1604,5 +1766,74 @@ describe("EquityFundraising", function () {
             expect(vestingPlan.releasePeriod).to.equal(1000);
             expect(vestingPlan.tgePercent).to.equal(20);
         });
+
+        it("Should prevent token release before vesting start time", async function () {
+            const currentTime = await getCurrentTime();
+            const futureStartTime = currentTime + 2000; // Set vesting to start in future
+            
+            // Create campaign with future vesting start
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _vestingStart: futureStartTime,
+                    _cliffPeriod: 1000,
+                    _vestingPeriod: 5000,
+                    _releasePeriod: 1000,
+                    _tgePercent: 20,
+                    _campaignMaxTicketLimit: 1000
+                },
+                user1
+            );
+
+            // Make investment
+            const investAmount = 200;
+            await investmentToken.approve(equityFundraising.getAddress(), investAmount);
+            await equityFundraising.invest(investAmount, investmentToken.getAddress(), campaignId);
+
+            // Try to compute releasable amount before vesting starts
+            await expect(
+                equityFundraising.computeReleasableAmount(campaignId)
+            ).to.be.revertedWith("TokenVesting: this vesting has not started yet");
+
+            // Fast forward past vesting start
+            await ethers.provider.send("evm_increaseTime", [2100]); // Past vesting start
+            await ethers.provider.send("evm_mine");
+
+            // Should now be able to compute releasable amount
+            const releasableAmount = await equityFundraising.computeReleasableAmount(campaignId);
+            expect(releasableAmount).to.be.gt(0);
+        });
+
+        it("Should prevent token claims before campaign is closed", async function () {
+            // Create campaign 
+            const { campaignId } = await createNewFundraising(
+                equityFundraising,
+                projectToken,
+                investmentToken,
+                {
+                    _totalCampaignLimit: 1000,
+                    _campaignMinTicketLimit: 100,
+                    _campaignMaxTicketLimit: 1000
+                },
+                user1
+            );
+
+            // Invest less than threshold
+            const investAmount = 1000;
+            await investmentToken.approve(equityFundraising.getAddress(), investAmount);
+            await equityFundraising.invest(investAmount, investmentToken.getAddress(), campaignId);
+
+            // Try to claim before end date
+            await expect(
+                equityFundraising.claimTokens(campaignId)
+            ).to.be.revertedWith("Campaign isnt closed");
+
+            // Fast forward past end date but with insufficient investment
+            await ethers.provider.send("evm_increaseTime", [1100]);
+            await ethers.provider.send("evm_mine");
+        });
+
     });
 });
