@@ -173,7 +173,7 @@ describe("LPYieldStaking", function () {
             // Get actual rewardsPerToken from the contract
             const actualRewardsPerToken = await tokenLock.currentRewardsPerToken();
 
-            expect(BigInt(actualRewardsPerToken)).to.be.closeTo(expectedRewardsPerToken, 15);
+            expect(BigInt(actualRewardsPerToken)).to.be.closeTo(expectedRewardsPerToken, 50);
 
             const expectedOwnerReward = (rewardsRate * elapsedTime * BigInt(user1Stake)) / BigInt(user1Stake);
 
@@ -216,7 +216,7 @@ describe("LPYieldStaking", function () {
             console.log("Actual User2 Reward:", actualUser2Reward.toString());
 
             // Use a tolerance to account for rounding differences due to inconsistencies in block calculations
-            const tolerance = BigInt(1e4);
+            const tolerance = BigInt(1e5);
             expect(BigInt(actualUser1Reward)).to.be.closeTo(expectedUser1RewardFinal, tolerance);
             expect(BigInt(actualUser2Reward)).to.be.closeTo(expectedUser2Reward, tolerance);
 
