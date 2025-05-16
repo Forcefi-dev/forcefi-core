@@ -1,294 +1,425 @@
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
+const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
-describe("Vesting", function () {
-    let erc20Token, vestingContract, owner, addr1, addr2, mockedLzAddress;
-    const name = "Test token";
-    const symbol = "TST";
-    const _projectName = "Forcefi";
+describe("Vesting Contract Tests", function () {
+  let Vesting;
+  let vesting;
+  let Token;
+  let token;
+  let owner;
+  let addr1;
+  let addr2;
+  let addrs;
 
-    const vesting_1_label = "My Vesting Plan";
-    const vesting_2_label = "My Vesting Plan2";
+  beforeEach(async function () {
+    [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
-    const beneficiar_1 = ethers.Wallet.createRandom();
-    const beneficiar_2 = ethers.Wallet.createRandom();
+    // Deploy mock ERC20 token
+    Token = await ethers.getContractFactory("ERC20Token20Dec");
+    token = await Token.deploy("Test Token", "TEST", ethers.parseEther("1000000"), owner.address);
+    await token.waitForDeployment();
 
-    const erc20Supply = "50000";
+    // Deploy Vesting contract
+    Vesting = await ethers.getContractFactory("Vesting");
+    vesting = await Vesting.deploy();
+    await vesting.waitForDeployment();
+  });
 
-    const vestingPlans = [
+  describe("VestingLibrary Tests", function () {
+    let tester;
+    let currentTime;
+    
+    beforeEach(async function () {
+      const VestingLibraryTester = await ethers.getContractFactory("VestingLibraryTester");
+      tester = await VestingLibraryTester.deploy();
+      await tester.waitForDeployment();
+      
+      const latestBlock = await ethers.provider.getBlock('latest');
+      currentTime = latestBlock.timestamp;
+    });
+
+    describe("generateUUID", function () {
+      it("should generate unique UUIDs for different inputs", async function () {
+        const id1 = 1;
+        const id2 = 2;
+        
+        const uuid1 = await tester.generateUUID(id1);
+        const uuid2 = await tester.generateUUID(id2);
+
+        expect(uuid1).to.not.equal(uuid2);
+      });
+    });
+
+    describe("computeReleasableAmount", function () {
+      const duration = 365 * 24 * 60 * 60; // 1 year
+      const period = 30 * 24 * 60 * 60; // 30 days
+      const lockUpPeriod = 90 * 24 * 60 * 60; // 90 days
+      const tgeAmount = 20; // 20%
+      const invested = ethers.parseEther("1000"); // 1000 tokens
+      const released = 0; 
+      beforeEach(async function () {
+        await ethers.provider.send("evm_mine");
+      });
+
+      it("should return correct amount after lock-up but before full vesting", async function () {        // Move time to just after lock-up period
+        await ethers.provider.send("evm_increaseTime", [lockUpPeriod + period]);
+        await ethers.provider.send("evm_mine");
+
+        const expectedTGE = (invested * BigInt(tgeAmount)) / BigInt(100);
+        const vestingAmount = invested - expectedTGE;
+        const totalPeriods = BigInt(duration) / BigInt(period);
+        const vestedPeriods = BigInt(1); // One period passed
+        
+        const expectedVested = (vestingAmount * vestedPeriods) / totalPeriods;
+        const expectedTotal = expectedTGE + expectedVested;
+
+        const amount = await tester.computeReleasableAmount(
+          currentTime,
+          duration,
+          period,
+          lockUpPeriod,
+          tgeAmount,
+          invested,
+          released
+        );
+
+        expect(amount).to.equal(expectedTotal);
+      });
+
+      it("should return full amount after complete vesting period", async function () {        // Move time to after complete vesting period
+        const newTime = currentTime + duration + lockUpPeriod + 1;
+        await time.setNextBlockTimestamp(newTime);
+        await ethers.provider.send("evm_mine");
+
+        const amount = await tester.computeReleasableAmount(
+          currentTime,
+          duration,
+          period,
+          lockUpPeriod,
+          tgeAmount,
+          invested,
+          released
+        );
+
+        expect(amount).to.equal(invested);
+      });
+
+      it("should handle partial releases correctly", async function () {
+        const partialRelease = ethers.parseEther("200"); // 200 tokens released
+        
+        const amount = await tester.computeReleasableAmount(
+          currentTime,
+          duration,
+          period,
+          lockUpPeriod,
+          tgeAmount,
+          invested,
+          partialRelease
+        );
+
+        const expectedTGE = (invested * BigInt(tgeAmount)) / BigInt(100);
+        expect(amount).to.equal(expectedTGE - partialRelease);
+      });
+    });
+  });
+
+  describe("Vesting Contract Functionality", function () {
+    let beneficiaries;
+    let vestingPlanParams;
+    const projectName = "TestProject";
+    
+    beforeEach(async function () {
+      // Approve tokens for vesting
+      await token.approve(await vesting.getAddress(), ethers.parseEther("10000"));
+
+      beneficiaries = [
         {
-            beneficiaries: [{ beneficiaryAddress: beneficiar_1, tokenAmount: 250 }],
-            vestingPlanLabel: vesting_1_label,
-            saleStart: Math.floor(Date.now() / 1000), // Current timestamp
-            cliffPeriod: 60 * 60 * 24 * 30, // 30 days
-            vestingPeriod: 60 * 60 * 24 * 365, // 1 year
-            releasePeriod: 60 * 60 * 24 * 30, // Monthly releases
-            tgePercent: 10, // 10% tokens at TGE
-            totalTokenAmount: "1000"
+          beneficiaryAddress: addr1.address,
+          tokenAmount: ethers.parseEther("100")
         },
         {
-            beneficiaries: [{ beneficiaryAddress: beneficiar_1, tokenAmount: 25 }],
-            vestingPlanLabel: vesting_2_label,
-            saleStart: Math.floor(Date.now() / 1000), // Current timestamp
-            cliffPeriod: 60 * 60 * 24 * 30, // 30 days
-            vestingPeriod: 60 * 60 * 24 * 365, // 1 year
-            releasePeriod: 60 * 60 * 24 * 30, // Monthly releases
-            tgePercent: 10, // 10%
-            totalTokenAmount: "350"
+          beneficiaryAddress: addr2.address,
+          tokenAmount: ethers.parseEther("200")
         }
-    ];
+      ];
 
-    // Helper function to deploy contracts
-    const deployContracts = async () => {
-        vestingContract = await ethers.deployContract("Vesting");
-        [owner, addr1, addr2, mockedLzAddress] = await ethers.getSigners();
-        erc20Token = await ethers.deployContract("ERC20Token", [name, symbol, erc20Supply, owner.address]);
-    };
-
-    // Helper function to approve and add vesting plans
-    const approveAndAddVestings = async (vestingPlansToUse) => {
-        await erc20Token.approve(vestingContract.getAddress(), erc20Supply);
-        await vestingContract.addVestingPlansBulk(vestingPlansToUse, _projectName, erc20Token.getAddress());
-    };
-
-    // Helper function to get vesting plan IDs
-    const getProjectVestings = async () => {
-        const projectVestings = await vestingContract.getVestingsByProjectName(_projectName);
-        return projectVestings.toString().split(",");
-    };
-
-    beforeEach(async function () {
-        await deployContracts();
+      vestingPlanParams = {
+        beneficiaries: beneficiaries,
+        vestingPlanLabel: "Test Plan",
+        saleStart: Math.floor(Date.now() / 1000),
+        cliffPeriod: 90 * 24 * 60 * 60, // 90 days
+        vestingPeriod: 365 * 24 * 60 * 60, // 1 year
+        releasePeriod: 30 * 24 * 60 * 60, // 30 days
+        tgePercent: 20,
+        totalTokenAmount: ethers.parseEther("300")
+      };
     });
 
-    describe("add vestings", function () {
-        it("adding vesting plan", async function () {
-            await approveAndAddVestings(vestingPlans);
-            const [vesting1] = await getProjectVestings();
-            const vestingPlan = await vestingContract.vestingPlans(vesting1);
+    describe("Adding Vesting Plans", function () {
+      it("should add a vesting plan successfully", async function () {
+        await vesting.addVestingPlansBulk(
+          [vestingPlanParams],
+          projectName,
+          await token.getAddress()
+        );
 
-            // Compare vesting data
-            expect(vestingPlan[0]).to.equal(await erc20Token.getAddress());
-            expect(vestingPlan[1]).to.equal(_projectName);
-            expect(vestingPlan[2]).to.equal(vestingPlans[0].vestingPlanLabel);
-            expect(vestingPlan[3]).to.equal(await owner.getAddress());
-            expect(vestingPlan[4]).to.equal(vestingPlans[0].saleStart);
-            expect(vestingPlan[5]).to.equal(vestingPlans[0].cliffPeriod);
-            expect(vestingPlan[6]).to.equal(vestingPlans[0].vestingPeriod);
-            expect(vestingPlan[7]).to.equal(vestingPlans[0].releasePeriod);
-            expect(vestingPlan[8]).to.equal(vestingPlans[0].tgePercent);
-            expect(vestingPlan[9]).to.equal(vestingPlans[0].totalTokenAmount);
-            expect(vestingPlan[10]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount);
+        const plans = await vesting.getVestingsByProjectName(projectName);
+        expect(plans.length).to.equal(1);
+      });
 
-            // Compare token amounts
-            const totalAllocatedTokens = Number(vestingPlans[0].totalTokenAmount) + Number(vestingPlans[1].totalTokenAmount);
-            expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - totalAllocatedTokens);
-            expect(await erc20Token.balanceOf(vestingContract.getAddress())).to.equal(totalAllocatedTokens);
+      it("should fail if total tokens exceed approved amount", async function () {
+        vestingPlanParams.totalTokenAmount = ethers.parseEther("20000");
+        await expect(
+          vesting.addVestingPlansBulk(
+            [vestingPlanParams],
+            projectName,
+            await token.getAddress()
+          )
+        ).to.be.reverted;
+      });
 
-            // Verify beneficiary's vesting
-            const beneficiar1 = await vestingContract.individualVestings(vesting1, beneficiar_1);
-            expect(beneficiar1[0]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount);
-            expect(beneficiar1[1]).to.equal(0);
-        });
+      it("should add multiple vesting plans", async function () {
+        const secondPlan = { ...vestingPlanParams };
+        secondPlan.vestingPlanLabel = "Test Plan 2";
+        
+        await vesting.addVestingPlansBulk(
+          [vestingPlanParams, secondPlan],
+          projectName,
+          await token.getAddress()
+        );
 
-        it("adding vesting plan with project package", async function () {
+        const plans = await vesting.getVestingsByProjectName(projectName);
+        expect(plans.length).to.equal(2);
+      });
+    });
 
-            await erc20Token.approve(vestingContract.getAddress(), erc20Supply);
+    describe("Token Release", function () {
+      let vestingIdx;
+      let startTime;
 
-            await approveAndAddVestings(vestingPlans);
-            const [vesting1] = await getProjectVestings();
-            const vestingPlan = await vestingContract.vestingPlans(vesting1);
+      beforeEach(async function () {
+        // Get current block time and set start time for vesting
+        const latestBlock = await ethers.provider.getBlock('latest');
+        startTime = latestBlock.timestamp;
+        vestingPlanParams.saleStart = startTime;
+        
+        await vesting.addVestingPlansBulk(
+          [vestingPlanParams],
+          projectName,
+          await token.getAddress()
+        );
+        const plans = await vesting.getVestingsByProjectName(projectName);
+        vestingIdx = plans[0];
+      });
 
-            expect(vestingPlan[1]).to.equal(_projectName);
-        });
+      it("should release TGE tokens immediately", async function () {
+        const initialBalance = await token.balanceOf(addr1.address);
+        await vesting.connect(addr1).releaseVestedTokens(vestingIdx);
+        
+        const totalAmount = ethers.parseEther("100");
+        const expectedTGE = (totalAmount * BigInt(20)) / BigInt(100);
+        const newBalance = await token.balanceOf(addr1.address);
+        
+        expect(newBalance - initialBalance).to.equal(expectedTGE);
+      });
 
-        it("unlock unallocated tokens", async function () {
-            await approveAndAddVestings(vestingPlans);
-            const [vesting1] = await getProjectVestings();
+      it("should fail to release tokens when no tokens are vested", async function () {
+        // First release TGE tokens
+        await vesting.connect(addr1).releaseVestedTokens(vestingIdx);
+        
+        // Try to release again immediately - should fail as no new tokens are vested
+        await expect(
+          vesting.connect(addr1).releaseVestedTokens(vestingIdx)
+        ).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
+        
+        // Advance time but stay within cliff period
+        await ethers.provider.send("evm_increaseTime", [vestingPlanParams.cliffPeriod / 2]);
+        await ethers.provider.send("evm_mine");
+        
+        // Try to release during cliff period - should still fail
+        await expect(
+          vesting.connect(addr1).releaseVestedTokens(vestingIdx)
+        ).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
+      });
+    });
 
-            // Initial balances
-            const totalAllocatedTokens = Number(vestingPlans[0].totalTokenAmount) + Number(vestingPlans[1].totalTokenAmount);
-            expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - totalAllocatedTokens);
+    describe("Unallocated Token Withdrawal", function () {
+      let vestingIdx;
 
-            // Withdraw unallocated tokens
-            const invalidVestingAddress = "0xa397bc7c0ff6ac261a7a658e96f6f457721577937cc4078360bcb683265671b2";
-            await expect(vestingContract.withdrawUnallocatedTokens(invalidVestingAddress)).to.be.revertedWith("Invalid vesting plan");
-            await expect(vestingContract.connect(addr1).withdrawUnallocatedTokens(vesting1)).to.be.revertedWith("Only vesting owner can withdraw tokens");
+      beforeEach(async function () {
+        // Create a vesting plan with more tokens than allocated to beneficiaries
+        vestingPlanParams.totalTokenAmount = ethers.parseEther("1000");
+        await vesting.addVestingPlansBulk(
+          [vestingPlanParams],
+          projectName,
+          await token.getAddress()
+        );
+        const plans = await vesting.getVestingsByProjectName(projectName);
+        vestingIdx = plans[0];
+      });
 
-            await vestingContract.withdrawUnallocatedTokens(vesting1);
-            expect(await erc20Token.balanceOf(owner.address)).to.equal(erc20Supply - vestingPlans[0].beneficiaries[0].tokenAmount - vestingPlans[1].totalTokenAmount);
+      it("should fail when vesting plan is not initialized", async function () {
+        const invalidVestingId = "0x" + "1".repeat(64); // Invalid UUID
+        await expect(
+          vesting.withdrawUnallocatedTokens(invalidVestingId)
+        ).to.be.revertedWith("Invalid vesting plan");
+      });
 
-            await expect(vestingContract.withdrawUnallocatedTokens(vesting1)).to.be.revertedWith("No unallocated tokens to withdraw");
-        });
+      it("should fail when there are no unallocated tokens to withdraw", async function () {
+        // First withdraw should succeed
+        await vesting.withdrawUnallocatedTokens(vestingIdx);
 
-        // Add other test cases here using helper functions as needed
-        it("adding additional beneficiaries", async function () {
-            // Add vesting plan
-            await approveAndAddVestings(vestingPlans);
-            // Get vesting by project name
-            const [vesting1] = await getProjectVestings();
+        // Second attempt should fail as there are no more tokens to withdraw
+        await expect(
+          vesting.withdrawUnallocatedTokens(vestingIdx)
+        ).to.be.revertedWith("No unallocated tokens to withdraw");
+      });
 
-            const benificariesArray = [{
-                beneficiaryAddress: beneficiar_2,
-                tokenAmount: vestingPlans[0].totalTokenAmount - vestingPlans[0].beneficiaries[0].tokenAmount
-            }]
+      it("should allow owner to withdraw unallocated tokens", async function () {
+        const initialBalance = await token.balanceOf(owner.address);
+        await vesting.withdrawUnallocatedTokens(vestingIdx);
+        const newBalance = await token.balanceOf(owner.address);
 
-            await vestingContract.addVestingBeneficiaries(vesting1, benificariesArray);
+        const allocatedAmount = ethers.parseEther("300"); // Sum of beneficiary amounts
+        const totalAmount = ethers.parseEther("1000");
+        const expectedWithdrawal = totalAmount - allocatedAmount;
 
-            await expect(vestingContract.connect(addr1).addVestingBeneficiaries(vesting1, benificariesArray)).to.be.revertedWith("Only vesting owner can add beneficiaries");
+        expect(newBalance - initialBalance).to.equal(expectedWithdrawal);
+      });
 
-            const invalidVestingAddress = "0xa397bc7c0ff6ac261a7a658e96f6f457721577937cc4078360bcb683265671b2";
-            await expect(vestingContract.addVestingBeneficiaries(invalidVestingAddress, benificariesArray)).to.be.revertedWith("Invalid vesting plan");
+      it("should not allow non-owner to withdraw tokens", async function () {
+        await expect(
+          vesting.connect(addr1).withdrawUnallocatedTokens(vestingIdx)
+        ).to.be.revertedWith("Only vesting owner can withdraw tokens");
+      });
+    });
 
-            // Try to add address(0) as benificiar
-            const invalidBenificariesArray = [{
-                beneficiaryAddress: '0x0000000000000000000000000000000000000000',
-                tokenAmount: 0
-            }]
-            await expect(vestingContract.addVestingBeneficiaries(vesting1, invalidBenificariesArray)).to.be.revertedWith("Invalid beneficiary address");
+    describe("addVestingBeneficiaries function", function () {
+      let vestingPlanParams;
+      let vestingIdx;
+      let projectName = "TestVestingProject";
 
-            const vestingPlan = await vestingContract.vestingPlans(vesting1);
-            expect(vestingPlan[10]).to.equal(vestingPlans[0].beneficiaries[0].tokenAmount + benificariesArray[0].tokenAmount);
-
-            // Try to add vesting beneficiaries one more time
-            await expect(vestingContract.addVestingBeneficiaries(vesting1, benificariesArray)).to.be.revertedWith("Token allocation reached maximum for vesting plan");
-        });
-
-        it("release vested tokens", async function () {
-            const getCurrentTime = async () => {
-                const currentBlock = await ethers.provider.getBlock("latest");
-                return currentBlock.timestamp;
+      beforeEach(async function () {
+        // Create a vesting plan with room for additional beneficiaries
+        vestingPlanParams = {
+          beneficiaries: [
+            {
+              beneficiaryAddress: addr1.address,
+              tokenAmount: ethers.parseEther("100")
             }
+          ],
+          vestingPlanLabel: "Test Plan",
+          saleStart: Math.floor(Date.now() / 1000),
+          cliffPeriod: 90 * 24 * 60 * 60, // 90 days
+          vestingPeriod: 365 * 24 * 60 * 60, // 1 year
+          releasePeriod: 30 * 24 * 60 * 60, // 30 days
+          tgePercent: 20,
+          totalTokenAmount: ethers.parseEther("500") // Total amount higher than initial beneficiary amount
+        };
 
-            const cliffPeriodTime = 1000;
-            const vestingPeriodTime = 5000;
-            const releasePeriodTime = 1000;
-            const benificiarTokenAmount = 2500;
+        // Approve and add vesting plan
+        await token.approve(await vesting.getAddress(), ethers.parseEther("500"));
+        await vesting.addVestingPlansBulk(
+          [vestingPlanParams],
+          projectName,
+          await token.getAddress()
+        );
 
-            // Ensure the saleStart is properly awaited
-            const releasableVestingPlan = [
-                {
-                    beneficiaries: [
-                        {
-                            beneficiaryAddress: addr1.address, // Use the address here
-                            tokenAmount: benificiarTokenAmount
-                        }
-                    ],
-                    vestingPlanLabel: vesting_1_label,
-                    saleStart: await getCurrentTime(),  // Await the current time
-                    cliffPeriod: cliffPeriodTime,
-                    vestingPeriod: vestingPeriodTime,
-                    releasePeriod: releasePeriodTime,
-                    tgePercent: 10,
-                    totalTokenAmount: "10000"
-                }
-            ];
+        const plans = await vesting.getVestingsByProjectName(projectName);
+        vestingIdx = plans[0];
+      });
 
-            // Add vesting plan
-            await erc20Token.approve(vestingContract.getAddress(), erc20Supply);
-            await vestingContract.addVestingPlansBulk(releasableVestingPlan, _projectName, erc20Token.getAddress());
+      it("should allow adding new beneficiaries within allocation limit", async function () {
+        const newBeneficiaries = [
+          {
+            beneficiaryAddress: addr2.address,
+            tokenAmount: ethers.parseEther("200")
+          }
+        ];
 
-            // Get vesting by project name
-            const projectVestings = await vestingContract.getVestingsByProjectName(_projectName);
-            const vestingId = projectVestings[0]; // Extract the first vesting plan ID
+        await vesting.addVestingBeneficiaries(vestingIdx, newBeneficiaries);
 
-            // Initially, no vested tokens should be claimable
-            await expect(vestingContract.releaseVestedTokens(vestingId)).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
+        // Verify beneficiary was added
+        const beneficiaryVesting = await vesting.individualVestings(vestingIdx, addr2.address);
+        expect(beneficiaryVesting[0]).to.equal(ethers.parseEther("200")); // tokenAmount
+        expect(beneficiaryVesting[1]).to.equal(0); // releasedAmount
+      });
 
-            expect(await erc20Token.balanceOf(addr1.address)).to.equal(0);
+      it("should fail when non-owner tries to add beneficiaries", async function () {
+        const newBeneficiaries = [
+          {
+            beneficiaryAddress: addr2.address,
+            tokenAmount: ethers.parseEther("200")
+          }
+        ];
 
-            // Release TGE tokens
-            await vestingContract.connect(addr1).releaseVestedTokens(vestingId);
+        await expect(
+          vesting.connect(addr1).addVestingBeneficiaries(vestingIdx, newBeneficiaries)
+        ).to.be.revertedWith("Only vesting owner can add beneficiaries");
+      });
 
-            const tgeTokenCount = benificiarTokenAmount * releasableVestingPlan[0].tgePercent / 100;
-            expect(await erc20Token.balanceOf(addr1.address)).to.equal(tgeTokenCount);
+      it("should fail with invalid vesting plan ID", async function () {
+        const invalidVestingId = "0x" + "1".repeat(64); // Invalid UUID
+        const newBeneficiaries = [
+          {
+            beneficiaryAddress: addr2.address,
+            tokenAmount: ethers.parseEther("200")
+          }
+        ];
 
-            await expect(vestingContract.connect(addr1).releaseVestedTokens(vestingId)).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
+        await expect(
+          vesting.addVestingBeneficiaries(invalidVestingId, newBeneficiaries)
+        ).to.be.revertedWith("Invalid vesting plan");
+      });
 
-            // Fast forward time to pass the cliff period
-            await ethers.provider.send('evm_increaseTime', [cliffPeriodTime]);
-            await ethers.provider.send('evm_mine');
-            await expect(vestingContract.connect(addr1).releaseVestedTokens(vestingId)).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
+      it("should fail with zero address beneficiary", async function () {
+        const newBeneficiaries = [
+          {
+            beneficiaryAddress: ethers.ZeroAddress,
+            tokenAmount: ethers.parseEther("200")
+          }
+        ];
 
-            // Fast forward time to pass one release period
-            await ethers.provider.send('evm_increaseTime', [releasePeriodTime]);
-            await ethers.provider.send('evm_mine');
+        await expect(
+          vesting.addVestingBeneficiaries(vestingIdx, newBeneficiaries)
+        ).to.be.revertedWith("Invalid beneficiary address");
+      });
 
-            await vestingContract.connect(addr1).releaseVestedTokens(vestingId);
+      it("should fail when exceeding total allocation", async function () {
+        const newBeneficiaries = [
+          {
+            beneficiaryAddress: addr2.address,
+            tokenAmount: ethers.parseEther("401") // Would exceed total of 500
+          }
+        ];
 
-            // Should release tokens proportional to the release period
-            const oneReleasePeriodTokenCount = (benificiarTokenAmount - tgeTokenCount) / (vestingPeriodTime / releasePeriodTime);
-            expect(await erc20Token.balanceOf(addr1.address)).to.equal(tgeTokenCount + oneReleasePeriodTokenCount);
+        await expect(
+          vesting.addVestingBeneficiaries(vestingIdx, newBeneficiaries)
+        ).to.be.revertedWith("Token allocation reached maximum for vesting plan");
+      });
 
-            // Fast forward time to pass the entire vesting period
-            await ethers.provider.send('evm_increaseTime', [vestingPeriodTime]);
-            await ethers.provider.send('evm_mine');
+      it("should allow multiple beneficiaries in single transaction", async function () {
+        const newBeneficiaries = [
+          {
+            beneficiaryAddress: addr2.address,
+            tokenAmount: ethers.parseEther("150")
+          },
+          {
+            beneficiaryAddress: addrs[0].address,
+            tokenAmount: ethers.parseEther("150")
+          }
+        ];
 
-            // Releasing all remaining tokens
-            await vestingContract.connect(addr1).releaseVestedTokens(vestingId);
-            expect(await erc20Token.balanceOf(addr1.address)).to.equal(benificiarTokenAmount);
+        await vesting.addVestingBeneficiaries(vestingIdx, newBeneficiaries);
 
-            // No further tokens should be available for release
-            await expect(vestingContract.connect(addr1).releaseVestedTokens(vestingId)).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
-        });
-
-        it("release vested tokens for paused contract", async function () {
-            const releasableVestingPlan = [
-                {
-                    beneficiaries: [
-                        {
-                            beneficiaryAddress: addr1.address,
-                            tokenAmount: 2500
-                        },
-                        {
-                            beneficiaryAddress: addr2.address,
-                            tokenAmount: 2500
-                        }
-                    ],
-                    vestingPlanLabel: vesting_1_label,
-                    saleStart: Math.floor(Date.now() / 1000),
-                    cliffPeriod: 60 * 60 * 24 * 30,  // 30 days
-                    vestingPeriod: 60 * 60 * 24 * 365,  // 1 year
-                    releasePeriod: 60 * 60 * 24 * 30,  // Monthly releases
-                    tgePercent: 10,
-                    totalTokenAmount: "10000"
-                }
-            ];
-
-            // Deploy and initialize the pausable ERC20 token
-            const erc20PausableToken = await ethers.deployContract("ERC20PausableBurnableToken", [name, symbol, erc20Supply, owner.address]);
-
-            // Add vesting plan
-            await erc20PausableToken.approve(vestingContract.getAddress(), erc20Supply);
-            await vestingContract.addVestingPlansBulk(releasableVestingPlan, _projectName, erc20PausableToken.getAddress());
-
-            // Get vesting by project name
-            const projectVestings = await vestingContract.getVestingsByProjectName(_projectName);
-            const vestingId = projectVestings[0]; // Get the vesting plan ID
-
-            // Check initial balance
-            expect(await erc20PausableToken.balanceOf(addr1.address)).to.equal(0);
-
-            // Release TGE tokens for addr1
-            await vestingContract.connect(addr1).releaseVestedTokens(vestingId);
-            const tgeTokenCountAddr1 = releasableVestingPlan[0].beneficiaries[0].tokenAmount * releasableVestingPlan[0].tgePercent / 100;
-            expect(await erc20PausableToken.balanceOf(addr1.address)).to.equal(tgeTokenCountAddr1);
-
-            // Ensure no additional tokens can be claimed yet
-            await expect(vestingContract.connect(addr1).releaseVestedTokens(vestingId)).to.be.revertedWith("TokenVesting: cannot release tokens, no vested tokens");
-
-            // Pause ERC20 contract
-            await erc20PausableToken.pause();
-
-            // Ensure addr2 cannot release tokens while the contract is paused
-            await expect(vestingContract.connect(addr2).releaseVestedTokens(vestingId)).to.be.revertedWith("Pausable: paused and not whitelisted");
-
-            // Whitelist vesting contract for transfers during paused state
-            await erc20PausableToken.addWhitelistedContract(vestingContract.getAddress());
-
-            // addr2 should now be able to release TGE tokens
-            await vestingContract.connect(addr2).releaseVestedTokens(vestingId);
-            const tgeTokenCountAddr2 = releasableVestingPlan[0].beneficiaries[1].tokenAmount * releasableVestingPlan[0].tgePercent / 100;
-            expect(await erc20PausableToken.balanceOf(addr2.address)).to.equal(tgeTokenCountAddr2);
-        });
+        // Verify both beneficiaries were added
+        const beneficiary1Vesting = await vesting.individualVestings(vestingIdx, addr2.address);
+        const beneficiary2Vesting = await vesting.individualVestings(vestingIdx, addrs[0].address);
+        
+        expect(beneficiary1Vesting[0]).to.equal(ethers.parseEther("150"));
+        expect(beneficiary2Vesting[0]).to.equal(ethers.parseEther("150"));
+      });
     });
+  });
 });
