@@ -11,6 +11,8 @@
 //     const minStakingAmount = ethers.parseEther("100");
 //     const curatorThreshold = ethers.parseEther("500");
 //     const investorThreshold = ethers.parseEther("1000");
+//     const srcChainId = 1;
+//     const dstChainId = 2;
 
 //     beforeEach(async function () {
 //         [owner, addr1, addr2] = await ethers.getSigners();
@@ -21,17 +23,35 @@
 
 //         // Deploy LayerZero endpoint mock
 //         const LZEndpointMock = await ethers.getContractFactory("LZEndpointMock");
-//         const endpoint = await LZEndpointMock.deploy(1); // chainId 1
+//         const srcEndpoint = await LZEndpointMock.deploy(dstChainId);
 
 //         // Deploy AccessStaking contract
 //         const AccessStaking = await ethers.getContractFactory("AccessStaking");
 //         accessStaking = await AccessStaking.deploy(
 //             await forcefiToken.getAddress(),
 //             owner.address, // mock fundraising address
-//             await endpoint.getAddress(),
+//             await srcEndpoint.getAddress(),
+//             owner.address
+//         );
+        
+//         // Deploy LayerZero endpoint mock
+//         const LZSrcMock = await ethers.getContractFactory("LZEndpointMock");
+//         const dstEndpoint = await LZSrcMock.deploy(srcChainId); // chainId 1
+
+//         // Deploy AccessStaking contract
+//         const AccessChildStaking = await ethers.getContractFactory("ForcefiChildChainStaking");
+//         accessChildStaking = await AccessChildStaking.deploy(
+//             owner.address, // mock fundraising address
+//             await dstEndpoint.getAddress(),
 //             owner.address
 //         );
 
+//         const dstEndpointAddress = await srcEndpoint.getAddress();
+//         await accessStaking.setPeer(dstChainId, ethers.zeroPadValue(dstEndpointAddress, 32));
+
+//         const srcEndpointAddress = await dstEndpoint.getAddress();
+//         await accessChildStaking.setPeer(dstChainId, ethers.zeroPadValue(srcEndpointAddress, 32));
+              
 //         // Setup remaining configuration
 //         await accessStaking.setMinStakingAmount(minStakingAmount);
 //         await accessStaking.setCuratorTreshholdAmount(curatorThreshold);

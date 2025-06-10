@@ -483,40 +483,43 @@ contract Fundraising is ForcefiBaseContract{
         fundraising.campaignClosed = true;
 
         uint feePercentage = calculateFee(fundraising.totalFundraised, fundraising.fundraisingFeeConfig);
-
         for(uint i=0; i < whitelistedTokens[_fundraisingIdx].length; i++) {
             uint totalFundraisedInWei = fundraisingBalance[_fundraisingIdx][whitelistedTokens[_fundraisingIdx][i]];
             uint feeInWei = totalFundraisedInWei * feePercentage / 100;
-            uint referralFeeInWei = totalFundraisedInWei * fundraising.fundraisingReferralFee / 100;
 
             // Track how much of the fees is actually distributed
             uint distributedFees = 0;
 
-            // Handle referral fee
-            if(fundraising.referralAddress != address(0)) {
+            // Calculate referral fee from base fee pool (if referral exists)
+            uint referralFeeInWei = 0;
+            if(fundraising.referralAddress != address(0) && fundraising.fundraisingReferralFee > 0) {
+                referralFeeInWei = feeInWei * fundraising.fundraisingReferralFee / 100;
                 ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(fundraising.referralAddress, referralFeeInWei);
                 emit ReferralFeeSent(fundraising.referralAddress, whitelistedTokens[_fundraisingIdx][i], fundraising.projectName, referralFeeInWei);
                 distributedFees += referralFeeInWei;
             }
 
-            // Handle platform fee (1/5 of the base fee)
+            // Calculate remaining base fee after referral deduction
+            uint remainingBaseFee = feeInWei - referralFeeInWei;
+
+            // Handle platform fee (1/5 of the remaining base fee)
             if(successfulFundraiseFeeAddress != address(0)) {
-                uint platformFee = feeInWei / 5;
+                uint platformFee = remainingBaseFee / 5;
                 ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(successfulFundraiseFeeAddress, platformFee);
                 distributedFees += platformFee;
             }
 
-            // Handle staking fee (3/10 of the base fee)
+            // Handle staking fee (3/10 of the remaining base fee)
             if(forcefiStakingAddress != address(0)) {
-                uint stakingFee = feeInWei * 3 / 10;
+                uint stakingFee = remainingBaseFee * 3 / 10;
                 ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(forcefiStakingAddress, stakingFee);
                 IForcefiStaking(forcefiStakingAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], stakingFee);
                 distributedFees += stakingFee;
             }
 
-            // Handle curator fee (1/2 of the base fee)
+            // Handle curator fee (1/2 of the remaining base fee)
             if(curatorContractAddress != address(0)) {
-                uint curatorFee = feeInWei / 2;
+                uint curatorFee = remainingBaseFee / 2;
                 uint curatorPercentage = IForcefiCuratorContract(curatorContractAddress).getCurrentTotalPercentage(_fundraisingIdx);
                 uint adjustedCuratorFee = curatorFee * curatorPercentage / 100;
                 if (adjustedCuratorFee > 0) {
