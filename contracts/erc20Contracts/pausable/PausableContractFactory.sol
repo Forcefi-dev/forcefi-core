@@ -13,7 +13,7 @@ import "./ERC20PausableToken.sol";
  * The factory can deploy pausable tokens with optional minting and burning capabilities.
  * Inherits from ForcefiBaseContract.
  */
-contract PausableContractFactory is ForcefiBaseContract {
+contract PausableContractFactory {
 
     constructor(){
 
@@ -59,9 +59,6 @@ contract PausableContractFactory is ForcefiBaseContract {
         string memory _projectName,
         uint256 _initialSupply
     ) external payable returns (address) {
-        // Ensure the deployer has the required creation token or pays the appropriate fee
-        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
-        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
 
         address newContract;
 

@@ -13,7 +13,7 @@ import "./../ForcefiBaseContract.sol";
  * The contract allows deploying standard, mintable, burnable, and mintable-burnable ERC20 tokens.
  * Inherits from ForcefiBaseContract.
  */
-contract ContractFactory is ForcefiBaseContract {
+contract ContractFactory {
 
     constructor(){}
 
@@ -56,9 +56,6 @@ contract ContractFactory is ForcefiBaseContract {
         string memory _projectName,
         uint256 _initialSupply
     ) external payable returns (address) {
-        // Ensure the deployer has the required creation token or pays the appropriate fee
-        bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
-        require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
 
         address newContract;
 
