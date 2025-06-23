@@ -2,6 +2,7 @@
 pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./ForcefiBaseContract.sol";
 import "./VestingLibrary.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
@@ -9,10 +10,12 @@ import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.so
 interface IForcefiStaking {
     function hasAddressStaked(address) external view returns(bool);
     function receiveFees(address, uint) external;
+    function receiveNativeCurrencyFees() external payable;
 }
 
 interface IForcefiCuratorContract {
     function receiveCuratorFees(address, uint, bytes32) external;
+    function receiveNativeCurrencyFees(bytes32) external payable;
     function getCurrentTotalPercentage(bytes32) external view returns (uint);
 }
 
@@ -21,7 +24,7 @@ interface IForcefiCuratorContract {
  * @notice The Fundraising contract is designed to facilitate fundraising campaigns with vesting plans for token distribution.
  * @dev It allows project owners to create fundraising campaigns, accept investments in various tokens, and manage the vesting schedule for token distribution to investors.
  */
-contract Fundraising is ForcefiBaseContract{
+contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
 
     /// @notice Counter used to generate unique fundraising IDs
     uint256 private _fundraisingIdCounter;
@@ -70,6 +73,15 @@ contract Fundraising is ForcefiBaseContract{
 
     /// @notice Maps fundraising IDs and investor addresses to their detailed investment balance information
     mapping(bytes32 => mapping(address => IndividualBalances)) public individualBalances;
+
+    /// @notice Maps fundraising IDs and investor addresses to their native currency (ETH) contribution balance
+    mapping(bytes32 => mapping(address => uint)) public nativeCurrencyBalance;
+
+    /// @notice Maps fundraising IDs to total native currency raised
+    mapping(bytes32 => uint) public totalNativeCurrencyRaised;
+
+    /// @notice Address representing native currency (ETH) for consistency with ERC20 handling
+    address public constant NATIVE_CURRENCY = address(0);
 
     /**
      * @notice Struct to track individual balances within a fundraising campaign.
@@ -274,7 +286,6 @@ contract Fundraising is ForcefiBaseContract{
         minCampaignThreshold: 70
         });
     }
-
     /**
      * @notice Creates a new fundraising campaign
      * @dev Campaign can be created either if the owner of the project has a creation token or pays the fee
@@ -284,8 +295,9 @@ contract Fundraising is ForcefiBaseContract{
      * @param _projectName The name of the project
      * @param _fundraisingErc20TokenAddress The address of the ERC20 token being distributed
      * @param _whitelistAddresses The addresses to whitelist for private campaigns
+     * @param _includeNativeCurrency Whether to include native currency (ETH) as an accepted investment token
      */
-    function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _fundraisingErc20TokenAddress, address [] calldata _whitelistAddresses) external payable {
+    function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _fundraisingErc20TokenAddress, address [] calldata _whitelistAddresses, bool _includeNativeCurrency) external payable {
         bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
         require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
@@ -315,15 +327,21 @@ contract Fundraising is ForcefiBaseContract{
         });
 
         uint fundraisingIdx = _fundraisingIdCounter;
-        _fundraisingIdCounter += 1;
-
-        bytes32 UUID = VestingLibrary.generateUUID(fundraisingIdx);
+        _fundraisingIdCounter += 1;        bytes32 UUID = VestingLibrary.generateUUID(fundraisingIdx);
         address [] storage tokensToPush = whitelistedTokens[UUID];
         for (uint i=0; i< _attachedERC20Address.length; i++){
             require(isInvestmentToken[_attachedERC20Address[i]], "Not whitelisted investment token address");
             tokensToPush.push(_attachedERC20Address[i]);
             whitelistedToken[UUID][_attachedERC20Address[i]] = true;
         }
+        
+        // Add native currency if requested and globally whitelisted
+        if(_includeNativeCurrency) {
+            require(isInvestmentToken[NATIVE_CURRENCY], "Native currency is not globally whitelisted for investment");
+            tokensToPush.push(NATIVE_CURRENCY);
+            whitelistedToken[UUID][NATIVE_CURRENCY] = true;
+        }
+        
         whitelistedTokens[UUID] = tokensToPush;
 
         vestingPlans[UUID] = VestingPlan(_fundraisingData._label,
@@ -351,6 +369,24 @@ contract Fundraising is ForcefiBaseContract{
      */
     function getIndividualBalanceForToken(bytes32 _idx, address _investmentTokenAddress) public view returns(uint){
         return individualBalances[_idx][msg.sender].investmentTokenBalances[_investmentTokenAddress];
+    }
+
+    /**
+     * @notice Gets the native currency (ETH) balance for the caller in a specific campaign
+     * @param _idx The ID of the fundraising campaign
+     * @return The balance of native currency contributed by the caller
+     */
+    function getNativeCurrencyBalance(bytes32 _idx) public view returns(uint){
+        return nativeCurrencyBalance[_idx][msg.sender];
+    }
+
+    /**
+     * @notice Gets the total native currency raised for a specific campaign
+     * @param _idx The ID of the fundraising campaign
+     * @return The total amount of native currency raised
+     */
+    function getTotalNativeCurrencyRaised(bytes32 _idx) public view returns(uint){
+        return totalNativeCurrencyRaised[_idx];
     }
 
     /**
@@ -420,16 +456,14 @@ contract Fundraising is ForcefiBaseContract{
         reclaimWindow: _reclaimWindow,
         minCampaignThreshold: _minCampaignThreshold
         });
-    }
-
-    /**
+    }    /**
      * @notice Allows users to invest in a fundraising campaign
      * @dev Requires users to stake FORC tokens and the campaign to be active
      * @param _amount The amount of tokens to invest
      * @param _whitelistedTokenAddress The address of the token being sent for investment
      * @param _fundraisingIdx The ID of the campaign to invest in
      */
-    function invest(uint256 _amount, address _whitelistedTokenAddress, bytes32 _fundraisingIdx) external {
+    function invest(uint256 _amount, address _whitelistedTokenAddress, bytes32 _fundraisingIdx) external nonReentrant {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(_amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
         require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + _amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
@@ -465,14 +499,65 @@ contract Fundraising is ForcefiBaseContract{
 
         fundraising.totalFundraised += _amount;
         emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
-    }
+    }    /**
+     * @notice Allows users to invest in a fundraising campaign using native currency (ETH)
+     * @dev Requires users to stake FORC tokens and the campaign to be active. Native currency must be enabled for the campaign.
+     * @param _amount The amount of fundraising tokens to receive (not the ETH amount sent)
+     * @param _fundraisingIdx The ID of the campaign to invest in
+     */
+    function investWithNativeCurrency(uint256 _amount, bytes32 _fundraisingIdx) external payable nonReentrant {
+        FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
+        require(_amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
+        require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + _amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
+        require(fundraising.campaignHardCap >= _amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
+        require(block.timestamp >= fundraising.startDate, "Campaign hasn't started yet");        
+        require(!fundraising.campaignClosed, "Campaign is closed");
+        require(block.timestamp <= fundraising.endDate, "Campaign has ended");
 
-    /**
+        // Check if native currency is whitelisted for this campaign
+        bool isNativeCurrencyWhitelisted = false;
+        for(uint i=0; i< whitelistedTokens[_fundraisingIdx].length; i++){
+            if(whitelistedTokens[_fundraisingIdx][i] == NATIVE_CURRENCY){
+                isNativeCurrencyWhitelisted = true;
+                break;
+            }
+        }
+        require(isNativeCurrencyWhitelisted, "Native currency is not whitelisted for this campaign");
+
+        if(forcefiStakingAddress != address(0)){
+            require(IForcefiStaking(forcefiStakingAddress).hasAddressStaked(msg.sender), "To participate in the sale, users must stake a sufficient amount of FORC tokens.");
+        }
+
+        if(fundraising.privateFundraising){
+            require(whitelistedAddresses[_fundraisingIdx][msg.sender], "not whitelisted address");
+        }
+
+        // Calculate required ETH amount using Chainlink price feed for ETH
+        // ETH has 18 decimals
+        uint ethPrice = getChainlinkDataFeedLatestAnswer(NATIVE_CURRENCY);
+        uint requiredEthAmount = (ethPrice * fundraising.rate * _amount) / fundraising.rateDelimiter / 1e18;
+        
+        require(msg.value >= requiredEthAmount, "Insufficient ETH sent");
+
+        // Update balances
+        individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += _amount;
+        nativeCurrencyBalance[_fundraisingIdx][msg.sender] += requiredEthAmount;
+        totalNativeCurrencyRaised[_fundraisingIdx] += requiredEthAmount;
+
+        fundraising.totalFundraised += _amount;
+
+        // Refund excess ETH if any
+        if(msg.value > requiredEthAmount) {
+            payable(msg.sender).transfer(msg.value - requiredEthAmount);
+        }
+
+        emit Invested(msg.sender, _amount, NATIVE_CURRENCY, _fundraisingIdx);
+    }    /**
      * @notice Closes a fundraising campaign
      * @dev To close, the campaign must reach its minimum threshold after end date + reclaim window
      * @param _fundraisingIdx The ID of the campaign to close
      */
-    function closeCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
+    function closeCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) nonReentrant {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(!fundraising.campaignClosed, "Campaign already closed");
         
@@ -481,60 +566,119 @@ contract Fundraising is ForcefiBaseContract{
         require(fundraising.endDate + fundraising.fundraisingFeeConfig.reclaimWindow <= block.timestamp, "Campaign is still within reclaim window");
 
         fundraising.campaignClosed = true;
-
         uint feePercentage = calculateFee(fundraising.totalFundraised, fundraising.fundraisingFeeConfig);
+        
+        // Handle ERC20 tokens
         for(uint i=0; i < whitelistedTokens[_fundraisingIdx].length; i++) {
-            uint totalFundraisedInWei = fundraisingBalance[_fundraisingIdx][whitelistedTokens[_fundraisingIdx][i]];
-            uint feeInWei = totalFundraisedInWei * feePercentage / 100;
+            address tokenAddress = whitelistedTokens[_fundraisingIdx][i];
+            
+            if(tokenAddress == NATIVE_CURRENCY) {
+                // Handle native currency (ETH)
+                uint totalFundraisedInWei = totalNativeCurrencyRaised[_fundraisingIdx];
+                if(totalFundraisedInWei > 0) {
+                    uint feeInWei = totalFundraisedInWei * feePercentage / 100;
+                    uint distributedFees = 0;
 
-            // Track how much of the fees is actually distributed
-            uint distributedFees = 0;
+                    // Calculate referral fee from base fee pool (if referral exists)
+                    uint referralFeeInWei = 0;
+                    if(fundraising.referralAddress != address(0) && fundraising.fundraisingReferralFee > 0) {
+                        referralFeeInWei = feeInWei * fundraising.fundraisingReferralFee / 100;
+                        payable(fundraising.referralAddress).transfer(referralFeeInWei);
+                        emit ReferralFeeSent(fundraising.referralAddress, NATIVE_CURRENCY, fundraising.projectName, referralFeeInWei);
+                        distributedFees += referralFeeInWei;
+                    }                    // Calculate remaining base fee after referral deduction
+                    uint remainingBaseFee = feeInWei - referralFeeInWei;
 
-            // Calculate referral fee from base fee pool (if referral exists)
-            uint referralFeeInWei = 0;
-            if(fundraising.referralAddress != address(0) && fundraising.fundraisingReferralFee > 0) {
-                referralFeeInWei = feeInWei * fundraising.fundraisingReferralFee / 100;
-                ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(fundraising.referralAddress, referralFeeInWei);
-                emit ReferralFeeSent(fundraising.referralAddress, whitelistedTokens[_fundraisingIdx][i], fundraising.projectName, referralFeeInWei);
-                distributedFees += referralFeeInWei;
-            }
+                    // Handle platform fee (1/5 of the remaining base fee)
+                    if(successfulFundraiseFeeAddress != address(0)) {
+                        uint platformFee = remainingBaseFee / 5;
+                        payable(successfulFundraiseFeeAddress).transfer(platformFee);
+                        distributedFees += platformFee;
+                    }
 
-            // Calculate remaining base fee after referral deduction
-            uint remainingBaseFee = feeInWei - referralFeeInWei;
+                    // Handle staking fee (3/10 of the remaining base fee) for native currency
+                    if(forcefiStakingAddress != address(0)) {
+                        uint stakingFee = remainingBaseFee * 3 / 10;
+                        // Try to send ETH to staking contract
+                        try IForcefiStaking(forcefiStakingAddress).receiveNativeCurrencyFees{value: stakingFee}() {
+                            distributedFees += stakingFee;
+                        } catch {
+                            // If staking contract doesn't support ETH, the fee remains with campaign owner
+                            // This provides fallback behavior without reverting the transaction
+                        }
+                    }
 
-            // Handle platform fee (1/5 of the remaining base fee)
-            if(successfulFundraiseFeeAddress != address(0)) {
-                uint platformFee = remainingBaseFee / 5;
-                ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(successfulFundraiseFeeAddress, platformFee);
-                distributedFees += platformFee;
-            }
+                    // Handle curator fee (1/2 of the remaining base fee) for native currency
+                    if(curatorContractAddress != address(0)) {
+                        uint curatorFee = remainingBaseFee / 2;
+                        uint curatorPercentage = IForcefiCuratorContract(curatorContractAddress).getCurrentTotalPercentage(_fundraisingIdx);
+                        uint adjustedCuratorFee = curatorFee * curatorPercentage / 100;
+                        if (adjustedCuratorFee > 0) {
+                            // Try to send ETH to curator contract
+                            try IForcefiCuratorContract(curatorContractAddress).receiveNativeCurrencyFees{value: adjustedCuratorFee}(_fundraisingIdx) {
+                                distributedFees += adjustedCuratorFee;
+                            } catch {
+                                // If curator contract doesn't support ETH, the fee remains with campaign owner
+                                // This provides fallback behavior without reverting the transaction
+                            }
+                        }
+                    }
 
-            // Handle staking fee (3/10 of the remaining base fee)
-            if(forcefiStakingAddress != address(0)) {
-                uint stakingFee = remainingBaseFee * 3 / 10;
-                ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(forcefiStakingAddress, stakingFee);
-                IForcefiStaking(forcefiStakingAddress).receiveFees(whitelistedTokens[_fundraisingIdx][i], stakingFee);
-                distributedFees += stakingFee;
-            }
+                    // Calculate total amount to send to msg.sender
+                    uint amountToSender = totalFundraisedInWei - distributedFees;
+                    payable(msg.sender).transfer(amountToSender);
+                }
+            } else {
+                // Handle ERC20 tokens
+                uint totalFundraisedInWei = fundraisingBalance[_fundraisingIdx][tokenAddress];
+                if(totalFundraisedInWei > 0) {
+                    uint feeInWei = totalFundraisedInWei * feePercentage / 100;
+                    uint distributedFees = 0;
 
-            // Handle curator fee (1/2 of the remaining base fee)
-            if(curatorContractAddress != address(0)) {
-                uint curatorFee = remainingBaseFee / 2;
-                uint curatorPercentage = IForcefiCuratorContract(curatorContractAddress).getCurrentTotalPercentage(_fundraisingIdx);
-                uint adjustedCuratorFee = curatorFee * curatorPercentage / 100;
-                if (adjustedCuratorFee > 0) {
-                    ERC20(whitelistedTokens[_fundraisingIdx][i]).approve(curatorContractAddress, adjustedCuratorFee);
-                    IForcefiCuratorContract(curatorContractAddress).receiveCuratorFees(whitelistedTokens[_fundraisingIdx][i], adjustedCuratorFee, _fundraisingIdx);
-                    distributedFees += adjustedCuratorFee;
+                    // Calculate referral fee from base fee pool (if referral exists)
+                    uint referralFeeInWei = 0;
+                    if(fundraising.referralAddress != address(0) && fundraising.fundraisingReferralFee > 0) {
+                        referralFeeInWei = feeInWei * fundraising.fundraisingReferralFee / 100;
+                        ERC20(tokenAddress).transfer(fundraising.referralAddress, referralFeeInWei);
+                        emit ReferralFeeSent(fundraising.referralAddress, tokenAddress, fundraising.projectName, referralFeeInWei);
+                        distributedFees += referralFeeInWei;
+                    }
+
+                    // Calculate remaining base fee after referral deduction
+                    uint remainingBaseFee = feeInWei - referralFeeInWei;
+
+                    // Handle platform fee (1/5 of the remaining base fee)
+                    if(successfulFundraiseFeeAddress != address(0)) {
+                        uint platformFee = remainingBaseFee / 5;
+                        ERC20(tokenAddress).transfer(successfulFundraiseFeeAddress, platformFee);
+                        distributedFees += platformFee;
+                    }
+
+                    // Handle staking fee (3/10 of the remaining base fee)
+                    if(forcefiStakingAddress != address(0)) {
+                        uint stakingFee = remainingBaseFee * 3 / 10;
+                        ERC20(tokenAddress).approve(forcefiStakingAddress, stakingFee);
+                        IForcefiStaking(forcefiStakingAddress).receiveFees(tokenAddress, stakingFee);
+                        distributedFees += stakingFee;
+                    }
+
+                    // Handle curator fee (1/2 of the remaining base fee)
+                    if(curatorContractAddress != address(0)) {
+                        uint curatorFee = remainingBaseFee / 2;
+                        uint curatorPercentage = IForcefiCuratorContract(curatorContractAddress).getCurrentTotalPercentage(_fundraisingIdx);
+                        uint adjustedCuratorFee = curatorFee * curatorPercentage / 100;
+                        if (adjustedCuratorFee > 0) {
+                            ERC20(tokenAddress).approve(curatorContractAddress, adjustedCuratorFee);
+                            IForcefiCuratorContract(curatorContractAddress).receiveCuratorFees(tokenAddress, adjustedCuratorFee, _fundraisingIdx);
+                            distributedFees += adjustedCuratorFee;
+                        }
+                    }
+
+                    // Calculate total amount to send to msg.sender
+                    uint amountToSender = totalFundraisedInWei - distributedFees;
+                    ERC20(tokenAddress).transfer(msg.sender, amountToSender);
                 }
             }
-
-            // Calculate total amount to send to msg.sender:
-            // Total raised - actually distributed fees (rather than calculated fees)
-            uint amountToSender = totalFundraisedInWei - distributedFees;
-
-            // Send remaining tokens to msg.sender
-            ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(msg.sender, amountToSender);
         }
 
         if(fundraising.campaignHardCap > fundraising.totalFundraised){
@@ -559,14 +703,12 @@ contract Fundraising is ForcefiBaseContract{
 
         fundraising.campaignClosed = true;
         ERC20(fundraising.mintingErc20TokenAddress).transfer(msg.sender, fundraising.campaignHardCap);
-    }
-
-    /**
+    }    /**
      * @notice Allows investors to claim their tokens based on the vesting schedule
      * @dev Only available after a successful campaign has been completed
      * @param _fundraisingIdx The ID of the campaign to claim tokens from
      */
-    function claimTokens(bytes32 _fundraisingIdx) external {
+    function claimTokens(bytes32 _fundraisingIdx) external nonReentrant {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
 
@@ -589,14 +731,12 @@ contract Fundraising is ForcefiBaseContract{
         require(vestingPlans[_fundraisingIdx].saleStart < block.timestamp, "TokenVesting: this vesting has not started yet");
         uint mintingTokenAmount = individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance;
         return VestingLibrary.computeReleasableAmount(vestingPlans[_fundraisingIdx].saleStart, vestingPlans[_fundraisingIdx].vestingPeriod, vestingPlans[_fundraisingIdx].releasePeriod, vestingPlans[_fundraisingIdx].cliffPeriod, vestingPlans[_fundraisingIdx].tgePercent, mintingTokenAmount, released[_fundraisingIdx][msg.sender]);
-    }
-
-    /**
+    }    /**
      * @notice Allows investors to reclaim their tokens if a campaign fails
      * @dev Available after campaign end date if threshold wasn't met
      * @param _fundraisingIdx The ID of the campaign
      */
-    function reclaimTokens(bytes32 _fundraisingIdx) external {
+    function reclaimTokens(bytes32 _fundraisingIdx) external nonReentrant {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(block.timestamp >= fundraising.endDate, "Campaign has not ended");
         
@@ -605,15 +745,28 @@ contract Fundraising is ForcefiBaseContract{
         // Fix the logic for successful campaigns
         if (hasReachedLimit) {
             require(block.timestamp <= fundraising.endDate + feeConfig.reclaimWindow, "Campaign not closed");
-        }
-
+        } 
 
         for(uint i=0; i< whitelistedTokens[_fundraisingIdx].length; i++){
-            uint reclaimAmount = individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[whitelistedTokens[_fundraisingIdx][i]];
-            if(reclaimAmount > 0){
-                individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[whitelistedTokens[_fundraisingIdx][i]] = 0;
-                ERC20(whitelistedTokens[_fundraisingIdx][i]).transfer(msg.sender, reclaimAmount);
-                emit TokensReclaimed(msg.sender, whitelistedTokens[_fundraisingIdx][i], reclaimAmount);
+            address tokenAddress = whitelistedTokens[_fundraisingIdx][i];
+            
+            if(tokenAddress == NATIVE_CURRENCY) {
+                // Handle native currency (ETH)
+                uint reclaimAmount = nativeCurrencyBalance[_fundraisingIdx][msg.sender];
+                if(reclaimAmount > 0){
+                    nativeCurrencyBalance[_fundraisingIdx][msg.sender] = 0;
+                    totalNativeCurrencyRaised[_fundraisingIdx] -= reclaimAmount;
+                    payable(msg.sender).transfer(reclaimAmount);
+                    emit TokensReclaimed(msg.sender, NATIVE_CURRENCY, reclaimAmount);
+                }
+            } else {
+                // Handle ERC20 tokens
+                uint reclaimAmount = individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[tokenAddress];
+                if(reclaimAmount > 0){
+                    individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[tokenAddress] = 0;
+                    ERC20(tokenAddress).transfer(msg.sender, reclaimAmount);
+                    emit TokensReclaimed(msg.sender, tokenAddress, reclaimAmount);
+                }
             }
         }
 
@@ -659,12 +812,21 @@ contract Fundraising is ForcefiBaseContract{
     }
 
     /**
+     * @notice Whitelists native currency (ETH) for investment and associates it with a Chainlink data feed
+     * @dev Can only be called by the contract owner
+     * @param _dataFeedAddress The address of the Chainlink ETH/USD data feed for price conversion
+     */
+    function whitelistNativeCurrencyForInvestment(address _dataFeedAddress) external onlyOwner {
+        isInvestmentToken[NATIVE_CURRENCY] = true;
+        dataFeeds[NATIVE_CURRENCY] = AggregatorV3Interface(_dataFeedAddress);
+    }
+
+    /**
      * @notice Gets the latest price from a Chainlink data feed for a specified token
      * @dev Handles decimal conversion between token and data feed
      * @param _erc20TokenAddress The address of the ERC20 token
      * @return uint256 The latest price from the data feed with adjusted decimals
-     */
-    function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
+     */    function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
         AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
 
         (
@@ -675,7 +837,13 @@ contract Fundraising is ForcefiBaseContract{
         /*uint80 answeredInRound*/
         ) = dataFeed.latestRoundData();
 
-        uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
+        uint erc20Decimals;
+        if (_erc20TokenAddress == NATIVE_CURRENCY) {
+            erc20Decimals = 18; // ETH has 18 decimals
+        } else {
+            erc20Decimals = ERC20(_erc20TokenAddress).decimals();
+        }
+        
         uint256 decimals = uint256(dataFeed.decimals());
         uint256 chainlinkPrice = uint256(answer);
 

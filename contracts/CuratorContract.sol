@@ -239,8 +239,30 @@ contract CuratorContract is Ownable {
     }
 
     /**
+     * @dev Receives and distributes native currency (ETH) fees to curators for a specific fundraising campaign
+     * @param fundraisingIdx The ID of the fundraising campaign
+     */
+    function receiveNativeCurrencyFees(bytes32 fundraisingIdx) external payable {
+        require(msg.sender == fundraisingAddress, "Only fundraising contract can distribute fees");
+        require(msg.value > 0, "Amount must be greater than 0");
+
+        CuratorData[] memory curators = fundraisingCurators[fundraisingIdx];
+        require(curators.length > 0, "No curators to distribute fees to");
+
+        // Use address(0) to represent native currency
+        address nativeCurrency = address(0);
+        emit FeesReceived(fundraisingIdx, nativeCurrency, msg.value);
+
+        for (uint i = 0; i < curators.length; i++) {
+            uint256 curatorShare = (msg.value * curators[i].percentage) / MAX_TOTAL_PERCENTAGE;
+            if (curatorShare > 0) {
+                unclaimedFees[curators[i].curatorAddress][nativeCurrency] += curatorShare;
+                emit FeesDistributed(fundraisingIdx, curators[i].curatorAddress, curatorShare);
+            }
+        }
+    }    /**
      * @dev Allows curators to claim their accumulated fees
-     * @param erc20TokenAddress The address of the ERC20 token to claim
+     * @param erc20TokenAddress The address of the ERC20 token to claim (use address(0) for native currency)
      */
     function claimCuratorFees(address erc20TokenAddress) external {
         uint256 amount = unclaimedFees[msg.sender][erc20TokenAddress];
@@ -248,10 +270,16 @@ contract CuratorContract is Ownable {
 
         unclaimedFees[msg.sender][erc20TokenAddress] = 0;
         
-        require(
-            IERC20(erc20TokenAddress).transfer(msg.sender, amount),
-            "Fee transfer failed"
-        );
+        if (erc20TokenAddress == address(0)) {
+            // Handle native currency (ETH)
+            payable(msg.sender).transfer(amount);
+        } else {
+            // Handle ERC20 tokens
+            require(
+                IERC20(erc20TokenAddress).transfer(msg.sender, amount),
+                "Fee transfer failed"
+            );
+        }
         
         emit FeesClaimed(msg.sender, erc20TokenAddress, amount);
     }

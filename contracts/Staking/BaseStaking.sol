@@ -87,16 +87,56 @@ abstract contract BaseStaking is Ownable, OApp, ReentrancyGuard {
         }
     }
 
-    function setEligabilityTimeToReceiveFees(uint _eligibleToReceiveFeeTime) public onlyOwner {
-        eligibleToReceiveFeeTime = _eligibleToReceiveFeeTime;
+    /// @notice Distributes native currency (ETH) fees to eligible stakers
+    function receiveNativeCurrencyFees() external payable {
+        require(msg.sender == forcefiFundraisingAddress, "Not fundraising address");
+        require(msg.value > 0, "No fees to distribute");
+        
+        address[] memory eligibleFeeReceivers = new address[](investors.length);
+        uint256 count = 0;
+
+        // Iterate over all investors and calculate their eligible stake for fee distribution
+        for (uint256 i = 0; i < investors.length; i++) {
+            // Check if the stake is eligible for receiving fees
+            if (activeStake[investors[i]].stakeEventTimestamp + eligibleToReceiveFeeTime < block.timestamp) {
+                eligibleFeeReceivers[count] = investors[i];
+                count++;
+            }
+        }
+
+        // Distribute fees based on calculated multipliers
+        if (count > 0) {
+            uint256 feeShare = msg.value / count;
+            // Use address(0) to represent native currency
+            address nativeCurrency = address(0);
+            for (uint256 j = 0; j < count; j++) {
+                investorTokenBalance[eligibleFeeReceivers[j]][nativeCurrency] += feeShare;
+            }
+        }
+        // TODO: Send to treasury if no eligible receivers
+        else {
+            // For now, the contract holds the ETH if no eligible receivers
+            // This should be modified to send to treasury in the future
+        }
     }
 
-    /// @notice Allows users to claim their accrued fees
-    /// @param _feeTokenAddress The address of the ERC20 token to claim fees in
+    function setEligabilityTimeToReceiveFees(uint _eligibleToReceiveFeeTime) public onlyOwner {
+        eligibleToReceiveFeeTime = _eligibleToReceiveFeeTime;
+    }    /// @notice Allows users to claim their accrued fees
+    /// @param _feeTokenAddress The address of the ERC20 token to claim fees in (use address(0) for native currency)
     function claimFees(address _feeTokenAddress) external nonReentrant{
         uint tokenBalance = investorTokenBalance[msg.sender][_feeTokenAddress];
-        IERC20(_feeTokenAddress).transfer(msg.sender, tokenBalance);
+        require(tokenBalance > 0, "No fees to claim");
+        
         investorTokenBalance[msg.sender][_feeTokenAddress] = 0;
+        
+        if (_feeTokenAddress == address(0)) {
+            // Handle native currency (ETH)
+            payable(msg.sender).transfer(tokenBalance);
+        } else {
+            // Handle ERC20 tokens
+            IERC20(_feeTokenAddress).transfer(msg.sender, tokenBalance);
+        }
     }
 
     /// @notice Returns the balance of a specific token for a given investor
