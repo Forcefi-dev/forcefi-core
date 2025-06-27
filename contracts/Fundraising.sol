@@ -56,9 +56,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     /// @notice Maps fundraising IDs to investor addresses that are whitelisted to participate
     mapping(bytes32 => mapping(address => bool)) whitelistedAddresses;
 
-    /// @notice Maps fundraising IDs and investor addresses to their contributed balance
-    mapping(bytes32 => mapping(address => uint)) public fundraisingBalance;
-
     /// @notice Maps fundraising IDs and investor addresses to the amount of tokens already released through vesting
     mapping(bytes32 => mapping(address => uint)) public released;
 
@@ -580,7 +577,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += _amount;
         individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[_whitelistedTokenAddress] += totalCostInPaymentTokenDecimals;
         ERC20(_whitelistedTokenAddress).transferFrom(msg.sender, address(this), totalCostInPaymentTokenDecimals);
-        fundraisingBalance[_fundraisingIdx][_whitelistedTokenAddress] += totalCostInPaymentTokenDecimals;
 
         fundraising.totalFundraised += _amount;
         emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
@@ -716,10 +712,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
                     payable(msg.sender).transfer(amountToSender);
                 }
             } else {
-                // Handle ERC20 tokens
-                uint totalFundraisedInWei = fundraisingBalance[_fundraisingIdx][tokenAddress];
-                if(totalFundraisedInWei > 0) {
-                    uint feeInWei = totalFundraisedInWei * feePercentage / 100;
+                uint actualTokenBalance = ERC20(tokenAddress).balanceOf(address(this));
+                if(actualTokenBalance > 0) {
+                    uint feeInWei = actualTokenBalance * feePercentage / 100;
                     uint distributedFees = 0;
 
                     // Calculate referral fee from base fee pool (if referral exists)
@@ -744,7 +739,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
                     // Handle staking fee (3/10 of the remaining base fee)
                     if(forcefiStakingAddress != address(0)) {
                         uint stakingFee = remainingBaseFee * 3 / 10;
-                        ERC20(tokenAddress).approve(forcefiStakingAddress, stakingFee);
+                        ERC20(tokenAddress).transfer(forcefiStakingAddress, stakingFee);
                         IForcefiStaking(forcefiStakingAddress).receiveFees(tokenAddress, stakingFee);
                         distributedFees += stakingFee;
                     }
@@ -755,14 +750,14 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
                         uint curatorPercentage = IForcefiCuratorContract(curatorContractAddress).getCurrentTotalPercentage(_fundraisingIdx);
                         uint adjustedCuratorFee = curatorFee * curatorPercentage / 100;
                         if (adjustedCuratorFee > 0) {
-                            ERC20(tokenAddress).approve(curatorContractAddress, adjustedCuratorFee);
+                            ERC20(tokenAddress).transfer(curatorContractAddress, adjustedCuratorFee);
                             IForcefiCuratorContract(curatorContractAddress).receiveCuratorFees(tokenAddress, adjustedCuratorFee, _fundraisingIdx);
                             distributedFees += adjustedCuratorFee;
                         }
                     }
 
-                    // Calculate total amount to send to msg.sender
-                    uint amountToSender = totalFundraisedInWei - distributedFees;
+                    // Calculate total amount to send to msg.sender based on ACTUAL balance
+                    uint amountToSender = actualTokenBalance - distributedFees;
                     ERC20(tokenAddress).transfer(msg.sender, amountToSender);
                 }
             }
@@ -940,12 +935,10 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @return uint256 The latest price from the data feed with adjusted decimals
      */
     function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
-        AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
-
-        (
+        AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];        (
         uint80 roundID,
         int answer,
-        uint startedAt,
+        ,
         uint timeStamp,
         uint80 answeredInRound
         ) = dataFeed.latestRoundData();
