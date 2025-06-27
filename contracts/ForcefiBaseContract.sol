@@ -38,7 +38,7 @@ contract ForcefiBaseContract is Ownable {
      * @dev Constructor for the ForcefiBaseContract.
      * Initializes the contract without setting the fee amount or the Forcefi package address.
      */
-    constructor() Ownable(tx.origin){
+    constructor() Ownable(msg.sender){
     }
 
     /**
