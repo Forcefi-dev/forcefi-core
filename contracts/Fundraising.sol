@@ -271,24 +271,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     event SuccessfulFundraisingFeeAddressUpdated(address indexed oldAddress, address indexed newAddress);
 
     /**
-     * @notice Emitted when the fee configuration is updated
-     * @param tier1Threshold The new tier 1 threshold
-     * @param tier2Threshold The new tier 2 threshold
-     * @param tier1FeePercentage The new tier 1 fee percentage
-     * @param tier2FeePercentage The new tier 2 fee percentage
-     * @param tier3FeePercentage The new tier 3 fee percentage
-     * @param minCampaignThreshold The new minimum campaign threshold
-     */
-    event FeeConfigUpdated(
-        uint256 tier1Threshold,
-        uint256 tier2Threshold,
-        uint256 tier1FeePercentage,
-        uint256 tier2FeePercentage,
-        uint256 tier3FeePercentage,
-        uint256 minCampaignThreshold
-    );
-
-    /**
      * @notice Emitted when the referral fee percentage is updated
      * @param oldFee The previous referral fee percentage
      * @param newFee The new referral fee percentage
@@ -335,14 +317,14 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     /**
      * @notice Initializes the contract with default fee configuration
      */
-    constructor() {
+    constructor(uint256 _tier1Threshold, uint256 _tier2Threshold, uint256 _tier1FeePercentage, uint256 _tier2FeePercentage, uint256 _tier3FeePercentage, uint256 _minCampaignThreshold) {
         feeConfig = FeeConfig({
-        tier1Threshold: 1_000_000 * 1e18,
-        tier2Threshold: 2_500_000 * 1e18,
-        tier1FeePercentage: 5,
-        tier2FeePercentage: 4,
-        tier3FeePercentage: 3,
-        minCampaignThreshold: 70
+        tier1Threshold: _tier1Threshold * 1e18,
+        tier2Threshold: _tier2Threshold * 1e18,
+        tier1FeePercentage: _tier1FeePercentage,
+        tier2FeePercentage: _tier2FeePercentage,
+        tier3FeePercentage: _tier3FeePercentage,
+        minCampaignThreshold: _minCampaignThreshold
         });
     }
     /**
@@ -484,15 +466,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      */
     function getWhitelistedTokens(bytes32 _idx) public view returns(address[] memory){
         return whitelistedTokens[_idx];
-    }    /**
-     * @notice Sets the address to which successful fundraising fees are sent
-     * @param _successfulFundraiseFeeAddress The address to receive fees
-     */
-    function setSuccessfulFundraisingFeeAddress(address _successfulFundraiseFeeAddress) external onlyOwner {
-        address oldAddress = successfulFundraiseFeeAddress;
-        // Allow setting to zero address to disable fee collection
-        successfulFundraiseFeeAddress = _successfulFundraiseFeeAddress;
-        emit SuccessfulFundraisingFeeAddressUpdated(oldAddress, _successfulFundraiseFeeAddress);
     }
 
     /**
@@ -506,35 +479,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
             whitelistedAddresses[_fundraisingIdx][_whitelistAddress[i]] = true;
             emit WhitelistedAddress(_whitelistAddress[i]);
         }
-    }
-
-    /**
-     * @notice Updates the fee configuration
-     * @param _tier1Threshold The threshold for tier 1 fees
-     * @param _tier2Threshold The threshold for tier 2 fees
-     * @param _tier1FeePercentage The percentage for tier 1 fees
-     * @param _tier2FeePercentage The percentage for tier 2 fees
-     * @param _tier3FeePercentage The percentage for tier 3 fees
-     * @param _minCampaignThreshold The minimum threshold for a successful campaign
-     */
-    function setFeeConfig(uint256 _tier1Threshold, uint256 _tier2Threshold, uint256 _tier1FeePercentage, uint256 _tier2FeePercentage, uint256 _tier3FeePercentage, uint256 _minCampaignThreshold) external onlyOwner {
-        feeConfig = FeeConfig({
-        tier1Threshold: _tier1Threshold,
-        tier2Threshold: _tier2Threshold,
-        tier1FeePercentage: _tier1FeePercentage,
-        tier2FeePercentage: _tier2FeePercentage,
-        tier3FeePercentage: _tier3FeePercentage,
-        minCampaignThreshold: _minCampaignThreshold
-        });
-        
-        emit FeeConfigUpdated(
-            _tier1Threshold,
-            _tier2Threshold,
-            _tier1FeePercentage,
-            _tier2FeePercentage,
-            _tier3FeePercentage,
-            _minCampaignThreshold
-        );
     }
     
     /**
@@ -873,9 +817,22 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _referralFee The new referral fee percentage
      */
     function setReferralFee(uint _referralFee) external onlyOwner {
+        require(_referralFee <= 10, "Referral fee cannot exceed 10%");
         uint oldFee = referralFee;
         referralFee = _referralFee;
         emit ReferralFeeUpdated(oldFee, _referralFee);
+    }
+        
+    /**
+     * @notice Sets the address to which successful fundraising fees are sent
+     * @param _successfulFundraiseFeeAddress The address to receive fees
+     */
+    function setSuccessfulFundraisingFeeAddress(address _successfulFundraiseFeeAddress) external onlyOwner {
+        require(successfulFundraiseFeeAddress == address(0), "ForceFi successful fundraise fee address can only be set once");
+        address oldAddress = successfulFundraiseFeeAddress;
+        // Allow setting to zero address to disable fee collection
+        successfulFundraiseFeeAddress = _successfulFundraiseFeeAddress;
+        emit SuccessfulFundraisingFeeAddressUpdated(oldAddress, _successfulFundraiseFeeAddress);
     }
     
     /**
@@ -884,6 +841,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _forcefiStakingAddress The address of the ForceFi staking contract
      */
     function setForcefiStakingAddress(address _forcefiStakingAddress) external onlyOwner {
+        require(forcefiStakingAddress == address(0), "ForceFi staking address can only be set once");
         address oldAddress = forcefiStakingAddress;
         // Allow setting to zero address to disable staking requirement
         forcefiStakingAddress = _forcefiStakingAddress;
@@ -896,6 +854,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _curatorContractAddress The address of the curators contract
      */
     function setCuratorsContractAddress(address _curatorContractAddress) external onlyOwner {
+        require(curatorContractAddress == address(0), "ForceFi curator contract address can only be set once");
         address oldAddress = curatorContractAddress;
         // Allow setting to zero address to disable curator fees
         curatorContractAddress = _curatorContractAddress;
