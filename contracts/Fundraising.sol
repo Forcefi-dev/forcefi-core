@@ -496,12 +496,16 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
 
         uint erc20Decimals = ERC20(_whitelistedTokenAddress).decimals();
 
-        uint investTokenAmount = (getChainlinkDataFeedLatestAnswer(_whitelistedTokenAddress) * fundraising.rate * _amount ) / fundraising.rateDelimiter / 10 ** erc20Decimals;
+        // Calculate total cost in USD: (amount * rate) / rateDelimiter
+        // Then convert to payment token amount: totalCostUSD / price_of_payment_token
+        // Adjust for token decimals
+        uint paymentTokenPrice = getChainlinkDataFeedLatestAnswer(_whitelistedTokenAddress);
+        uint totalCostInPaymentTokenDecimals = (_amount * fundraising.rate * (10 ** erc20Decimals)) / (fundraising.rateDelimiter * paymentTokenPrice);
+        
         individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += _amount;
-        individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[_whitelistedTokenAddress] += investTokenAmount;
-
-        ERC20(_whitelistedTokenAddress).transferFrom(msg.sender, address(this), investTokenAmount);
-        fundraisingBalance[_fundraisingIdx][_whitelistedTokenAddress] += investTokenAmount;
+        individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[_whitelistedTokenAddress] += totalCostInPaymentTokenDecimals;
+        ERC20(_whitelistedTokenAddress).transferFrom(msg.sender, address(this), totalCostInPaymentTokenDecimals);
+        fundraisingBalance[_fundraisingIdx][_whitelistedTokenAddress] += totalCostInPaymentTokenDecimals;
 
         fundraising.totalFundraised += _amount;
         emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
@@ -539,11 +543,13 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         if(fundraising.privateFundraising){
             require(whitelistedAddresses[_fundraisingIdx][msg.sender], "not whitelisted address");
         }
-
-        // Calculate required ETH amount using Chainlink price feed for ETH
-        // ETH has 18 decimals
+        
+        // Calculate required ETH amount using correct financial logic
+        // First calculate total cost in USD: (amount * rate) / rateDelimiter  
+        // Then convert to ETH: totalCostUSD / ethPrice
+        // ETH has 18 decimals, so adjust accordingly
         uint ethPrice = getChainlinkDataFeedLatestAnswer(NATIVE_CURRENCY);
-        uint requiredEthAmount = (ethPrice * fundraising.rate * _amount) / fundraising.rateDelimiter / 1e18;
+        uint requiredEthAmount = (_amount * fundraising.rate * 1e18) / (fundraising.rateDelimiter * ethPrice);
         
         require(msg.value >= requiredEthAmount, "Insufficient ETH sent");
 
