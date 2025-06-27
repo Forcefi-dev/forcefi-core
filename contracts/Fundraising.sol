@@ -194,7 +194,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param tier1FeePercentage The percentage fee applied for tier 1.
      * @param tier2FeePercentage The percentage fee applied for tier 2.
      * @param tier3FeePercentage The percentage fee applied for tier 3.
-     * @param reclaimWindow The time window (in seconds) for reclaiming funds.
      * @param minCampaignThreshold The minimum threshold percentage of the campaign hard cap that must be met for a successful campaign.
      */
     struct FeeConfig {
@@ -203,7 +202,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         uint256 tier1FeePercentage;
         uint256 tier2FeePercentage;
         uint256 tier3FeePercentage;
-        uint256 reclaimWindow;
         uint256 minCampaignThreshold;
     }
 
@@ -282,7 +280,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         tier1FeePercentage: 5,
         tier2FeePercentage: 4,
         tier3FeePercentage: 3,
-        reclaimWindow: 0,
         minCampaignThreshold: 70
         });
     }
@@ -326,7 +323,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         tier1FeePercentage: feeConfig.tier1FeePercentage,
         tier2FeePercentage: feeConfig.tier2FeePercentage,
         tier3FeePercentage: feeConfig.tier3FeePercentage,
-        reclaimWindow: feeConfig.reclaimWindow,
         minCampaignThreshold: feeConfig.minCampaignThreshold
         });
 
@@ -447,17 +443,15 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _tier1FeePercentage The percentage for tier 1 fees
      * @param _tier2FeePercentage The percentage for tier 2 fees
      * @param _tier3FeePercentage The percentage for tier 3 fees
-     * @param _reclaimWindow The window for reclaiming tokens
      * @param _minCampaignThreshold The minimum threshold for a successful campaign
      */
-    function setFeeConfig(uint256 _tier1Threshold, uint256 _tier2Threshold, uint256 _tier1FeePercentage, uint256 _tier2FeePercentage, uint256 _tier3FeePercentage, uint256 _reclaimWindow, uint256 _minCampaignThreshold) external onlyOwner {
+    function setFeeConfig(uint256 _tier1Threshold, uint256 _tier2Threshold, uint256 _tier1FeePercentage, uint256 _tier2FeePercentage, uint256 _tier3FeePercentage, uint256 _minCampaignThreshold) external onlyOwner {
         feeConfig = FeeConfig({
         tier1Threshold: _tier1Threshold,
         tier2Threshold: _tier2Threshold,
         tier1FeePercentage: _tier1FeePercentage,
         tier2FeePercentage: _tier2FeePercentage,
         tier3FeePercentage: _tier3FeePercentage,
-        reclaimWindow: _reclaimWindow,
         minCampaignThreshold: _minCampaignThreshold
         });
     }
@@ -496,9 +490,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
 
         uint erc20Decimals = ERC20(_whitelistedTokenAddress).decimals();
 
-        // Calculate total cost in USD: (amount * rate) / rateDelimiter
-        // Then convert to payment token amount: totalCostUSD / price_of_payment_token
-        // Adjust for token decimals
         uint paymentTokenPrice = getChainlinkDataFeedLatestAnswer(_whitelistedTokenAddress);
         uint totalCostInPaymentTokenDecimals = (_amount * fundraising.rate * (10 ** erc20Decimals)) / (fundraising.rateDelimiter * paymentTokenPrice);
         
@@ -544,10 +535,6 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
             require(whitelistedAddresses[_fundraisingIdx][msg.sender], "not whitelisted address");
         }
         
-        // Calculate required ETH amount using correct financial logic
-        // First calculate total cost in USD: (amount * rate) / rateDelimiter  
-        // Then convert to ETH: totalCostUSD / ethPrice
-        // ETH has 18 decimals, so adjust accordingly
         uint ethPrice = getChainlinkDataFeedLatestAnswer(NATIVE_CURRENCY);
         uint requiredEthAmount = (_amount * fundraising.rate * 1e18) / (fundraising.rateDelimiter * ethPrice);
         
@@ -579,7 +566,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * fundraising.fundraisingFeeConfig.minCampaignThreshold / 100;
         require(hasReachedLimit, "Campaign didn't reach minimal threshold");
-        require(fundraising.endDate + fundraising.fundraisingFeeConfig.reclaimWindow <= block.timestamp, "Campaign is still within reclaim window");
+        require(fundraising.endDate <= block.timestamp, "Campaign is still within reclaim window");
 
         fundraising.campaignClosed = true;
         uint feePercentage = calculateFee(fundraising.totalFundraised, fundraising.fundraisingFeeConfig);
@@ -602,7 +589,8 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
                         payable(fundraising.referralAddress).transfer(referralFeeInWei);
                         emit ReferralFeeSent(fundraising.referralAddress, NATIVE_CURRENCY, fundraising.projectName, referralFeeInWei);
                         distributedFees += referralFeeInWei;
-                    }                    // Calculate remaining base fee after referral deduction
+                    }
+                    // Calculate remaining base fee after referral deduction
                     uint remainingBaseFee = feeInWei - referralFeeInWei;
 
                     // Handle platform fee (1/5 of the remaining base fee)
@@ -712,14 +700,16 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     function unlockFundsFromCampaign(bytes32 _fundraisingIdx) external isFundraisingOwner(_fundraisingIdx) {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         require(!fundraising.campaignClosed, "Campaign already closed");
-        require(block.timestamp >= fundraising.endDate + feeConfig.reclaimWindow, "Campaign end date + reclaim window has not passed");
+        require(block.timestamp >= fundraising.endDate, "Campaign end date has not passed");
         
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
         require(!hasReachedLimit, "Campaign has reached minimal threshold");
 
         fundraising.campaignClosed = true;
         ERC20(fundraising.mintingErc20TokenAddress).transfer(msg.sender, fundraising.campaignHardCap);
-    }    /**
+    }
+    
+    /**
      * @notice Allows investors to claim their tokens based on the vesting schedule
      * @dev Only available after a successful campaign has been completed
      * @param _fundraisingIdx The ID of the campaign to claim tokens from
@@ -728,7 +718,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
 
-        require(hasReachedLimit && block.timestamp >= fundraising.endDate + feeConfig.reclaimWindow, "Campaign isnt closed");
+        require(hasReachedLimit && block.timestamp >= fundraising.endDate, "Campaign isnt closed");
 
         uint256 vestedAmount = computeReleasableAmount(_fundraisingIdx);
         require(vestedAmount > 0, "TokenVesting: cannot release tokens, no vested tokens");
@@ -747,7 +737,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         require(vestingPlans[_fundraisingIdx].saleStart < block.timestamp, "TokenVesting: this vesting has not started yet");
         uint mintingTokenAmount = individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance;
         return VestingLibrary.computeReleasableAmount(vestingPlans[_fundraisingIdx].saleStart, vestingPlans[_fundraisingIdx].vestingPeriod, vestingPlans[_fundraisingIdx].releasePeriod, vestingPlans[_fundraisingIdx].cliffPeriod, vestingPlans[_fundraisingIdx].tgePercent, mintingTokenAmount, released[_fundraisingIdx][msg.sender]);
-    }    /**
+    }
+    
+    /**
      * @notice Allows investors to reclaim their tokens if a campaign fails
      * @dev Available after campaign end date if threshold wasn't met
      * @param _fundraisingIdx The ID of the campaign
@@ -757,11 +749,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         require(block.timestamp >= fundraising.endDate, "Campaign has not ended");
         
         bool hasReachedLimit = fundraising.totalFundraised > fundraising.campaignHardCap * feeConfig.minCampaignThreshold / 100;
-        
-        // Fix the logic for successful campaigns
-        if (hasReachedLimit) {
-            require(block.timestamp <= fundraising.endDate + feeConfig.reclaimWindow, "Campaign not closed");
-        } 
+        require(!hasReachedLimit, "Cannot reclaim from a successful campaign");
 
         for(uint i=0; i< whitelistedTokens[_fundraisingIdx].length; i++){
             address tokenAddress = whitelistedTokens[_fundraisingIdx][i];
