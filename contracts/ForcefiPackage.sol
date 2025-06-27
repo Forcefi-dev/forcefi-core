@@ -218,42 +218,41 @@ contract ForcefiPackage is Ownable, OApp {
         bytes memory payload = abi.encode(msg.sender, _projectName);
         _lzSend(_destChainId, payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
         emit TokenBridged(_destChainId, _projectName, msg.sender);
-    }
-
-    /**
+    }    /**
      * @dev Mint a creation token by the contract owner.
      * @param _tokenHolder Address of the token holder.
      * @param _projectName Name of the project associated with the token.
      */
     function ownerMintToken(address _tokenHolder, string memory _projectName) public onlyOwner {
+        require(_tokenHolder != address(0), "Token holder address cannot be zero");
         _mintPackageToken(_tokenHolder, _projectName);
-    }
-
-    /**
+    }    /**
      * @dev Whitelist an ERC20 token for investment.
      * @param _whitelistedTokenAddress Address of the ERC20 token to whitelist.
      * @param _dataFeedAddress Address of the Chainlink data feed (currently commented out).
      */
     function whitelistTokenForInvestment(address _whitelistedTokenAddress, address _dataFeedAddress) external onlyOwner {
+        require(_whitelistedTokenAddress != address(0), "Token address cannot be zero");
+        require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
         whitelistedToken[_whitelistedTokenAddress] = true;
         dataFeeds[_whitelistedTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
-    }
-
-    /**
+    }    /**
      * @dev Remove an ERC20 token from the whitelist.
      * @param _whitelistedTokenAddress Address of the ERC20 token to remove.
      */
     function removeWhitelistInvestmentToken(address _whitelistedTokenAddress) external onlyOwner {
+        require(_whitelistedTokenAddress != address(0), "Token address cannot be zero");
         whitelistedToken[_whitelistedTokenAddress] = false;
-    }
-
-    /**
+    }    /**
      * @dev Withdraw ERC20 tokens from the contract.
      * @param _tokenContract Address of the ERC20 token contract.
      * @param _recipient Address to receive the withdrawn tokens.
      * @param _amount Amount of tokens to withdraw.
      */
     function withdrawToken(address _tokenContract, address _recipient, uint256 _amount) external onlyOwner {
+        require(_tokenContract != address(0), "Token contract address cannot be zero");
+        require(_recipient != address(0), "Recipient address cannot be zero");
+        require(_amount > 0, "Amount must be greater than zero");
         ERC20(_tokenContract).transfer(_recipient, _amount);
     }
 

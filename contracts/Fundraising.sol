@@ -305,6 +305,8 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         require(_fundraisingData._rateDelimiter > 0, "Rate delimiter cannot be zero");
         require(_fundraisingData._campaignMinTicketLimit <= _fundraisingData._campaignMaxTicketLimit, "Min ticket cannot exceed max");
         require(_fundraisingData._startDate < _fundraisingData._endDate, "Start date must be before end date");
+        require(_fundraisingErc20TokenAddress != address(0), "Fundraising token address cannot be zero");
+        require(bytes(_projectName).length > 0, "Project name cannot be empty");
         bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
         require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
@@ -336,11 +338,12 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         tier3FeePercentage: feeConfig.tier3FeePercentage,
         minCampaignThreshold: feeConfig.minCampaignThreshold
         });
-
         uint fundraisingIdx = _fundraisingIdCounter;
-        _fundraisingIdCounter += 1;        bytes32 UUID = VestingLibrary.generateUUID(fundraisingIdx);
+        _fundraisingIdCounter += 1;
+        bytes32 UUID = VestingLibrary.generateUUID(fundraisingIdx);
         address [] storage tokensToPush = whitelistedTokens[UUID];
         for (uint i=0; i< _attachedERC20Address.length; i++){
+            require(_attachedERC20Address[i] != address(0), "Token address cannot be zero");
             require(isInvestmentToken[_attachedERC20Address[i]], "Not whitelisted investment token address");
             tokensToPush.push(_attachedERC20Address[i]);
             whitelistedToken[UUID][_attachedERC20Address[i]] = true;
@@ -425,13 +428,12 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      */
     function getWhitelistedTokens(bytes32 _idx) public view returns(address[] memory){
         return whitelistedTokens[_idx];
-    }
-
-    /**
+    }    /**
      * @notice Sets the address to which successful fundraising fees are sent
      * @param _successfulFundraiseFeeAddress The address to receive fees
      */
     function setSuccessfulFundraisingFeeAddress(address _successfulFundraiseFeeAddress) external onlyOwner {
+        // Allow setting to zero address to disable fee collection
         successfulFundraiseFeeAddress = _successfulFundraiseFeeAddress;
     }
 
@@ -442,6 +444,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      */
     function addWhitelistAddress(address [] calldata _whitelistAddress, bytes32 _fundraisingIdx) public isFundraisingOwner(_fundraisingIdx) {
         for(uint i = 0; i< _whitelistAddress.length; i++){
+            require(_whitelistAddress[i] != address(0), "Cannot whitelist zero address");
             whitelistedAddresses[_fundraisingIdx][_whitelistAddress[i]] = true;
             emit WhitelistedAddress(_whitelistAddress[i]);
         }
@@ -806,14 +809,13 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      */
     function setReferralFee(uint _referralFee) external onlyOwner {
         referralFee = _referralFee;
-    }
-
-    /**
+    }    /**
      * @notice Sets the address of the ForceFi staking contract
      * @dev Can only be called by the contract owner
      * @param _forcefiStakingAddress The address of the ForceFi staking contract
      */
     function setForcefiStakingAddress(address _forcefiStakingAddress) external onlyOwner {
+        // Allow setting to zero address to disable staking requirement
         forcefiStakingAddress = _forcefiStakingAddress;
     }
 
@@ -823,9 +825,10 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _curatorContractAddress The address of the curators contract
      */
     function setCuratorsContractAddress(address _curatorContractAddress) external onlyOwner {
+        // Allow setting to zero address to disable curator fees
         curatorContractAddress = _curatorContractAddress;
     }
-
+    
     /**
      * @notice Whitelists a token for investment and associates it with a Chainlink data feed
      * @dev Can only be called by the contract owner
@@ -833,16 +836,19 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _dataFeedAddress The address of the Chainlink data feed for price conversion
      */
     function whitelistTokenForInvestment(address _investmentTokenAddress, address _dataFeedAddress) external onlyOwner {
+        require(_investmentTokenAddress != address(0), "Investment token address cannot be zero");
+        require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
         isInvestmentToken[_investmentTokenAddress] = true;
         dataFeeds[_investmentTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
     }
-
+    
     /**
      * @notice Whitelists native currency (ETH) for investment and associates it with a Chainlink data feed
      * @dev Can only be called by the contract owner
      * @param _dataFeedAddress The address of the Chainlink ETH/USD data feed for price conversion
      */
     function whitelistNativeCurrencyForInvestment(address _dataFeedAddress) external onlyOwner {
+        require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
         isInvestmentToken[NATIVE_CURRENCY] = true;
         dataFeeds[NATIVE_CURRENCY] = AggregatorV3Interface(_dataFeedAddress);
     }

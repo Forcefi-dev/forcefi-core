@@ -49,13 +49,14 @@ contract ForcefiBaseContract is Ownable {
     function setFeeAmount(uint _feeAmount) public onlyOwner {
         feeAmount = _feeAmount;
     }
-
+    
     /**
      * @dev Sets the address of the Forcefi package contract.
      * This function can only be called by the owner of the contract.
      * @param _forcefiPackageAddress The address of the Forcefi package contract to be set.
      */
     function setForcefiPackageAddress(address _forcefiPackageAddress) public onlyOwner {
+        require(_forcefiPackageAddress != address(0), "ForcefiPackage address cannot be zero");
         forcefiPackageAddress = _forcefiPackageAddress;
     }
 
@@ -65,6 +66,8 @@ contract ForcefiBaseContract is Ownable {
      * @param receiver The address of the address that will receive all the fees collected by the contract.
      */
     function withdrawCollectedFees(address payable receiver) public onlyOwner{
+        require(receiver != address(0), "Receiver address cannot be zero");
+        require(collectedFees > 0, "No fees to withdraw");
         receiver.transfer(collectedFees);
         collectedFees = 0;
     }

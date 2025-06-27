@@ -155,15 +155,14 @@ contract CuratorContract is Ownable {
             
             emit CuratorAdded(_fundraisingId, _curatorsData[i].curatorAddress, _curatorsData[i].percentage);
         }
-    }
-
-    /**
+    }    /**
      * @dev Remove curators from a specific fundraising campaign
      */
     function removeCurators(bytes32 _fundraisingId, address[] calldata _curatorsToRemove) external onlyFundraisingOwner(_fundraisingId) {
         CuratorData[] storage curators = fundraisingCurators[_fundraisingId];
         
         for (uint i = 0; i < _curatorsToRemove.length; i++) {
+            require(_curatorsToRemove[i] != address(0), "Cannot remove zero address curator");
             bool found = false;
             for (uint j = 0; j < curators.length; j++) {
                 if (curators[j].curatorAddress == _curatorsToRemove[i]) {
@@ -179,9 +178,7 @@ contract CuratorContract is Ownable {
             }
             require(found, "Curator does not exist");
         }
-    }
-
-    /**
+    }    /**
      * @dev Adjust curator percentage
      */
     function adjustCuratorPercentage(
@@ -189,6 +186,7 @@ contract CuratorContract is Ownable {
         address _curator, 
         uint256 _newPercentage
     ) external onlyFundraisingOwner(_fundraisingId) {
+        require(_curator != address(0), "Curator address cannot be zero");
         require(_newPercentage > 0, "Percentage must be greater than 0");
         
         CuratorData[] storage curators = fundraisingCurators[_fundraisingId];
