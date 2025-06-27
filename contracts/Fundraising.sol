@@ -296,9 +296,11 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _includeNativeCurrency Whether to include native currency (ETH) as an accepted investment token
      */
     function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _fundraisingErc20TokenAddress, address [] calldata _whitelistAddresses, bool _includeNativeCurrency) external payable {
+        require(_fundraisingData._tgePercent <= 100, "TGE percent cannot exceed 100");
         bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
         require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
+        
 
         if(msg.value == feeAmount) {
             collectedFees += msg.value;
