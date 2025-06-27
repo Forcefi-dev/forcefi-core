@@ -297,6 +297,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      */
     function createFundraising(FundraisingData memory _fundraisingData, address [] memory _attachedERC20Address, address _referralAddress, string memory _projectName, address _fundraisingErc20TokenAddress, address [] calldata _whitelistAddresses, bool _includeNativeCurrency) external payable {
         require(_fundraisingData._tgePercent <= 100, "TGE percent cannot exceed 100");
+        require(_fundraisingData._rateDelimiter > 0, "Rate delimiter cannot be zero");
+        require(_fundraisingData._campaignMinTicketLimit <= _fundraisingData._campaignMaxTicketLimit, "Min ticket cannot exceed max");
+        require(_fundraisingData._startDate < _fundraisingData._endDate, "Start date must be before end date");
         bool hasCreationToken = IForcefiPackage(forcefiPackageAddress).hasCreationToken(msg.sender, _projectName);
         require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
