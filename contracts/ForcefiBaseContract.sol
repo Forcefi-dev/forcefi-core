@@ -35,6 +35,27 @@ contract ForcefiBaseContract is Ownable {
     address public forcefiPackageAddress;
 
     /**
+     * @notice Emitted when the fee amount is updated
+     * @param oldFeeAmount The previous fee amount
+     * @param newFeeAmount The new fee amount
+     */
+    event FeeAmountUpdated(uint256 oldFeeAmount, uint256 newFeeAmount);
+
+    /**
+     * @notice Emitted when the Forcefi package address is updated
+     * @param oldAddress The previous package address
+     * @param newAddress The new package address
+     */
+    event ForcefiPackageAddressUpdated(address indexed oldAddress, address indexed newAddress);
+
+    /**
+     * @notice Emitted when fees are withdrawn
+     * @param receiver The address that received the fees
+     * @param amount The amount of fees withdrawn
+     */
+    event FeesWithdrawn(address indexed receiver, uint256 amount);
+
+    /**
      * @dev Constructor for the ForcefiBaseContract.
      * Initializes the contract without setting the fee amount or the Forcefi package address.
      */
@@ -47,7 +68,9 @@ contract ForcefiBaseContract is Ownable {
      * @param _feeAmount The new fee amount to be set.
      */
     function setFeeAmount(uint _feeAmount) public onlyOwner {
+        uint oldFeeAmount = feeAmount;
         feeAmount = _feeAmount;
+        emit FeeAmountUpdated(oldFeeAmount, _feeAmount);
     }
     
     /**
@@ -57,7 +80,9 @@ contract ForcefiBaseContract is Ownable {
      */
     function setForcefiPackageAddress(address _forcefiPackageAddress) public onlyOwner {
         require(_forcefiPackageAddress != address(0), "ForcefiPackage address cannot be zero");
+        address oldAddress = forcefiPackageAddress;
         forcefiPackageAddress = _forcefiPackageAddress;
+        emit ForcefiPackageAddressUpdated(oldAddress, _forcefiPackageAddress);
     }
 
     /**
@@ -68,7 +93,9 @@ contract ForcefiBaseContract is Ownable {
     function withdrawCollectedFees(address payable receiver) public onlyOwner{
         require(receiver != address(0), "Receiver address cannot be zero");
         require(collectedFees > 0, "No fees to withdraw");
-        receiver.transfer(collectedFees);
+        uint256 amount = collectedFees;
         collectedFees = 0;
+        receiver.transfer(amount);
+        emit FeesWithdrawn(receiver, amount);
     }
 }

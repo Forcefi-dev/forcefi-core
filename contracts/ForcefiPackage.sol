@@ -55,6 +55,64 @@ contract ForcefiPackage is Ownable, OApp {
     event TokenBridged(uint32 _destChainId, string _projectName, address indexed _projectOwner);
 
     /**
+     * @notice Emitted when a new package is added
+     * @param label The label of the package
+     * @param amount The amount of the package
+     * @param isCustom Whether the package is custom
+     * @param referralFee The referral fee percentage
+     * @param benefitsEnabled Whether benefits are enabled
+     */
+    event PackageAdded(string label, uint256 amount, bool isCustom, uint256 referralFee, bool benefitsEnabled);
+
+    /**
+     * @notice Emitted when a package is updated
+     * @param label The label of the package
+     * @param oldAmount The previous amount
+     * @param newAmount The new amount
+     * @param oldIsCustom The previous custom status
+     * @param newIsCustom The new custom status
+     * @param oldReferralFee The previous referral fee
+     * @param newReferralFee The new referral fee
+     */
+    event PackageUpdated(
+        string label,
+        uint256 oldAmount,
+        uint256 newAmount,
+        bool oldIsCustom,
+        bool newIsCustom,
+        uint256 oldReferralFee,
+        uint256 newReferralFee
+    );
+
+    /**
+     * @notice Emitted when a creation token is minted by owner
+     * @param tokenHolder The address that received the token
+     * @param projectName The project name
+     */
+    event OwnerMintedToken(address indexed tokenHolder, string projectName);
+
+    /**
+     * @notice Emitted when a token is whitelisted for investment
+     * @param tokenAddress The address of the whitelisted token
+     * @param dataFeedAddress The address of the associated data feed
+     */
+    event TokenWhitelistedForInvestment(address indexed tokenAddress, address indexed dataFeedAddress);
+
+    /**
+     * @notice Emitted when a token is removed from whitelist
+     * @param tokenAddress The address of the token removed from whitelist
+     */
+    event TokenRemovedFromWhitelist(address indexed tokenAddress);
+
+    /**
+     * @notice Emitted when tokens are withdrawn
+     * @param tokenContract The address of the token contract
+     * @param recipient The address that received the tokens
+     * @param amount The amount withdrawn
+     */
+    event TokensWithdrawn(address indexed tokenContract, address indexed recipient, uint256 amount);
+
+    /**
      * @dev Constructor to initialize the contract with the LayerZero contract address and default packages.
     */
     constructor(address _endpoint, address _delegate) OApp(_endpoint, _delegate) Ownable(_delegate) {
@@ -121,6 +179,7 @@ contract ForcefiPackage is Ownable, OApp {
         });
 
         packages.push(newTier);
+        emit PackageAdded(_label, _amount, _isCustom, _referralFee, _benefitsEnabled);
     }
 
     /**
@@ -132,9 +191,15 @@ contract ForcefiPackage is Ownable, OApp {
      */
     function updatePackage(string memory _label, uint256 newAmount, bool newIsCustom, uint256 newReferralFee) external onlyOwner {
         Package storage packageToUpdate = getPackageByLabel(_label);  // Retrieve the package by label
+        uint256 oldAmount = packageToUpdate.amount;
+        bool oldIsCustom = packageToUpdate.isCustom;
+        uint256 oldReferralFee = packageToUpdate.referralFee;
+
         packageToUpdate.amount = newAmount;
         packageToUpdate.isCustom = newIsCustom;
         packageToUpdate.referralFee = newReferralFee;
+
+        emit PackageUpdated(_label, oldAmount, newAmount, oldIsCustom, newIsCustom, oldReferralFee, newReferralFee);
     }
 
     /**
@@ -226,6 +291,7 @@ contract ForcefiPackage is Ownable, OApp {
     function ownerMintToken(address _tokenHolder, string memory _projectName) public onlyOwner {
         require(_tokenHolder != address(0), "Token holder address cannot be zero");
         _mintPackageToken(_tokenHolder, _projectName);
+        emit OwnerMintedToken(_tokenHolder, _projectName);
     }    /**
      * @dev Whitelist an ERC20 token for investment.
      * @param _whitelistedTokenAddress Address of the ERC20 token to whitelist.
@@ -236,6 +302,7 @@ contract ForcefiPackage is Ownable, OApp {
         require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
         whitelistedToken[_whitelistedTokenAddress] = true;
         dataFeeds[_whitelistedTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
+        emit TokenWhitelistedForInvestment(_whitelistedTokenAddress, _dataFeedAddress);
     }    /**
      * @dev Remove an ERC20 token from the whitelist.
      * @param _whitelistedTokenAddress Address of the ERC20 token to remove.
@@ -243,6 +310,7 @@ contract ForcefiPackage is Ownable, OApp {
     function removeWhitelistInvestmentToken(address _whitelistedTokenAddress) external onlyOwner {
         require(_whitelistedTokenAddress != address(0), "Token address cannot be zero");
         whitelistedToken[_whitelistedTokenAddress] = false;
+        emit TokenRemovedFromWhitelist(_whitelistedTokenAddress);
     }    /**
      * @dev Withdraw ERC20 tokens from the contract.
      * @param _tokenContract Address of the ERC20 token contract.
@@ -254,6 +322,7 @@ contract ForcefiPackage is Ownable, OApp {
         require(_recipient != address(0), "Recipient address cannot be zero");
         require(_amount > 0, "Amount must be greater than zero");
         ERC20(_tokenContract).transfer(_recipient, _amount);
+        emit TokensWithdrawn(_tokenContract, _recipient, _amount);
     }
 
     /**

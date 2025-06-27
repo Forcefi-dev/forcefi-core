@@ -267,6 +267,65 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     event ReferralFeeSent(address indexed referralAddress, address erc20TokenAddress, string projectName, uint amount);
 
     /**
+     * @notice Emitted when the successful fundraising fee address is updated
+     * @param oldAddress The previous fee address
+     * @param newAddress The new fee address
+     */
+    event SuccessfulFundraisingFeeAddressUpdated(address indexed oldAddress, address indexed newAddress);
+
+    /**
+     * @notice Emitted when the fee configuration is updated
+     * @param tier1Threshold The new tier 1 threshold
+     * @param tier2Threshold The new tier 2 threshold
+     * @param tier1FeePercentage The new tier 1 fee percentage
+     * @param tier2FeePercentage The new tier 2 fee percentage
+     * @param tier3FeePercentage The new tier 3 fee percentage
+     * @param minCampaignThreshold The new minimum campaign threshold
+     */
+    event FeeConfigUpdated(
+        uint256 tier1Threshold,
+        uint256 tier2Threshold,
+        uint256 tier1FeePercentage,
+        uint256 tier2FeePercentage,
+        uint256 tier3FeePercentage,
+        uint256 minCampaignThreshold
+    );
+
+    /**
+     * @notice Emitted when the referral fee percentage is updated
+     * @param oldFee The previous referral fee percentage
+     * @param newFee The new referral fee percentage
+     */
+    event ReferralFeeUpdated(uint256 oldFee, uint256 newFee);
+
+    /**
+     * @notice Emitted when the Forcefi staking address is updated
+     * @param oldAddress The previous staking address
+     * @param newAddress The new staking address
+     */
+    event ForcefiStakingAddressUpdated(address indexed oldAddress, address indexed newAddress);
+
+    /**
+     * @notice Emitted when the curator contract address is updated
+     * @param oldAddress The previous curator contract address
+     * @param newAddress The new curator contract address
+     */
+    event CuratorContractAddressUpdated(address indexed oldAddress, address indexed newAddress);
+
+    /**
+     * @notice Emitted when a token is whitelisted for investment
+     * @param tokenAddress The address of the whitelisted token
+     * @param dataFeedAddress The address of the associated Chainlink data feed
+     */
+    event TokenWhitelistedForInvestment(address indexed tokenAddress, address indexed dataFeedAddress);
+
+    /**
+     * @notice Emitted when native currency is whitelisted for investment
+     * @param dataFeedAddress The address of the associated Chainlink data feed
+     */
+    event NativeCurrencyWhitelistedForInvestment(address indexed dataFeedAddress);
+
+    /**
      * @notice Restricts function access to the fundraising campaign owner
      * @param _fundraisingIdx The ID of the fundraising campaign
      */
@@ -433,8 +492,10 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _successfulFundraiseFeeAddress The address to receive fees
      */
     function setSuccessfulFundraisingFeeAddress(address _successfulFundraiseFeeAddress) external onlyOwner {
+        address oldAddress = successfulFundraiseFeeAddress;
         // Allow setting to zero address to disable fee collection
         successfulFundraiseFeeAddress = _successfulFundraiseFeeAddress;
+        emit SuccessfulFundraisingFeeAddressUpdated(oldAddress, _successfulFundraiseFeeAddress);
     }
 
     /**
@@ -468,6 +529,15 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         tier3FeePercentage: _tier3FeePercentage,
         minCampaignThreshold: _minCampaignThreshold
         });
+        
+        emit FeeConfigUpdated(
+            _tier1Threshold,
+            _tier2Threshold,
+            _tier1FeePercentage,
+            _tier2FeePercentage,
+            _tier3FeePercentage,
+            _minCampaignThreshold
+        );
     }
     
     /**
@@ -802,21 +872,27 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
 
         payable(msg.sender).transfer(amount);
      }
-
-    /**
+     
+     /**
      * @notice Sets the referral fee percentage
      * @param _referralFee The new referral fee percentage
      */
     function setReferralFee(uint _referralFee) external onlyOwner {
+        uint oldFee = referralFee;
         referralFee = _referralFee;
-    }    /**
+        emit ReferralFeeUpdated(oldFee, _referralFee);
+    }
+    
+    /**
      * @notice Sets the address of the ForceFi staking contract
      * @dev Can only be called by the contract owner
      * @param _forcefiStakingAddress The address of the ForceFi staking contract
      */
     function setForcefiStakingAddress(address _forcefiStakingAddress) external onlyOwner {
+        address oldAddress = forcefiStakingAddress;
         // Allow setting to zero address to disable staking requirement
         forcefiStakingAddress = _forcefiStakingAddress;
+        emit ForcefiStakingAddressUpdated(oldAddress, _forcefiStakingAddress);
     }
 
     /**
@@ -825,8 +901,10 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @param _curatorContractAddress The address of the curators contract
      */
     function setCuratorsContractAddress(address _curatorContractAddress) external onlyOwner {
+        address oldAddress = curatorContractAddress;
         // Allow setting to zero address to disable curator fees
         curatorContractAddress = _curatorContractAddress;
+        emit CuratorContractAddressUpdated(oldAddress, _curatorContractAddress);
     }
     
     /**
@@ -840,6 +918,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
         isInvestmentToken[_investmentTokenAddress] = true;
         dataFeeds[_investmentTokenAddress] = AggregatorV3Interface(_dataFeedAddress);
+        emit TokenWhitelistedForInvestment(_investmentTokenAddress, _dataFeedAddress);
     }
     
     /**
@@ -851,6 +930,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
         isInvestmentToken[NATIVE_CURRENCY] = true;
         dataFeeds[NATIVE_CURRENCY] = AggregatorV3Interface(_dataFeedAddress);
+        emit NativeCurrencyWhitelistedForInvestment(_dataFeedAddress);
     }
     
     /**
@@ -858,7 +938,8 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
      * @dev Handles decimal conversion between token and data feed and validates oracle data
      * @param _erc20TokenAddress The address of the ERC20 token
      * @return uint256 The latest price from the data feed with adjusted decimals
-     */    function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
+     */
+    function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
         AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
 
         (
