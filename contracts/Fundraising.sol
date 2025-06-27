@@ -75,8 +75,13 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     mapping(bytes32 => mapping(address => IndividualBalances)) public individualBalances;
 
     /// @notice Maps fundraising IDs and investor addresses to their native currency (ETH) contribution balance
-    mapping(bytes32 => mapping(address => uint)) public nativeCurrencyBalance;    /// @notice Maps fundraising IDs to total native currency raised
+    mapping(bytes32 => mapping(address => uint)) public nativeCurrencyBalance;
+    
+    /// @notice Maps fundraising IDs to total native currency raised
     mapping(bytes32 => uint) public totalNativeCurrencyRaised;
+    
+    /// @notice Stores undistributed fees for addresses (e.g., staking or curator contracts)
+    mapping(address => uint256) public undistributedFees;
 
     /// @notice Address representing native currency (ETH) for consistency with ERC20 handling
     address public constant NATIVE_CURRENCY = address(0);
@@ -613,9 +618,8 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
                         try IForcefiStaking(forcefiStakingAddress).receiveNativeCurrencyFees{value: stakingFee}() {
                             distributedFees += stakingFee;
                         } catch {
-                            // If staking contract doesn't support ETH, the fee remains with campaign owner
-                            // This provides fallback behavior without reverting the transaction
-                        }
+                            undistributedFees[forcefiStakingAddress] += stakingFee;
+                        }                         
                     }
 
                     // Handle curator fee (1/2 of the remaining base fee) for native currency
@@ -628,8 +632,8 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
                             try IForcefiCuratorContract(curatorContractAddress).receiveNativeCurrencyFees{value: adjustedCuratorFee}(_fundraisingIdx) {
                                 distributedFees += adjustedCuratorFee;
                             } catch {
-                                // If curator contract doesn't support ETH, the fee remains with campaign owner
-                                // This provides fallback behavior without reverting the transaction
+                                // If curator contract doesn't support ETH, we store funds in the contract and allow to withdraw them for respective address
+                                undistributedFees[curatorContractAddress] += adjustedCuratorFee;
                             }
                         }
                     }
@@ -783,6 +787,18 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         fundraising.totalFundraised -= individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance;
         individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance = 0;
     }
+    /**
+     * @notice Allows the ForceFi staking contract or curator contract to release undistributed fees
+     * @dev Only callable by the staking or curator contract
+     */
+    function releaseUndistributedFees() external nonReentrant(){
+        require(undistributedFees[msg.sender] > 0, "No undistributed fees for this address");
+        require(msg.sender == forcefiStakingAddress || msg.sender == curatorContractAddress, "Only staking or curator contract can withdraw undistributed fees");
+        uint amount = undistributedFees[msg.sender];
+        undistributedFees[msg.sender] = 0;
+
+        payable(msg.sender).transfer(amount);
+     }
 
     /**
      * @notice Sets the referral fee percentage
@@ -829,7 +845,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     function whitelistNativeCurrencyForInvestment(address _dataFeedAddress) external onlyOwner {
         isInvestmentToken[NATIVE_CURRENCY] = true;
         dataFeeds[NATIVE_CURRENCY] = AggregatorV3Interface(_dataFeedAddress);
-    }    /**
+    }
+    
+    /**
      * @notice Gets the latest price from a Chainlink data feed for a specified token
      * @dev Handles decimal conversion between token and data feed and validates oracle data
      * @param _erc20TokenAddress The address of the ERC20 token
