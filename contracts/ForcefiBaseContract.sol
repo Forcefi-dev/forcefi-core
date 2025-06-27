@@ -26,6 +26,9 @@ interface IForcefiPackage {
 contract ForcefiBaseContract is Ownable {
 
     // The fee amount required for certain actions in the contract
+    uint public collectedFees;
+
+    // The fee amount required for certain actions in the contract
     uint public feeAmount;
 
     // The address of the Forcefi package contract, which provides functionality related to creation tokens
@@ -61,7 +64,8 @@ contract ForcefiBaseContract is Ownable {
      * This function can only be called by the owner of the contract.
      * @param receiver The address of the address that will receive all the fees collected by the contract.
      */
-    function withdrawFee(address payable receiver) public onlyOwner{
-        receiver.transfer(address(this).balance);
+    function withdrawCollectedFees(address payable receiver) public onlyOwner{
+        receiver.transfer(collectedFees);
+        collectedFees = 0;
     }
 }

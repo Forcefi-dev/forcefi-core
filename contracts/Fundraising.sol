@@ -302,6 +302,10 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         require(msg.value == feeAmount || hasCreationToken, "Invalid fee value or no creation token available");
         ERC20(_fundraisingErc20TokenAddress).transferFrom(msg.sender, address(this), _fundraisingData._totalCampaignLimit);
 
+        if(msg.value == feeAmount) {
+            collectedFees += msg.value;
+        }
+
         FundraisingInstance memory fundraising;
         fundraising.owner = msg.sender;
         fundraising.campaignHardCap = _fundraisingData._totalCampaignLimit;
@@ -456,7 +460,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         reclaimWindow: _reclaimWindow,
         minCampaignThreshold: _minCampaignThreshold
         });
-    }    /**
+    }
+    
+    /**
      * @notice Allows users to invest in a fundraising campaign
      * @dev Requires users to stake FORC tokens and the campaign to be active
      * @param _amount The amount of tokens to invest
@@ -499,7 +505,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
 
         fundraising.totalFundraised += _amount;
         emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
-    }    /**
+    }
+    
+    /**
      * @notice Allows users to invest in a fundraising campaign using native currency (ETH)
      * @dev Requires users to stake FORC tokens and the campaign to be active. Native currency must be enabled for the campaign.
      * @param _amount The amount of fundraising tokens to receive (not the ETH amount sent)
@@ -552,7 +560,9 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         }
 
         emit Invested(msg.sender, _amount, NATIVE_CURRENCY, _fundraisingIdx);
-    }    /**
+    }
+    
+    /**
      * @notice Closes a fundraising campaign
      * @dev To close, the campaign must reach its minimum threshold after end date + reclaim window
      * @param _fundraisingIdx The ID of the campaign to close
