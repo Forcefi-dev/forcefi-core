@@ -75,13 +75,14 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     mapping(bytes32 => mapping(address => IndividualBalances)) public individualBalances;
 
     /// @notice Maps fundraising IDs and investor addresses to their native currency (ETH) contribution balance
-    mapping(bytes32 => mapping(address => uint)) public nativeCurrencyBalance;
-
-    /// @notice Maps fundraising IDs to total native currency raised
+    mapping(bytes32 => mapping(address => uint)) public nativeCurrencyBalance;    /// @notice Maps fundraising IDs to total native currency raised
     mapping(bytes32 => uint) public totalNativeCurrencyRaised;
 
     /// @notice Address representing native currency (ETH) for consistency with ERC20 handling
     address public constant NATIVE_CURRENCY = address(0);
+
+    /// @notice Maximum allowed delay for oracle price updates (24 hours)
+    uint256 public constant MAX_ORACLE_DELAY = 24 hours;
 
     /**
      * @notice Struct to track individual balances within a fundraising campaign.
@@ -823,23 +824,27 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     function whitelistNativeCurrencyForInvestment(address _dataFeedAddress) external onlyOwner {
         isInvestmentToken[NATIVE_CURRENCY] = true;
         dataFeeds[NATIVE_CURRENCY] = AggregatorV3Interface(_dataFeedAddress);
-    }
-
-    /**
+    }    /**
      * @notice Gets the latest price from a Chainlink data feed for a specified token
-     * @dev Handles decimal conversion between token and data feed
+     * @dev Handles decimal conversion between token and data feed and validates oracle data
      * @param _erc20TokenAddress The address of the ERC20 token
      * @return uint256 The latest price from the data feed with adjusted decimals
      */    function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
         AggregatorV3Interface dataFeed = dataFeeds[_erc20TokenAddress];
 
         (
-        /* uint80 roundID */,
+        uint80 roundID,
         int answer,
-        /*uint startedAt*/,
-        /*uint timeStamp*/,
-        /*uint80 answeredInRound*/
+        uint startedAt,
+        uint timeStamp,
+        uint80 answeredInRound
         ) = dataFeed.latestRoundData();
+
+        // Validate oracle data
+        require(answer > 0, "Oracle: Invalid price data");
+        require(timeStamp > 0, "Oracle: Round not complete");
+        require(block.timestamp - timeStamp < MAX_ORACLE_DELAY, "Oracle: Stale price data");
+        require(answeredInRound >= roundID, "Oracle: Stale round data");
 
         uint erc20Decimals;
         if (_erc20TokenAddress == NATIVE_CURRENCY) {
