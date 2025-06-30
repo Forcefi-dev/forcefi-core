@@ -414,13 +414,15 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     }
 
     /**
-     * @notice Gets the balance of a specific investment token for the caller
+     * @notice Gets the balance of a specific investment token for any address (for debugging)
      * @param _idx The ID of the fundraising campaign
+     * @param _investor The investor address to check
      * @param _investmentTokenAddress The address of the investment token
      * @return The balance of the specified investment token
      */
-    function getIndividualBalanceForToken(bytes32 _idx, address _investmentTokenAddress) public view returns(uint){
-        return individualBalances[_idx][msg.sender].investmentTokenBalances[_investmentTokenAddress];
+    function getIndividualBalanceForTokenAndAddress(bytes32 _idx, address _investor, address _investmentTokenAddress) 
+        external view returns(uint){
+        return individualBalances[_idx][_investor].investmentTokenBalances[_investmentTokenAddress];
     }
 
     /**
@@ -526,17 +528,15 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
     }
     
-    /**
+     /**
      * @notice Allows users to invest in a fundraising campaign using native currency (ETH)
      * @dev Requires users to stake FORC tokens and the campaign to be active. Native currency must be enabled for the campaign.
-     * @param _amount The amount of fundraising tokens to receive (not the ETH amount sent)
+     * The amount of fundraising tokens received is calculated based on the ETH amount sent (msg.value).
      * @param _fundraisingIdx The ID of the campaign to invest in
      */
-    function investWithNativeCurrency(uint256 _amount, bytes32 _fundraisingIdx) external payable nonReentrant {
+    function investWithNativeCurrency(bytes32 _fundraisingIdx) external payable nonReentrant {
         FundraisingInstance storage fundraising = fundraisings[_fundraisingIdx];
-        require(_amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
-        require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + _amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
-        require(fundraising.campaignHardCap >= _amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
+        require(msg.value > 0, "Must send ETH to invest");
         require(block.timestamp >= fundraising.startDate, "Campaign hasn't started yet");        
         require(!fundraising.campaignClosed, "Campaign is closed");
         require(block.timestamp <= fundraising.endDate, "Campaign has ended");
@@ -559,22 +559,20 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
             require(whitelistedAddresses[_fundraisingIdx][msg.sender], "not whitelisted address");
         }
         
+        // Calculate the amount of fundraising tokens based on ETH sent
         uint ethPrice = getChainlinkDataFeedLatestAnswer(NATIVE_CURRENCY);
-        uint requiredEthAmount = (_amount * fundraising.rate * 1e18) / (fundraising.rateDelimiter * ethPrice);
+        uint _amount = (msg.value * ethPrice * fundraising.rateDelimiter) / (fundraising.rate * 1e18);
         
-        require(msg.value >= requiredEthAmount, "Insufficient ETH sent");
+        require(_amount >= fundraising.campaignMinTicketLimit || fundraising.campaignHardCap - fundraising.totalFundraised <= fundraising.campaignMinTicketLimit, "Amount should be more than campaign min ticket limit");
+        require(individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance + _amount <= fundraising.campaignMaxTicketLimit, "Amount should be less than campaign max ticket limit");
+        require(fundraising.campaignHardCap >= _amount + fundraising.totalFundraised, "Campaign has reached its total fund raised required");
 
         // Update balances
         individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += _amount;
-        nativeCurrencyBalance[_fundraisingIdx][msg.sender] += requiredEthAmount;
-        totalNativeCurrencyRaised[_fundraisingIdx] += requiredEthAmount;
+        nativeCurrencyBalance[_fundraisingIdx][msg.sender] += msg.value;
+        totalNativeCurrencyRaised[_fundraisingIdx] += msg.value;
 
         fundraising.totalFundraised += _amount;
-
-        // Refund excess ETH if any
-        if(msg.value > requiredEthAmount) {
-            payable(msg.sender).transfer(msg.value - requiredEthAmount);
-        }
 
         emit Invested(msg.sender, _amount, NATIVE_CURRENCY, _fundraisingIdx);
     }
