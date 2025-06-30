@@ -414,7 +414,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
     }
 
     /**
-     * @notice Gets the balance of a specific investment token for any address (for debugging)
+     * @notice Gets the balance of a specific investment token for any address
      * @param _idx The ID of the fundraising campaign
      * @param _investor The investor address to check
      * @param _investmentTokenAddress The address of the investment token
