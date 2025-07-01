@@ -526,7 +526,7 @@ contract Fundraising is ForcefiBaseContract, ReentrancyGuard {
         individualBalances[_fundraisingIdx][msg.sender].fundraisingTokenBalance += _amount;
         individualBalances[_fundraisingIdx][msg.sender].investmentTokenBalances[_whitelistedTokenAddress] += totalCostInPaymentTokenDecimals;
         ERC20(_whitelistedTokenAddress).transferFrom(msg.sender, address(this), totalCostInPaymentTokenDecimals);
-        fundraisingBalance[_fundraisingIdx][msg.sender] += totalCostInPaymentTokenDecimals;
+        fundraisingBalance[_fundraisingIdx][_whitelistedTokenAddress] += totalCostInPaymentTokenDecimals;
 
         fundraising.totalFundraised += _amount;
         emit Invested(msg.sender, _amount, _whitelistedTokenAddress, _fundraisingIdx);
