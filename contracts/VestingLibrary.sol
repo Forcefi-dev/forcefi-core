@@ -30,15 +30,17 @@ library VestingLibrary {
         uint released
     ) internal view returns (uint256) {
         uint256 currentTime = block.timestamp;
+
         // If the current time is past the total vesting duration plus the lock-up period, all remaining tokens are releasable.
         if (currentTime >= start + duration + lockUpPeriod) {
             return invested - released;
         } else {
             // Calculate the amount releasable at TGE
             uint256 tgeCalculatedAmount = (invested * tgeAmount) / 100;
-            // If still within the lock-up period, no tokens can be released (including TGE).
+            
+            // If still within the lock-up period, only the TGE amount can be released.
             if (currentTime <= start + lockUpPeriod) {
-                return 0;
+                return tgeCalculatedAmount - released;
             }
 
             // Calculate time passed since the start of the vesting period, excluding the lock-up period.
