@@ -22,6 +22,9 @@ interface ILzContract {
 contract ForcefiPackage is Ownable, OApp {
     mapping(address => AggregatorV3Interface) dataFeeds;
 
+    /// @notice Address representing native currency (ETH) for consistency with ERC20 handling
+    address public constant NATIVE_CURRENCY = address(0);
+
     // Structure defining the properties of an investment package
     struct Package {
         string label;
@@ -249,7 +252,6 @@ contract ForcefiPackage is Ownable, OApp {
         uint256 packagePaymentCost = finalAmountToPay - referralFee;
 
         ERC20(_erc20TokenAddress).transferFrom(msg.sender, address(this), packagePaymentCost);
-
         individualPackages[_projectName].push(_packageLabel);
         emit PackageBought(_projectName, _packageLabel, msg.sender);
     }
@@ -348,10 +350,10 @@ contract ForcefiPackage is Ownable, OApp {
         }
         return false;
     }
-
+    
     /**
-     * @dev Placeholder function to get the latest Chainlink data feed answer (currently commented out).
-     * @param _erc20TokenAddress Address of the ERC20 token for which to get the price.
+     * @dev Gets the latest Chainlink data feed answer for ERC20 tokens or native currency.
+     * @param _erc20TokenAddress Address of the ERC20 token for which to get the price (use address(0) for native currency).
      * @return uint256 The latest price in base currency.
      */
     function getChainlinkDataFeedLatestAnswer(address _erc20TokenAddress) public view returns (uint256) {
@@ -365,7 +367,12 @@ contract ForcefiPackage is Ownable, OApp {
         /*uint80 answeredInRound*/
         ) = dataFeed.latestRoundData();
 
-        uint erc20Decimals = ERC20(_erc20TokenAddress).decimals();
+        uint erc20Decimals;
+        if (_erc20TokenAddress == NATIVE_CURRENCY) {
+            erc20Decimals = 18; // ETH has 18 decimals
+        } else {
+            erc20Decimals = ERC20(_erc20TokenAddress).decimals();
+        }
 
         uint256 decimals = uint256(dataFeed.decimals());
         uint256 chainlinkPrice = uint256(answer);
@@ -374,6 +381,78 @@ contract ForcefiPackage is Ownable, OApp {
             return chainlinkPrice * (10 ** (erc20Decimals - decimals));
         } else if(decimals > erc20Decimals ) {
             return chainlinkPrice / (10 ** (decimals - erc20Decimals));
-        } else return chainlinkPrice;
+        } else {
+            return chainlinkPrice;
+        }
+    }
+
+    /**
+     * @dev Allows a project to purchase a package using native currency (ETH).
+     * @param _projectName Name of the project buying the package.
+     * @param _packageLabel Label of the package being purchased.
+     * @param _referralAddress Address to receive the referral fee.
+     */
+    function buyPackageWithNativeCurrency(string memory _projectName, string memory _packageLabel, address _referralAddress) external payable {
+        require(whitelistedToken[NATIVE_CURRENCY], "Native currency is not whitelisted for investment");  // Check if native currency is whitelisted
+        Package memory package = getPackageByLabel(_packageLabel);  // Retrieve the package by label
+        require(!checkForExistingPackage(package, _projectName), "Project has already bought this package");  // Ensure package hasn't been purchased before
+        
+        uint256 amountToPay = package.amount;
+        if (!package.isCustom) {
+            amountToPay = package.amount - amountInvestedByProject[_projectName];  // Calculate amount based on previous investments
+            amountInvestedByProject[_projectName] += amountToPay;
+            if (package.benefitsEnabled) {
+                _mintPackageToken(msg.sender, _projectName);
+            }
+        }
+        
+        // Get ETH price from Chainlink feed and calculate the required ETH amount
+        uint256 ethPricePerUsd = uint256(getChainlinkDataFeedLatestAnswer(NATIVE_CURRENCY));
+        // Calculate required ETH: Package Price (USD) / ETH Price (USD/ETH) = Required ETH
+        // ethPricePerUsd is normalized to 18 decimals, so it represents price * 10^18
+        // We want: (amountToPay * 10^18) / (ethPricePerUsd / 10^18) = (amountToPay * 10^36) / ethPricePerUsd
+        uint256 finalAmountToPayInWei = (amountToPay * 1e18 * 1e18) / ethPricePerUsd;
+
+        require(msg.value >= finalAmountToPayInWei, "Insufficient ETH sent");
+
+        uint256 referralFee = 0;
+        if (_referralAddress != address(0)) {
+            referralFee = finalAmountToPayInWei * package.referralFee / 100;  // Calculate referral fee
+            payable(_referralAddress).transfer(referralFee);  // Transfer referral fee in ETH
+            emit ReferralFeeSent(_projectName, _referralAddress, referralFee);
+        }
+
+        // Refund excess ETH if any
+        uint256 excessAmount = msg.value - finalAmountToPayInWei;
+        if (excessAmount > 0) {
+            payable(msg.sender).transfer(excessAmount);
+        }
+
+        individualPackages[_projectName].push(_packageLabel);
+        emit PackageBought(_projectName, _packageLabel, msg.sender);
+    }
+
+    /**
+     * @dev Whitelist native currency (ETH) for investment.
+     * @param _dataFeedAddress Address of the Chainlink ETH/USD data feed.
+     */
+    function whitelistNativeCurrencyForInvestment(address _dataFeedAddress) external onlyOwner {
+        require(_dataFeedAddress != address(0), "Data feed address cannot be zero");
+        whitelistedToken[NATIVE_CURRENCY] = true;
+        dataFeeds[NATIVE_CURRENCY] = AggregatorV3Interface(_dataFeedAddress);
+        emit TokenWhitelistedForInvestment(NATIVE_CURRENCY, _dataFeedAddress);
+    }
+
+    /**
+     * @dev Withdraw native currency (ETH) from the contract.
+     * @param _recipient Address to receive the withdrawn ETH.
+     * @param _amount Amount of ETH to withdraw.
+     */
+    function withdrawNativeCurrency(address payable _recipient, uint256 _amount) external onlyOwner {
+        require(_recipient != address(0), "Recipient address cannot be zero");
+        require(_amount > 0, "Amount must be greater than zero");
+        require(address(this).balance >= _amount, "Insufficient contract balance");
+        _recipient.transfer(_amount);
+        emit TokensWithdrawn(NATIVE_CURRENCY, _recipient, _amount);
     }
 }

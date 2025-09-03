@@ -129,6 +129,343 @@ describe("Forcefi Package", function () {
         });
     });
 
+    describe("whitelistNativeCurrencyForInvestment", function () {
+        it("should whitelist native currency with valid data feed", async function () {
+            // Create a mock ETH/USD oracle
+            const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle = await MockEthOracle.deploy(
+                "8", // 8 decimals for ETH/USD price feed
+                "200000000000" // $2000 per ETH (8 decimals)
+            );
+
+            // Initially native currency should not be whitelisted
+            expect(await forcefiPackage.whitelistedToken(ethers.ZeroAddress)).to.equal(false);
+
+            // Whitelist native currency
+            const tx = await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle.getAddress());
+
+            // Check that native currency is now whitelisted
+            expect(await forcefiPackage.whitelistedToken(ethers.ZeroAddress)).to.equal(true);
+
+            // Check that the data feed is set correctly
+            const ethPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(ethers.ZeroAddress);
+            expect(ethPrice).to.equal(ethers.parseUnits("2000", 18)); // Should be normalized to 18 decimals
+
+            // Check that the event was emitted
+            await expect(tx)
+                .to.emit(forcefiPackage, "TokenWhitelistedForInvestment")
+                .withArgs(ethers.ZeroAddress, ethOracle.getAddress());
+        });
+
+        it("should not allow non-owner to whitelist native currency", async function () {
+            const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle = await MockEthOracle.deploy("8", "200000000000");
+
+            await expect(
+                forcefiPackage.connect(addr1).whitelistNativeCurrencyForInvestment(ethOracle.getAddress())
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+        });
+
+        it("should reject zero address for data feed", async function () {
+            await expect(
+                forcefiPackage.whitelistNativeCurrencyForInvestment(ethers.ZeroAddress)
+            ).to.be.revertedWith("Data feed address cannot be zero");
+        });
+          it("should allow buying package with native currency after whitelisting", async function () {
+            // Setup ETH oracle
+            const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle = await MockEthOracle.deploy("8", "200000000000"); // $2000 per ETH
+
+            // Whitelist native currency
+            await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle.getAddress());
+
+            const _projectName = "EthProject";
+            const _packageLabel = "Explorer";
+            
+            // Calculate required ETH using the same formula as the contract
+            const packagePrice = 750; // USD
+            const ethPriceNormalized = ethers.parseUnits("2000", 18); // Normalized ETH price
+            const requiredEth = (BigInt(packagePrice) * BigInt(1e18) * BigInt(1e18)) / ethPriceNormalized;
+
+            // Get initial balances
+            const initialOwnerBalance = await ethers.provider.getBalance(owner.address);
+            const initialAddr1Balance = await ethers.provider.getBalance(addr1.address);
+            const initialContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+
+            // Buy package with native currency
+            const tx = await forcefiPackage.buyPackageWithNativeCurrency(
+                _projectName,
+                _packageLabel,
+                addr1.address,
+                { value: requiredEth }
+            );
+
+            // Get transaction receipt to calculate gas costs
+            const receipt = await tx.wait();
+            const gasUsed = receipt.gasUsed * receipt.gasPrice;
+
+            // Get final balances
+            const finalOwnerBalance = await ethers.provider.getBalance(owner.address);
+            const finalAddr1Balance = await ethers.provider.getBalance(addr1.address);
+            const finalContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+
+            // Calculate expected amounts based on contract logic
+            const referralFeePercentage = 5; // 5% referral fee from Explorer package
+            const referralFee = requiredEth * BigInt(referralFeePercentage) / BigInt(100);
+            const contractRevenue = requiredEth - referralFee;
+
+            // Check ETH balance changes
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance - requiredEth - gasUsed); // Owner paid ETH + gas
+            expect(finalAddr1Balance).to.equal(initialAddr1Balance + referralFee); // Referral address received fee
+            expect(finalContractBalance).to.equal(initialContractBalance + contractRevenue); // Contract received revenue
+
+            // Check that package was bought
+            const packages = await forcefiPackage.viewProjectPackages(_projectName);
+            expect(packages).to.have.lengthOf(1);
+            expect(packages[0]).to.equal(_packageLabel);
+
+            // Check that event was emitted
+            await expect(tx)
+                .to.emit(forcefiPackage, "PackageBought")
+                .withArgs(_projectName, _packageLabel, owner.address);
+        });
+          it("should refund excess ETH when more than required is sent", async function () {
+            // Setup ETH oracle
+            const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle = await MockEthOracle.deploy("8", "200000000000"); // $2000 per ETH
+
+            // Whitelist native currency
+            await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle.getAddress());
+
+            const _projectName = "EthProject2";
+            const _packageLabel = "Explorer";
+            
+            // Calculate required ETH using the same formula as the contract
+            const packagePrice = 750; // USD
+            const ethPriceNormalized = ethers.parseUnits("2000", 18); // Normalized ETH price
+            const requiredEth = (BigInt(packagePrice) * BigInt(1e18) * BigInt(1e18)) / ethPriceNormalized;
+            
+            const excessAmount = ethers.parseEther("0.125"); // Extra 0.125 ETH
+            const totalSent = requiredEth + excessAmount;
+
+            // Get initial balances
+            const initialOwnerBalance = await ethers.provider.getBalance(owner.address);
+            const initialAddr1Balance = await ethers.provider.getBalance(addr1.address);
+            const initialContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+
+            // Buy package with excess ETH
+            const tx = await forcefiPackage.buyPackageWithNativeCurrency(
+                _projectName,
+                _packageLabel,
+                addr1.address,
+                { value: totalSent }
+            );
+
+            // Get transaction receipt to calculate gas costs
+            const receipt = await tx.wait();
+            const gasUsed = receipt.gasUsed * receipt.gasPrice;
+
+            // Get final balances
+            const finalOwnerBalance = await ethers.provider.getBalance(owner.address);
+            const finalAddr1Balance = await ethers.provider.getBalance(addr1.address);
+            const finalContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+
+            // Calculate expected amounts based on contract logic
+            const referralFeePercentage = 5; // 5% referral fee from Explorer package
+            const referralFee = requiredEth * BigInt(referralFeePercentage) / BigInt(100);
+            const contractRevenue = requiredEth - referralFee;
+
+            // Check ETH balance changes (excess should be refunded)
+            expect(finalOwnerBalance).to.equal(initialOwnerBalance - requiredEth - gasUsed); // Only paid required amount + gas
+            expect(finalAddr1Balance).to.equal(initialAddr1Balance + referralFee); // Referral address received fee
+            expect(finalContractBalance).to.equal(initialContractBalance + contractRevenue); // Contract received revenue
+
+            // Check that package was bought
+            const packages = await forcefiPackage.viewProjectPackages(_projectName);
+            expect(packages).to.have.lengthOf(1);
+            expect(packages[0]).to.equal(_packageLabel);
+        });        it("should revert when insufficient ETH is sent", async function () {
+            // Setup ETH oracle
+            const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle = await MockEthOracle.deploy("8", "200000000000"); // $2000 per ETH
+
+            // Whitelist native currency
+            await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle.getAddress());
+
+            const _projectName = "EthProject3";
+            const _packageLabel = "Explorer";
+            
+            // Calculate the exact required amount using the same formula as the contract
+            const packagePrice = 750; // USD
+            const ethPriceNormalized = ethers.parseUnits("2000", 18); // Normalized ETH price
+            const requiredEth = (BigInt(packagePrice) * BigInt(1e18) * BigInt(1e18)) / ethPriceNormalized;
+            
+            // Send 1 wei less than required
+            const insufficientEth = requiredEth - BigInt(1);
+
+            await expect(
+                forcefiPackage.buyPackageWithNativeCurrency(
+                    _projectName,
+                    _packageLabel,
+                    addr1.address,
+                    { value: insufficientEth }
+                )
+            ).to.be.revertedWith("Insufficient ETH sent");
+        });
+
+        it("should handle different ETH price feeds correctly", async function () {
+            // Test with different ETH prices
+            const prices = [
+                { price: "100000000000", expected: "1000" }, // $1000 per ETH
+                { price: "300000000000", expected: "3000" }, // $3000 per ETH
+                { price: "150000000000", expected: "1500" }  // $1500 per ETH
+            ];
+
+            for (const testCase of prices) {
+                const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+                const ethOracle = await MockEthOracle.deploy("8", testCase.price);
+
+                await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle.getAddress());
+                
+                const ethPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(ethers.ZeroAddress);
+                expect(ethPrice).to.equal(ethers.parseUnits(testCase.expected, 18));
+            }
+        });        it("should update existing native currency whitelist", async function () {
+            // First whitelist with one oracle
+            const MockEthOracle1 = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle1 = await MockEthOracle1.deploy("8", "200000000000");
+            await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle1.getAddress());
+
+            let ethPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(ethers.ZeroAddress);
+            expect(ethPrice).to.equal(ethers.parseUnits("2000", 18));
+
+            // Update with different oracle
+            const MockEthOracle2 = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle2 = await MockEthOracle2.deploy("8", "250000000000");
+            await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle2.getAddress());
+
+            ethPrice = await forcefiPackage.getChainlinkDataFeedLatestAnswer(ethers.ZeroAddress);
+            expect(ethPrice).to.equal(ethers.parseUnits("2500", 18));
+        });
+    });
+
+    describe("withdrawNativeCurrency", function () {
+        beforeEach(async function () {
+            // Setup ETH oracle and whitelist native currency
+            const MockEthOracle = await ethers.getContractFactory("MockV3Aggregator");
+            const ethOracle = await MockEthOracle.deploy("8", "200000000000"); // $2000 per ETH
+            await forcefiPackage.whitelistNativeCurrencyForInvestment(ethOracle.getAddress());
+
+            // Buy a package with native currency to add ETH to the contract
+            const packagePrice = 750; // USD
+            const ethPriceNormalized = ethers.parseUnits("2000", 18); // Normalized ETH price
+            const requiredEth = (BigInt(packagePrice) * BigInt(1e18) * BigInt(1e18)) / ethPriceNormalized;
+            
+            await forcefiPackage.buyPackageWithNativeCurrency(
+                "TestProject",
+                "Explorer", 
+                addr1.address,
+                { value: requiredEth }
+            );
+        });
+
+        it("should allow owner to withdraw native currency", async function () {
+            const initialContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const initialAddr2Balance = await ethers.provider.getBalance(addr2.address);
+            
+            // Withdraw half of the contract's ETH balance
+            const withdrawAmount = initialContractBalance / BigInt(2);
+            
+            const tx = await forcefiPackage.withdrawNativeCurrency(addr2.address, withdrawAmount);
+            
+            const finalContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const finalAddr2Balance = await ethers.provider.getBalance(addr2.address);
+            
+            // Check balances
+            expect(finalContractBalance).to.equal(initialContractBalance - withdrawAmount);
+            expect(finalAddr2Balance).to.equal(initialAddr2Balance + withdrawAmount);
+            
+            // Check event emission
+            await expect(tx)
+                .to.emit(forcefiPackage, "TokensWithdrawn")
+                .withArgs(ethers.ZeroAddress, addr2.address, withdrawAmount);
+        });
+
+        it("should not allow non-owner to withdraw native currency", async function () {
+            const contractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const withdrawAmount = contractBalance / BigInt(2);
+
+            await expect(
+                forcefiPackage.connect(addr1).withdrawNativeCurrency(addr2.address, withdrawAmount)
+            ).to.be.revertedWithCustomError(forcefiPackage, "OwnableUnauthorizedAccount")
+            .withArgs(await addr1.getAddress());
+        });
+
+        it("should reject zero address for recipient", async function () {
+            const contractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const withdrawAmount = contractBalance / BigInt(2);
+
+            await expect(
+                forcefiPackage.withdrawNativeCurrency(ethers.ZeroAddress, withdrawAmount)
+            ).to.be.revertedWith("Recipient address cannot be zero");
+        });
+
+        it("should reject zero amount withdrawal", async function () {
+            await expect(
+                forcefiPackage.withdrawNativeCurrency(addr2.address, 0)
+            ).to.be.revertedWith("Amount must be greater than zero");
+        });
+
+        it("should reject withdrawal when insufficient contract balance", async function () {
+            const contractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const excessiveAmount = contractBalance + ethers.parseEther("1"); // More than contract has
+
+            await expect(
+                forcefiPackage.withdrawNativeCurrency(addr2.address, excessiveAmount)
+            ).to.be.revertedWith("Insufficient contract balance");
+        });
+
+        it("should allow withdrawing the entire contract balance", async function () {
+            const initialContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const initialAddr2Balance = await ethers.provider.getBalance(addr2.address);
+            
+            // Withdraw entire balance
+            await forcefiPackage.withdrawNativeCurrency(addr2.address, initialContractBalance);
+            
+            const finalContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const finalAddr2Balance = await ethers.provider.getBalance(addr2.address);
+            
+            // Check balances
+            expect(finalContractBalance).to.equal(0);
+            expect(finalAddr2Balance).to.equal(initialAddr2Balance + initialContractBalance);
+        });
+
+        it("should handle multiple withdrawals", async function () {
+            const initialContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const withdrawAmount1 = initialContractBalance / BigInt(3);
+            const withdrawAmount2 = initialContractBalance / BigInt(3);
+            
+            const initialAddr1Balance = await ethers.provider.getBalance(addr1.address);
+            const initialAddr2Balance = await ethers.provider.getBalance(addr2.address);
+            
+            // First withdrawal to addr1
+            await forcefiPackage.withdrawNativeCurrency(addr1.address, withdrawAmount1);
+            
+            // Second withdrawal to addr2
+            await forcefiPackage.withdrawNativeCurrency(addr2.address, withdrawAmount2);
+            
+            const finalContractBalance = await ethers.provider.getBalance(forcefiPackage.getAddress());
+            const finalAddr1Balance = await ethers.provider.getBalance(addr1.address);
+            const finalAddr2Balance = await ethers.provider.getBalance(addr2.address);
+            
+            // Check balances
+            expect(finalContractBalance).to.equal(initialContractBalance - withdrawAmount1 - withdrawAmount2);
+            expect(finalAddr1Balance).to.equal(initialAddr1Balance + withdrawAmount1);
+            expect(finalAddr2Balance).to.equal(initialAddr2Balance + withdrawAmount2);
+        });
+    });
+
     describe("buyPackage", function () {
         const _projectName = "Forcefi";
         const _packageLabel = "Explorer";
