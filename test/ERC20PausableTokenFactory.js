@@ -38,19 +38,8 @@ describe("ERC20 Pausable token factory", function () {
         mockEndpointA = await EndpointV2Mock.deploy(srcChainId);
 
         forcefiPackage = await ForcefiPackageFactory.deploy(mockEndpointA.getAddress(), owner.address);
-
-        await erc20TokenFactory.setForcefiPackageAddress(forcefiPackage.getAddress());
     });
-
-    describe("factory constructor", function () {
-
-        it("should check the ownership of factory contract", async function () {
-            const n = await erc20TokenFactory.owner();
-            expect(n).to.equal(owner.address);
-        });
-
-    });
-
+    
     describe("erc20 pausable token creation", function () {
 
         it("should check the ownership of new erc20 token contract instance, mint some tokens, pause/unpause token transfers", async function () {

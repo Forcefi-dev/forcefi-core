@@ -17,9 +17,7 @@ contract PausableContractFactory {
 
     constructor(){
 
-    }
-
-    /**
+    }    /**
      * @dev Enum representing different types of pausable token contracts that can be created.
      * - Pausable: A pausable ERC20 token.
      * - PausableBurnable: A pausable ERC20 token with burning capabilities.
@@ -28,6 +26,22 @@ contract PausableContractFactory {
      */
     enum ContractType { Pausable, PausableBurnable, PausableMintable, PausableMintableBurnable }
 
+    /**
+     * @dev Struct to hold information about a deployed contract
+     * @param contractAddress Address of the deployed contract
+     * @param contractType Type of the contract (from ContractType enum)
+     * @param isBurnable Whether the contract supports burning
+     * @param isMintable Whether the contract supports minting
+     */
+    struct ContractInfo {
+        address contractAddress;
+        bool isBurnable;
+        bool isMintable;
+    }
+    
+    // Mapping to store contract information by project name
+    mapping(string => ContractInfo[]) public projectContractInfo;
+    
     /**
      * @dev Emitted when a new token contract is created.
      * @param contractAddress Address of the newly deployed token contract.
@@ -58,25 +72,44 @@ contract PausableContractFactory {
         string memory _ticker,
         string memory _projectName,
         uint256 _initialSupply
-    ) external payable returns (address) {
-
-        address newContract;
+    ) external payable returns (address) {        address newContract;
+        bool isBurnable = false;
+        bool isMintable = false;
 
         // Deploy the appropriate contract type based on the provided enum value
         if (_type == ContractType.Pausable) {
             newContract = address(new ERC20PausableToken(_name, _ticker, _initialSupply, msg.sender));
         } else if (_type == ContractType.PausableMintable) {
             newContract = address(new ERC20PausableMintableToken(_name, _ticker, _initialSupply, msg.sender));
+            isMintable = true;
         } else if (_type == ContractType.PausableBurnable) {
             newContract = address(new ERC20PausableBurnableToken(_name, _ticker, _initialSupply, msg.sender));
+            isBurnable = true;
         } else if (_type == ContractType.PausableMintableBurnable) {
             newContract = address(new ERC20PausableMintableBurnableToken(_name, _ticker, _initialSupply, msg.sender));
+            isBurnable = true;
+            isMintable = true;
         } else {
             revert("Invalid contract type");
         }
+        // Store the contract information with capabilities
+        projectContractInfo[_projectName].push(ContractInfo({
+            contractAddress: newContract,
+            isBurnable: isBurnable,
+            isMintable: isMintable
+        }));
 
         emit ContractCreated(newContract, msg.sender, _projectName, uint8(_type));
 
         return newContract;
+    }
+
+    /**
+     * @dev Get all contract information for a specific project name, including capabilities.
+     * @param _projectName The name of the project.
+     * @return Array of ContractInfo structs containing address, type, and capabilities.
+     */
+    function getContractInfoByProject(string memory _projectName) external view returns (ContractInfo[] memory) {
+        return projectContractInfo[_projectName];
     }
 }

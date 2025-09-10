@@ -5,7 +5,7 @@ async function main() {
 
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const ForcefiToken = await ethers.deployContract("ERC20PausableBurnableToken", ["Forcefi token", "FORC", "1000000000000000000000000000", deployer.address]);
+    const ForcefiToken = await ethers.deployContract("ERC20BurnableToken", ["Forcefi token", "FORC", "1000000000000000000000000000", deployer.address]);
     console.log("ForcefiToken contract address " + await ForcefiToken.getAddress())
 }
 

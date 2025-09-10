@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require('hardhat-deploy');
 require("dotenv").config();
+require("solidity-coverage");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -9,9 +10,9 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 1000,
+        runs: 10,
       },
-    // viaIR: true,
+      viaIR: true,
     },
   },
   allowUnlimitedContractSize: true,
@@ -49,6 +50,13 @@ module.exports = {
         mnemonic: process.env.MNEMONIC_TEST,
       },
     },
+    base: {
+      url: process.env.BASE_RPC_URL,
+      chainId: 8453,
+      accounts: {
+        mnemonic: process.env.MNEMONIC,
+      },
+    },
   },
   etherscan: {
     apiKey: {
@@ -56,7 +64,8 @@ module.exports = {
       sepolia: process.env.ETHERSCAN_API_KEY,
       lineaSepolia: process.env.LINEASCAN_API_KEY,
       arbitrumSepolia: process.env.ARBITRUM_API_KEY,
-      baseSepolia: process.env.BASE_API_KEY
+      baseSepolia: process.env.BASE_API_KEY,
+      base: process.env.BASE_API_KEY,
     },
     customChains: [
       {
@@ -81,6 +90,14 @@ module.exports = {
         urls: {
           apiURL: "https://api-sepolia.basescan.org/api",
           browserURL: "https://sepolia.basescan.org/",
+        },
+      },
+      {
+        network: "base",
+        chainId: 8453,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: "https://basescan.org/",
         },
       },
     ],
