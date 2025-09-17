@@ -113,11 +113,11 @@ contract AccessStaking is BaseStaking {
         }
         emit Staked(_stakerAddress, _stakeAmount, stakeId);
     }
-
-    /// @notice Bridges the staking access to multiple destination chains
-    /// @param _destChainIds An array of destination chain IDs to which staking access is bridged
+    
+    /// @notice Bridges the staking access to a destination chain
+    /// @param _destChainId The destination chain ID to which staking access is bridged
     /// @param _unstake Boolean indicating if the bridging is for unstaking
-    function bridgeStakingAccess(uint16[] memory _destChainIds, bytes calldata _options, bool _unstake) public payable {
+    function bridgeStakingAccess(uint16 _destChainId, bytes calldata _options, bool _unstake) public payable {
         ActiveStake storage activeStake = activeStake[msg.sender];
 
         bytes memory payload = abi.encode(msg.sender, activeStake.stakeAmount, activeStake.stakeId);
@@ -129,31 +129,30 @@ contract AccessStaking is BaseStaking {
             }
             if(activeStake.goldNftId != 0){
                 goldNftOwner[activeStake.goldNftId] = address(0);
-            }
-            activeStake.stakeAmount = 0;
+            }            activeStake.stakeAmount = 0;
             isCurator[msg.sender] = false;
             hasStaked[msg.sender] = false;
             currentStakeId[msg.sender] = 0;
             removeInvestor(msg.sender);
             forcefiTokenAddress.safeTransfer(msg.sender, activeStake.stakeAmount);
             emit Unstaked(msg.sender, activeStake.stakeId);
-            executeBridge(chainList[msg.sender], payload, _options);
-        } else {
-            // Loop through all destination chain IDs and add them to the user's chain list
-            for (uint i = 0; i < _destChainIds.length; i++) {
-                addChain(_destChainIds[i]);
-                executeBridge(_destChainIds, payload, _options);
+            // Bridge unstake to all chains in user's chain list
+            uint16[] memory userChains = chainList[msg.sender];
+            for (uint256 i = 0; i < userChains.length; i++) {
+                executeBridge(userChains[i], payload, _options);
             }
+        } else {
+            // Add the destination chain ID to the user's chain list and execute bridge
+            addChain(_destChainId);
+            executeBridge(_destChainId, payload, _options);
         }
     }
-
-    /// @notice Executes the bridge operation to multiple destination chains
-    /// @param _destChainIds An array of destination chain IDs to bridge to
-    /// @param payload The payload data to send to the destination chains
-    function executeBridge(uint16[] memory _destChainIds, bytes memory payload, bytes calldata _options) internal {
-        for (uint256 i = 0; i < _destChainIds.length; i++) {
-            _lzSend(_destChainIds[i], payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
-        }
+    
+    /// @notice Executes the bridge operation to a destination chain
+    /// @param _destChainId The destination chain ID to bridge to
+    /// @param payload The payload data to send to the destination chain
+    function executeBridge(uint16 _destChainId, bytes memory payload, bytes calldata _options) internal {
+        _lzSend(_destChainId, payload, _options, MessagingFee(msg.value, 0), payable(msg.sender));
     }
 
     /// @notice Adds a new chain ID to a user's list of chains
